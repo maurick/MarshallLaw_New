@@ -25,7 +25,7 @@ namespace Game_Test
 
         public int SprSheetY { get; set; }
 
-        private Rectangle SourceRect, Source;
+        private Rectangle Source;
         private Texture2D Texture;
 
         ContentManager content;
@@ -34,7 +34,6 @@ namespace Game_Test
         {
             Path = path;
             Position = Vector2.Zero;
-            SourceRect = Rectangle.Empty;
             SprSheetX = 0;
             SprSheetY = 10;
             Source = new Rectangle(SprSheetX * ImageSize, SprSheetY * ImageSize, ImageSize, ImageSize);
@@ -45,7 +44,6 @@ namespace Game_Test
         {
             Path = path;
             Position = Vector2.Zero;
-            SourceRect = Rectangle.Empty;
             this.SprSheetX = sprSheetX;
             this.SprSheetY = sprSheetY;
             Source = new Rectangle(SprSheetX * ImageSize, SprSheetY * ImageSize, ImageSize, ImageSize);
@@ -86,8 +84,6 @@ namespace Game_Test
 
             Position = new Vector2(pos_X, pos_Y);
 
-            SourceRect = new Rectangle((int)Position.X, (int)Position.Y, (int)(dimensions.X), (int)(dimensions.Y));
-
             Scale = scale;
         }
 
@@ -118,7 +114,6 @@ namespace Game_Test
         public void SetScale(Vector2 Scale)
         {
             this.Scale = Scale;
-
         }
     }
 }
