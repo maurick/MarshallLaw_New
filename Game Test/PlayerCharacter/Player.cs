@@ -140,9 +140,9 @@ namespace Game_Test
                 }
             }
             #endregion
-            controller.Read();
+            controller.Update();
             //Check if keys are pressed
-            if (InputManager.Instance.KeyDown(Keys.Space) || controller.lbutt())
+            if (InputManager.Instance.KeyDown(Keys.Space) || controller.rbutt())
             {
                 if (State != PlayerEnums.ActionState.Thrust)
                     State = PlayerEnums.ActionState.Thrust;
@@ -178,17 +178,17 @@ namespace Game_Test
             }
             #endregion
 
-            bool test = false;
+            bool ControlsActive = false;
             for (int i = 0; i < 8; i++)
             {
                 if(controller.fbutt(i))
                 {
-                    test = true;
+                    ControlsActive = true;
                 }
             }
 
             #region Keyreleased
-            if (!test || (InputManager.Instance.KeyReleased(Keys.W) || InputManager.Instance.KeyReleased(Keys.A) || InputManager.Instance.KeyReleased(Keys.S) || InputManager.Instance.KeyReleased(Keys.D)) && InputManager.Instance.KeyDown(Keys.Space) == false || InputManager.Instance.KeyReleased(Keys.Space))
+            if (!ControlsActive || (InputManager.Instance.KeyReleased(Keys.W) || InputManager.Instance.KeyReleased(Keys.A) || InputManager.Instance.KeyReleased(Keys.S) || InputManager.Instance.KeyReleased(Keys.D)) && InputManager.Instance.KeyDown(Keys.Space) == false || InputManager.Instance.KeyReleased(Keys.Space))
             {
                 State = PlayerEnums.ActionState.None;
                 sprSheetY = PlayerEnums.Action.None;

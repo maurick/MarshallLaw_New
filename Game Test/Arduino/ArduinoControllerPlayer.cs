@@ -11,6 +11,7 @@ namespace Game_Test
         ArduinoRead reader;
         ArduinoCmds cmnds;
         string allbuttons;
+        string lastconfig;
 
         public ArduinoControllerPlayer(int Controller)
         {
@@ -20,8 +21,9 @@ namespace Game_Test
             allbuttons = "000000000";
         }
 
-        public void Read()
+        public void Update()
         {
+            lastconfig = allbuttons;
             string x = reader.Read();
             if(x != null && x != "")
             {
@@ -41,6 +43,23 @@ namespace Game_Test
                 
         }
 
+        public bool MenuUp()
+        {
+            if(allbuttons[2] > lastconfig[2])
+            {
+                return true;
+            }
+            return false;        
+        }
+        public bool MenuDown()
+        {
+            if (allbuttons[3] > lastconfig[3])
+            {
+                return true;
+            }
+            return false;
+        }
+
         public bool Up()
         {
             return fbutt(2);
@@ -57,9 +76,25 @@ namespace Game_Test
         {
             return fbutt(0);
         }
-        public bool lbutt()
+        public bool rbutt()
         {
             return fbutt(4);
+        }
+        public bool ubutt()
+        {
+            return fbutt(5);
+        }
+        public bool dbutt()
+        {
+            return fbutt(6);
+        }
+        public bool lbutt()
+        {
+            return fbutt(7);
+        }
+        public bool jbutt()
+        {
+            return fbutt(8);
         }
     }
 }
