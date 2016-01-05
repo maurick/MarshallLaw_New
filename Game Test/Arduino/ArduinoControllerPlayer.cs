@@ -27,6 +27,7 @@ namespace Game_Test
 
         public void Update()
         {
+            return;
             lastconfig = allbuttons;
             string x = reader.Read();
             if(x != null && x != "")
