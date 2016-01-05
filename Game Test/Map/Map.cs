@@ -87,8 +87,6 @@ namespace Game_Test
             content = new ContentManager(ScreenManager.Instance.Content.ServiceProvider, "Content");
 
             grid = content.Load<Texture2D>("Spritesheets/grid");
-            //grid.LoadContent(0, 0, false, new Vector2(GameSettings.Instance.Dimensions.X / 1920, GameSettings.Instance.Dimensions.Y / 1080));
-            //grid.SetScale(new Vector2(GameSettings.Instance.Dimensions.X / 1920, GameSettings.Instance.Dimensions.Y / 1080));
         }
 
         public virtual void UnloadContent()
