@@ -45,6 +45,9 @@ namespace Game_Test
         private double knockbacktimer;
         private Vector2 knockbackdirection;
 
+        ArduinoPortDetection ports; 
+        ArduinoRead reader;
+
         public Player()
         {
             //TODO add playerstats
@@ -61,6 +64,13 @@ namespace Game_Test
             SpeedScale = 1.5f;
 
             weapon = new Weapon();
+
+            ports = new ArduinoPortDetection();
+            if (ports.portFound)
+            {
+                reader = new ArduinoRead(ports.ReturnPorts()[0]);
+            }
+            int i = reader.X();
         }
 
         public void LoadContent(int X, int Y)
