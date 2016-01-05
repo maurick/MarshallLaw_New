@@ -83,7 +83,6 @@ namespace Game_Test
 
         public void Update(GameTime gameTime)
         {
-            return;
             Vector2 temp = CheckHit();
             if (temp.X == 1)
             {
@@ -140,10 +139,11 @@ namespace Game_Test
             if (State != PlayerEnums.ActionState.Thrust)
             {
                 #region Aggro
-                if (((sprite.Position.X - PlayerPosition.X < AggroDistance && sprite.Position.X - PlayerPosition.X > 0) ||
+                if ((((sprite.Position.X - PlayerPosition.X < AggroDistance && sprite.Position.X - PlayerPosition.X > 0) ||
                     (PlayerPosition.X - sprite.Position.X < AggroDistance && PlayerPosition.X - sprite.Position.X > 0)) &&
                     ((sprite.Position.Y - PlayerPosition.Y < AggroDistance && sprite.Position.Y - PlayerPosition.Y > 0) ||
-                    (PlayerPosition.Y - sprite.Position.Y < AggroDistance && PlayerPosition.Y - sprite.Position.Y > 0)))
+                    (PlayerPosition.Y - sprite.Position.Y < AggroDistance && PlayerPosition.Y - sprite.Position.Y > 0))) &&
+                    PlayerinZone())
                 {
                     SpeedScale = 1.0f;
                     if (sprite.Position.Y - GameSettings.Instance.Tilescale.Y - PlayerPosition.Y > 0)
@@ -316,16 +316,14 @@ namespace Game_Test
             dirX *= SpeedScale * (32 / GameSettings.Instance.Tilescale.X);
             dirY *= SpeedScale * (32 / GameSettings.Instance.Tilescale.X);
 
-            bool CollisionY = CheckCollision(new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY), sprite.Position, (int)direction.Y);
-            bool CollisionX = CheckCollision(new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY), sprite.Position, (int)direction.X + 1);
+            Vector2 Collision = CheckCollision(new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY), sprite.Position, direction);
+            if (Collision.X == 0)
+                dirX = 0;
+            if (Collision.Y == 0)
+                dirY = 0;
 
-            if (CollisionX && CollisionY)
+            if (dirX == 0 && dirY == 0)
                 duration = 0;
-            else if (CollisionX && direction.Y == 0)
-                duration = 0;
-            else if (CollisionY && direction.X == 0)
-                duration = 0;
-
 
             //change sprSheetX and sprSheetY based on previous movement direction
             if (direction.Y == -1)//up
@@ -336,8 +334,6 @@ namespace Game_Test
                 {
                     sprSheetY = PlayerEnums.Action.WalkUp;
                 }
-                if (CollisionY)
-                    dirY = 0;
             }
             if (direction.Y == 1)//down
             {
@@ -347,8 +343,6 @@ namespace Game_Test
                 {
                     sprSheetY = PlayerEnums.Action.WalkDown;
                 }
-                if (CollisionY)
-                    dirY = 0;
             }
             if (direction.X == -1)//left
             {
@@ -358,8 +352,6 @@ namespace Game_Test
                 {
                     sprSheetY = PlayerEnums.Action.WalkLeft;
                 }
-                if (CollisionX)
-                    dirX = 0;
             }
             if (direction.X == 1)//right
             {
@@ -369,54 +361,135 @@ namespace Game_Test
                 {
                     sprSheetY = PlayerEnums.Action.WalkRight;
                 }
-                if (CollisionX)
-                    dirX = 0;
             }
 
-            for (int l = 1; l < layer.Length; l++)
+            for (int l = 2; l < layer.Length; l++)
                 ChangeAlpha(new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY), l);
             sprite.Position = new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY); //Set new position
             weapon.setPosition(new Vector2(weapon.getPosition().X + dirX, weapon.getPosition().Y + dirY)); //Move weapon with you
         }
 
-        private bool CheckCollision(Vector2 PositionNew, Vector2 PositionOld, int direction)
+        private Vector2 CheckCollision(Vector2 PositionNew, Vector2 PositionOld, Vector2 Direction)
         {
             float tilescale_x = GameSettings.Instance.Tilescale.X, tilescale_y = GameSettings.Instance.Tilescale.Y;
 
-            int x = (int)((PositionOld.X + tilescale_x) / tilescale_x),
-            y = (int)((PositionOld.Y + tilescale_y) / tilescale_y);
+            int xnew = (int)((PositionNew.X + 0.5 * tilescale_x) / tilescale_x),
+            xold = (int)((PositionOld.X + 0.5 * tilescale_x) / tilescale_x),
+            ynew = (int)((PositionNew.Y + tilescale_y) / tilescale_y),
+            yold = (int)((PositionOld.Y + tilescale_y) / tilescale_y);
 
-            switch (direction)
+            int[] x1 = new int[2], x2 = new int[2], y1 = new int[2], y2 = new int[2];
+            x1[0] = xnew;
+            x1[1] = xnew;
+            x2[0] = xold;
+            x2[1] = xold;
+
+            y1[0] = ynew;
+            y1[1] = ynew;
+            y2[0] = yold;
+            y2[1] = yold;
+
+            Vector2 temp = new Vector2(1, 1);
+            Vector2 returnvalue = new Vector2(1, 1);
+
+            Rectangle playerRectHor = new Rectangle(new Point((int)(PositionNew.X + 0.5 * tilescale_x), (int)(PositionOld.Y + tilescale_y)), new Point((int)tilescale_x, (int)(tilescale_y))),
+            playerRectVer = new Rectangle(new Point((int)(PositionOld.X + 0.5 * tilescale_x), (int)(PositionNew.Y + tilescale_y)), new Point((int)tilescale_x, (int)(tilescale_y)));
+
+            if (Direction.X == -1)//links
             {
-                case -1://up
-                    y--;
-                    break;
-                case 1://down
-                    y++;
-                    break;
-                case 0://left
-                    x--;
-                    break;
-                case 2://right
-                    x++;
-                    break;
+                returnvalue.X = -1;
+                if (playerRectHor.Y % tilescale_y != 0)
+                    y2[1]++;
+                temp = CheckCollision2(playerRectHor, x1, y2);
+                if (temp.X == 1 || temp.Y == 1)
+                    returnvalue.X = 0;
+            }
+            if (Direction.X == 1)//rechts
+            {
+                x1[0]++;
+                x1[1]++;
+                if (playerRectHor.Y % tilescale_y != 0)
+                    y2[1]++;
+                temp = CheckCollision2(playerRectHor, x1, y2);
+                if (temp.X == 1 || temp.Y == 1)
+                    returnvalue.X = 0;
+            }
+            if (Direction.Y == -1)//omhoog
+            {
+                returnvalue.Y = -1;
+                if (playerRectVer.X % tilescale_x != 0)
+                    x2[1]++;
+                temp = CheckCollision2(playerRectVer, x2, y1);
+                if (temp.X == 1 || temp.Y == 1)
+                    returnvalue.Y = 0;
+            }
+            if (Direction.Y == 1)//omlaag
+            {
+                if (playerRectVer.X % tilescale_x != 0)
+                    x2[1]++;
+                y1[0]++;
+                y1[1]++;
+                temp = CheckCollision2(playerRectVer, x2, y1);
+                if (temp.X == 1 || temp.Y == 1)
+                    returnvalue.Y = 0;
             }
 
-            Rectangle Enemyrect = new Rectangle(new Point((int)(PositionNew.X + 0.5 * tilescale_x), (int)(PositionNew.Y + tilescale_y)), new Point((int)tilescale_x, (int)(tilescale_y)));
+            return returnvalue;
+        }
 
+        private Vector2 CheckCollision2(Rectangle playerRect, int[] x, int[] y)
+        {
+            float tilescale_x = GameSettings.Instance.Tilescale.X, tilescale_y = GameSettings.Instance.Tilescale.Y;
             int TileID;
-
-            TileID = layer[0].getTileID(x, y);
             Rectangle rect;
+            int temp1 = 0, temp2 = 0;
+
+            
+            TileID = layer[0].getTileID(x[0], y[0]);
             if (TileID != 0)
             {
-                rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)tilescale_x, (int)tilescale_y);
-                if (rect.Intersects(Enemyrect))
+                rect = new Rectangle((x[0]) * (int)tilescale_x, (y[0]) * (int)tilescale_y, (int)tilescale_x, (int)tilescale_y);
+                if (rect.Intersects(playerRect))
                 {
-                    return true;
+                    temp1 = 1;
                 }
             }
-            return false;
+
+            TileID = layer[1].getTileID(x[0], y[0]);
+            if (TileID == 0)
+            {
+                rect = new Rectangle((x[0]) * (int)tilescale_x, (y[0]) * (int)tilescale_y, (int)tilescale_x, (int)tilescale_y);
+                if (rect.Intersects(playerRect))
+                {
+                    temp1 = 1;
+                    temp2 = 1;
+                }
+            }
+
+
+            TileID = layer[0].getTileID(x[1], y[1]);
+            if (TileID != 0)
+            {
+                rect = new Rectangle((x[1]) * (int)tilescale_x, (y[1]) * (int)tilescale_y, (int)tilescale_x, (int)tilescale_y);
+                if (rect.Intersects(playerRect))
+                {
+                    temp2 = 1;
+                }
+            }
+
+            TileID = layer[1].getTileID(x[1], y[1]);
+            if (TileID == 0)
+            {
+                rect = new Rectangle((x[1]) * (int)tilescale_x, (y[1]) * (int)tilescale_y, (int)tilescale_x, (int)tilescale_y);
+                if (rect.Intersects(playerRect))
+                {
+                    temp1 = 1;
+                    temp2 = 1;
+                }
+            }
+
+
+            return new Vector2(temp1, temp2);
         }
 
         private void ChangeAlpha(Vector2 position, int number)
@@ -529,6 +602,34 @@ namespace Game_Test
                         if (Enemyrect.Intersects(Playerrect))
                             returnvalue = new Vector2(1, 4);
                         break;
+                }
+            }
+            return returnvalue;
+        }
+
+        private bool PlayerinZone()
+        {
+            float tilescale_x = GameSettings.Instance.Tilescale.X, tilescale_y = GameSettings.Instance.Tilescale.Y;
+            bool returnvalue = false;
+            int TileID;
+            int[] x = new int[4],
+                y = new int[4];
+
+            x[0] = (int)((PlayerPosition.X + tilescale_x * 0.5) / tilescale_x);
+            x[1] = (int)((PlayerPosition.X + tilescale_x * 1.5) / tilescale_x);
+
+            y[0] = (int)((PlayerPosition.Y + tilescale_y) / tilescale_y);
+            y[1] = (int)((PlayerPosition.Y + 2 * tilescale_y) / tilescale_y);
+
+            for (int i = 0; i < 2; i++)
+            {
+                for (int j = 0; j < 2; j++)
+                {
+                    TileID = layer[1].getTileID(x[i], y[j]);
+                    if (TileID != 0)
+                    {
+                            returnvalue = true;
+                    }
                 }
             }
             return returnvalue;

@@ -16,21 +16,39 @@ namespace Game_Test
             CurrentPort = port;
         }
 
-        private string Read()
+
+
+        public string Read()
         {
-            int intReturnASCII = 0;
-            CurrentPort.Open();
-            Thread.Sleep(1000);
-            int count = CurrentPort.BytesToRead;
-            string returnMessage = "";
-            while (count > 0)
+            if (!CurrentPort.IsOpen)
             {
-                intReturnASCII = CurrentPort.ReadByte();
-                returnMessage += Convert.ToChar(intReturnASCII);
-                count--;
+                CurrentPort.Open();
             }
-            CurrentPort.Close();
-            return returnMessage;
-        }
+           
+            if (CurrentPort.BytesToRead > 0)
+            {
+                string message = "";
+
+                int incomingByte = CurrentPort.ReadByte();
+                char readChar = (char)incomingByte;
+
+                if (readChar == '#')
+                {
+                    while (readChar != '%')
+                    {
+                        message += readChar;
+                        incomingByte = CurrentPort.ReadByte();
+                        readChar = (char)incomingByte;                        
+                    }
+                    message = message.Remove(0,1);
+                }
+                CurrentPort.DiscardInBuffer();
+                CurrentPort.Close();
+                return message;
+                }
+            //CurrentPort.Close();
+            return null;
+            
+        }         
     }
 }

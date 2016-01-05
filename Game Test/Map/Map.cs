@@ -58,9 +58,9 @@ namespace Game_Test
                 enemy.SetLayernumber(NumberLayers - layer_player_num);
             player.SetLayernumber(NumberLayers - layer_player_num);
             GetLayer("Collision", temp++);
+            GetLayer("Zone", temp++);
 
-
-            for (int l = layer_player_num; l < Layers.Count - 1; l++)
+            for (int l = layer_player_num; l < Layers.Count - 2; l++)
             {
                 GetLayer(Layers[l].Layername, temp++);
             }
@@ -135,7 +135,7 @@ namespace Game_Test
                 {
                     for (int l = layer_player_num; l < Layers.Count; l++)
                     {
-                        if (Layers[l].Layername != "Collision" && Layers[l].Layername != "Player")
+                        if (Layers[l].Layername != "Collision" && Layers[l].Layername != "Player" && Layers[l].Layername != "Zone")
                             Layers[l].DrawTile(spriteBatch, x, y);
                         if (Layers[l].Layername == "Player" && PlayerActive == false)
                         {
@@ -164,8 +164,6 @@ namespace Game_Test
                     {
                             Layers[l].DrawTile(spriteBatch, x, y);
                     }
-
-                    Layers[11].DrawTile(spriteBatch, x, y);
                 }
             }
 
