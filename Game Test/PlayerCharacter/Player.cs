@@ -299,7 +299,7 @@ namespace Game_Test
                 ChangeAlpha(new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY), l);
             sprite.Position = new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY); //Set new position
             boundingBox.Position = new Vector2(boundingBox.Position.X + dirX, boundingBox.Position.Y + dirY);
-            weapon.setPosition(new Vector2(weapon.getPosition().X + dirX, weapon.getPosition().Y + dirY)); //Move weapon with you
+            weapon.setPosition(new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY)); //Move weapon with you
         }
 
         private Vector2 CheckCollision(Vector2 PositionNew, Vector2 PositionOld, Vector2 Direction)
@@ -330,12 +330,11 @@ namespace Game_Test
 
             if (Direction.X == -1)//links
             {
+                returnvalue.X = -1;
                 if (playerRectHor.Y % tilescale_y != 0)
                     y2[1]++;
                 temp = CheckCollision2(playerRectHor, x1, y2);
-                if (temp.X == 1)
-                    returnvalue.X = 0;
-                else if (temp.Y == 1)
+                if (temp.X == 1 || temp.Y == 1)
                     returnvalue.X = 0;
             }
             if (Direction.X == 1)//rechts
@@ -345,19 +344,16 @@ namespace Game_Test
                 if (playerRectHor.Y % tilescale_y != 0)
                     y2[1]++;
                 temp = CheckCollision2(playerRectHor, x1, y2);
-                if (temp.X == 1)
-                    returnvalue.X = 0;
-                else if (temp.Y == 1)
+                if (temp.X == 1 || temp.Y == 1)
                     returnvalue.X = 0;
             }
             if (Direction.Y == -1)//omhoog
             {
+                returnvalue.Y = -1;
                 if (playerRectVer.X % tilescale_x != 0)
                     x2[1]++;
                 temp = CheckCollision2(playerRectVer, x2, y1);
-                if (temp.X == 1)
-                    returnvalue.Y = 0;
-                else if (temp.Y == 1)
+                if (temp.X == 1 || temp.Y == 1)
                     returnvalue.Y = 0;
             }
             if (Direction.Y == 1)//omlaag
@@ -367,140 +363,13 @@ namespace Game_Test
                 y1[0]++;
                 y1[1]++;
                 temp = CheckCollision2(playerRectVer, x2, y1);
-                if (temp.X == 1)
-                    returnvalue.Y = 0;
-                else if (temp.Y == 1)
+                if (temp.X == 1 || temp.Y == 1)
                     returnvalue.Y = 0;
             }
 
             return returnvalue;
         }
-
-        /*private Vector2 CheckCollision(Vector2 PositionNew, Vector2 PositionOld, Vector2 Direction)
-        {
-            float tilescale_x = GameSettings.Instance.Tilescale.X, tilescale_y = GameSettings.Instance.Tilescale.Y;
-
-            int x = (int)((PositionNew.X + 0.5 * tilescale_x) / tilescale_x),
-            y = (int)((PositionNew.Y + tilescale_y) / tilescale_y);
-
-            int[] x1 = new int[3], y1 = new int[3];
-            x1[0] = x;
-            x1[1] = x;
-            x1[2] = x;
-
-            y1[0] = y;
-            y1[1] = y;
-            y1[2] = y;
-
-            Vector3 temp = new Vector3(0, 0, 0);
-            Vector2 returnvalue = new Vector2(1, 1);
-
-            Rectangle playerRect = new Rectangle(new Point((int)(PositionNew.X + 0.5 * tilescale_x), (int)(PositionNew.Y + tilescale_y)), new Point((int)tilescale_x, (int)(tilescale_y)));
-
-            if (Direction == new Vector2(-1, 0))//links
-            {
-                if (playerRect.Y % tilescale_y != 0)
-                    y1[1]++;
-                temp = CheckCollision2(playerRect, x1, y1, 2);
-                if (temp.X == 1)
-                    return new Vector2(0, 0);
-                else if (temp.Y == 1)
-                    return new Vector2(0, 0);
-            }
-            else if (Direction == new Vector2(-1, -1))//linksomhoog
-            {
-                if (playerRect.X % tilescale_x != 0)
-                    x1[2]++;
-                if (playerRect.Y % tilescale_y != 0)
-                    y1[1]++;
-                temp = CheckCollision2(playerRect, x1, y1, 3);
-                if (temp.X == 1 || temp.Y == 1)
-                    returnvalue.X = 0;
-                if (temp.X == 1 || temp.Z == 1)
-                    returnvalue.Y = 0;
-                return returnvalue;
-            }
-            else if (Direction == new Vector2(-1, 1))//linksomlaag
-            {
-                if (playerRect.X % tilescale_x != 0)
-                    x1[2]++;
-                if (playerRect.Y % tilescale_y != 0)
-                    y1[1]++;
-                y1[2]++;
-                temp = CheckCollision2(playerRect, x1, y1, 3);
-                if (temp.X == 1 || temp.Y == 1)
-                    returnvalue.X = 0;
-                if (temp.Y == 1 || temp.Z == 1)
-                    returnvalue.Y = 0;
-                return returnvalue;
-            }
-            else if (Direction == new Vector2(1, 0))//rechts
-            {
-                x1[0]++;
-                x1[1]++;
-                if (playerRect.Y % tilescale_y != 0)
-                    y1[1]++;
-                temp = CheckCollision2(playerRect, x1, y1, 2);
-                if (temp.X == 1)
-                    return new Vector2(0, 0);
-                else if (temp.Y == 1)
-                    return new Vector2(0, 0);
-            }
-            else if (Direction == new Vector2(1, -1))//rechtsomhoog
-            {
-                if (playerRect.X % tilescale_x != 0)
-                    x1[0]++;
-                x1[1]++;
-                if (playerRect.Y % tilescale_y != 0)
-                    y1[1]++;
-                temp = CheckCollision2(playerRect, x1, y1, 3);
-                if (temp.X == 1 || temp.Y == 1)
-                    returnvalue.X = 0;
-                if (temp.X == 1 || temp.Z == 1)
-                    returnvalue.Y = 0;
-                return returnvalue;
-            }
-            else if (Direction == new Vector2(1, 1))//rechtsomlaag
-            {
-                x1[0]++;
-                if (playerRect.X % tilescale_x != 0)
-                    x1[1]++;
-                if (playerRect.Y % tilescale_y != 0)
-                    y1[1]++;
-                y1[2]++;
-                temp = CheckCollision2(playerRect, x1, y1, 3);
-                if (temp.X == 1 || temp.Y == 1)
-                    returnvalue.X = 0;
-                if (temp.Y == 1 || temp.Z == 1)
-                    returnvalue.Y = 0;
-                return returnvalue;
-            }
-            else if (Direction == new Vector2(0, -1))//omhoog
-            {
-                if (playerRect.X % tilescale_x != 0)
-                    x1[1]++;
-                temp = CheckCollision2(playerRect, x1, y1, 2);
-                if (temp.X == 1)
-                    return new Vector2(0, 0);
-                else if (temp.Y == 1)
-                    return new Vector2(0, 0);
-            }
-            else if (Direction == new Vector2(0, 1))//omlaag
-            {
-                if (playerRect.X % tilescale_x != 0)
-                    x1[1]++;
-                y1[0]++;
-                y1[1]++;
-                temp = CheckCollision2(playerRect, x1, y1, 2);
-                if (temp.X == 1)
-                    return new Vector2(0, 0);
-                else if (temp.Y == 1)
-                    return new Vector2(0, 0);
-            }
-
-            return new Vector2(1, 1);
-        }*/
-
+        
         private Vector2 CheckCollision2(Rectangle playerRect, int[] x, int[] y)
         {
             float tilescale_x = GameSettings.Instance.Tilescale.X, tilescale_y = GameSettings.Instance.Tilescale.Y;
