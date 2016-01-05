@@ -29,7 +29,7 @@ namespace Game_Test
             }
 
         }
-        private bool fbutt(int x)
+        public bool fbutt(int x)
         {
             if (allbuttons[x] == '1')
             {
@@ -56,6 +56,10 @@ namespace Game_Test
         public bool Right()
         {
             return fbutt(0);
+        }
+        public bool lbutt()
+        {
+            return fbutt(4);
         }
     }
 }
