@@ -14,14 +14,12 @@ namespace Game_Test
         MenuItem[] menuItems; //The Class MenuItem is at the bottom of the this Code
         Vector2 menuLenght;
         Vector2 menuPosition;
-        ArduinoControllerPlayer controller;
         int currentSelected;
         string[] text = { "Start", "Options", "Exit"};
 
     public MenuScreen()
         {
             //Create the Images for the Menuscreen
-            controller = new ArduinoControllerPlayer(1);
             background = new Image("TitleScreen/background");
             sign = new Image("TitleScreen/woodsign_marshal_law");
             poster = new Image("TitleScreen/gun_poster1280x720");
@@ -110,52 +108,45 @@ namespace Game_Test
 
             if (background.Alpha > 0.0f)
                 IsVisible = true;
-            if (controller != null)
+
+            //If the down key is selected then move the selected 1 down
+            if (InputManager.Instance.KeyPressed(Keys.Down))
             {
-                //controller.Update();
+                menuItems[currentSelected].Selected = false;
+                currentSelected++;
+                if (currentSelected == text.Length)
+                    currentSelected = 0;
+                menuItems[currentSelected].Selected = true;
 
-
-                //If the down key is selected then move the selected 1 down
-                if (InputManager.Instance.KeyPressed(Keys.Down) || controller.MenuDown())
-                {
-                    menuItems[currentSelected].Selected = false;
-                    currentSelected++;
-                    if (currentSelected == text.Length)
-                        currentSelected = 0;
-                    menuItems[currentSelected].Selected = true;
-
-                }
-
-                //If the up key is selected then move the selected 1 up
-                if (InputManager.Instance.KeyPressed(Keys.Up) || controller.MenuUp())
-                {
-                    menuItems[currentSelected].Selected = false;
-                    currentSelected--;
-                    if (currentSelected == -1)
-                        currentSelected = text.Length - 1;
-                    menuItems[currentSelected].Selected = true;
-                }
-
-                if (menuItems[currentSelected].ItemID == 0 && (InputManager.Instance.KeyPressed(Keys.Enter) || controller.dbutt()))
-                {
-                    controller = null;
-                    ScreenManager.Instance.ChangeScreen("CharCreationScreen");
-                }
-
-                //If the Exit button is selected and Enter has been pressed exit the game
-                if (menuItems[currentSelected].ItemID == 1 && (InputManager.Instance.KeyPressed(Keys.Enter) || controller.dbutt()))
-                {
-                    controller = null;
-                    ScreenManager.Instance.ChangeScreen("MapTestScreen");
-                }
-
-                //If the Exit button is selected and Enter has been pressed exit the game
-                if (menuItems[currentSelected].ItemID == 2 && (InputManager.Instance.KeyPressed(Keys.Enter) || controller.dbutt()))
-                {
-                    controller = null;
-                    GameInstance.ExitGame = true;
-                }
             }
+
+            //If the up key is selected then move the selected 1 up
+            if (InputManager.Instance.KeyPressed(Keys.Up))
+            {
+                menuItems[currentSelected].Selected = false;
+                currentSelected--;
+                if (currentSelected == -1)
+                    currentSelected = text.Length - 1;
+                menuItems[currentSelected].Selected = true;
+            }
+
+            if (menuItems[currentSelected].ItemID == 0 && (InputManager.Instance.KeyPressed(Keys.Enter)))
+            {
+                ScreenManager.Instance.ChangeScreen("CharCreationScreen");
+            }
+
+            //If the Exit button is selected and Enter has been pressed exit the game
+            if (menuItems[currentSelected].ItemID == 1 && (InputManager.Instance.KeyPressed(Keys.Enter)))
+            {
+                ScreenManager.Instance.ChangeScreen("MapTestScreen");
+            }
+
+            //If the Exit button is selected and Enter has been pressed exit the game
+            if (menuItems[currentSelected].ItemID == 2 && (InputManager.Instance.KeyPressed(Keys.Enter)))
+            {
+                GameInstance.ExitGame = true;
+            }
+            
         }
 
         public override void Draw(SpriteBatch spriteBatch)

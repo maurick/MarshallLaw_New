@@ -45,8 +45,6 @@ namespace Game_Test
         private double knockbacktimer;
         private Vector2 knockbackdirection;
 
-        ArduinoControllerPlayer controller;
-
         public Player()
         {
             //TODO add playerstats
@@ -63,8 +61,6 @@ namespace Game_Test
             SpeedScale = 1.5f;
 
             weapon = new Weapon();
-
-            controller = new ArduinoControllerPlayer(1);
         }
 
         public void LoadContent(int X, int Y)
@@ -140,9 +136,9 @@ namespace Game_Test
                 }
             }
             #endregion
-            controller.Update();
+            //controller.Update();
             //Check if keys are pressed
-            if (InputManager.Instance.KeyDown(Keys.Space) || controller.rbutt())
+            if (InputManager.Instance.KeyDown(Keys.Space))
             {
                 if (State != PlayerEnums.ActionState.Thrust)
                     State = PlayerEnums.ActionState.Thrust;
@@ -151,25 +147,25 @@ namespace Game_Test
             else
             {
                 
-                if (InputManager.Instance.KeyDown(Keys.W) || controller.Up())
+                if (InputManager.Instance.KeyDown(Keys.W))
                 {
                     State = PlayerEnums.ActionState.Walk;
                     lookDirection = PlayerEnums.LookDirection.Up;
                     direction.Y = -1;
                 }
-                if (InputManager.Instance.KeyDown(Keys.S)|| controller.Down())
+                if (InputManager.Instance.KeyDown(Keys.S))
                 {
                     State = PlayerEnums.ActionState.Walk;
                     lookDirection = PlayerEnums.LookDirection.Down;
                     direction.Y = 1;
                 }
-                if (InputManager.Instance.KeyDown(Keys.A)|| controller.Left())
+                if (InputManager.Instance.KeyDown(Keys.A))
                 {
                     State = PlayerEnums.ActionState.Walk;
                     lookDirection = PlayerEnums.LookDirection.left;
                     direction.X = -1;
                 }
-                if (InputManager.Instance.KeyDown(Keys.D)|| controller.Right())
+                if (InputManager.Instance.KeyDown(Keys.D))
                 {
                     State = PlayerEnums.ActionState.Walk;
                     lookDirection = PlayerEnums.LookDirection.Right;
@@ -177,15 +173,6 @@ namespace Game_Test
                 }
             }
             #endregion
-
-            bool ControlsActive = false;
-            for (int i = 0; i < 8; i++)
-            {
-                if(controller.fbutt(i))
-                {
-                    ControlsActive = true;
-                }
-            }
 
             #region Keyreleased
             if (/*!ControlsActive ||*/ (InputManager.Instance.KeyReleased(Keys.W) || InputManager.Instance.KeyReleased(Keys.A) || InputManager.Instance.KeyReleased(Keys.S) || InputManager.Instance.KeyReleased(Keys.D)) && InputManager.Instance.KeyDown(Keys.Space) == false || InputManager.Instance.KeyReleased(Keys.Space))
