@@ -10,6 +10,7 @@ namespace Game_Test
 {
     class CharCreationScreen : Screen
     {
+        #region "Control"
         Control1 control;
         CharCreation_Members charCreatin_member = new CharCreation_Members();
         static int numFields = 3;
@@ -23,19 +24,22 @@ namespace Game_Test
         static int numitems1;
         static int numitems2;
         static int numitems3;
+        #endregion
+
+
 
         //Contructor
         public CharCreationScreen()
         {
             charCreatin_member = new CharCreation_Members();
 
-            numitems1 = charCreatin_member.GetList(10, 2).Count;
-            numitems2 = 1;
-            numitems3 = 1;
+            numitems1 = charCreatin_member.GetList(10, 0).Count;
+            numitems2 = charCreatin_member.GetList(10, 1).Count;
+            numitems3 = charCreatin_member.GetList(10, 2).Count;
 
-            fields[0] = new Control1_Field( 0, numFields, "Character", numitems3);
+            fields[0] = new Control1_Field( 0, numFields, "Character", numitems1);
             fields[1] = new Control1_Field( 1, numFields, "Attributes", numitems2);
-            fields[2] = new Control1_Field( 2, numFields, "Appearance", numitems1);
+            fields[2] = new Control1_Field( 2, numFields, "Appearance", numitems3);
 
             control = new Control1(numFields, numitems1);
 
@@ -43,7 +47,28 @@ namespace Game_Test
             {
                 items1[i] = new Control1_Item(
                     itemID:i,
-                    itemname: charCreatin_member.GetList(10, 2)[i], 
+                    itemname: charCreatin_member.GetList(10, 0)[i], 
+                    itemsetting: charCreatin_member.GetString(i, 0),
+                    fieldID: 0,
+                    maxindex: charCreatin_member.GetList(i, 0).Count
+                    );
+            }
+
+            for (int i = 0; i < numitems2; i++)
+            {
+                items2[i] = new Control1_Item(
+                    itemID: i,
+                    itemname: charCreatin_member.GetList(10, 1)[i],
+                    itemsetting: charCreatin_member.GetString(i, 0),
+                    fieldID: 1,
+                    maxindex: charCreatin_member.GetList(i, 1).Count
+                    );
+            }
+            for (int i = 0; i < numitems3; i++)
+            {
+                items3[i] = new Control1_Item(
+                    itemID: i,
+                    itemname: charCreatin_member.GetList(10, 2)[i],
                     itemsetting: charCreatin_member.GetString(i, 0),
                     fieldID: 2,
                     maxindex: charCreatin_member.GetList(i, 2).Count
@@ -67,6 +92,16 @@ namespace Game_Test
                 if (item != null)
                     item.LoadContent();
             }
+            foreach (var item in items2)
+            {
+                if (item != null)
+                    item.LoadContent();
+            }
+            foreach (var item in items3)
+            {
+                if (item != null)
+                    item.LoadContent();
+            }
 
         }
 
@@ -86,7 +121,16 @@ namespace Game_Test
                 if (item != null)
                     item.UnloadContent();
             }
-
+            foreach (var item in items2)
+            {
+                if (item != null)
+                    item.UnloadContent();
+            }
+            foreach (var item in items3)
+            {
+                if (item != null)
+                    item.UnloadContent();
+            }
         }
 
         public override void Update(GameTime gameTime)
@@ -98,7 +142,14 @@ namespace Game_Test
             control.Update(gameTime);
 
             if(control.CurrentActiveItem != 10)
-                items1[control.CurrentActiveItem].itemsetting.Text = charCreatin_member.GetString(control.CurrentActiveItem, items1[control.CurrentActiveItem].currentIndex);
+            {
+                if (control.CurrentActiveField == 0)
+                    items1[control.CurrentActiveItem].itemsetting.Text = charCreatin_member.GetString(control.CurrentActiveItem, items1[control.CurrentActiveItem].currentIndex);
+                else if(control.CurrentActiveField == 1)
+                    items2[control.CurrentActiveItem].itemsetting.Text = charCreatin_member.GetString(control.CurrentActiveItem, items2[control.CurrentActiveItem].currentIndex);
+                else if (control.CurrentActiveField == 2)
+                    items3[control.CurrentActiveItem].itemsetting.Text = charCreatin_member.GetString(control.CurrentActiveItem, items3[control.CurrentActiveItem].currentIndex);
+            }
 
             foreach (var control_field in fields)
             {
@@ -116,12 +167,44 @@ namespace Game_Test
                     item.Update(gameTime);
                 }
             }
+            foreach (var item in items2)
+            {
+                if (item != null)
+                {
+                    item.IsSelected = false;
+                    item.SetSelected((int)control.currentSelectedItemControl);
+                    item.Update(gameTime);
+                }
+            }
+            foreach (var item in items3)
+            {
+                if (item != null)
+                {
+                    item.IsSelected = false;
+                    item.SetSelected((int)control.currentSelectedItemControl);
+                    item.Update(gameTime);
+                }
+            }
+
             if (control.currentSelectedMainControl == Control1.selection.fieldactive)
             {
                 if (control.CurrentActiveItem != 10)
                 {
-                    items1[control.CurrentActiveItem].IsSelected = true;
-                    items1[control.CurrentActiveItem].Update(gameTime);
+                    if(control.CurrentActiveField == 0)
+                    {
+                        items1[control.CurrentActiveItem].IsSelected = true;
+                        items1[control.CurrentActiveItem].Update(gameTime);
+                    }
+                    if (control.CurrentActiveField == 1)
+                    {
+                        items2[control.CurrentActiveItem].IsSelected = true;
+                        items2[control.CurrentActiveItem].Update(gameTime);
+                    }
+                    if (control.CurrentActiveField == 2)
+                    {
+                        items3[control.CurrentActiveItem].IsSelected = true;
+                        items3[control.CurrentActiveItem].Update(gameTime);
+                    }
                 }
 
             }

@@ -263,8 +263,13 @@ namespace Game_Test
             dirX *= SpeedScale * (32 / GameSettings.Instance.Tilescale.X);
             dirY *= SpeedScale * (32 / GameSettings.Instance.Tilescale.X);
 
-            bool CollisionY = CheckCollision(new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY), (int)direction.Y);
-            bool CollisionX = CheckCollision(new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY), (int)direction.X + 1);
+            /*bool CollisionY = CheckCollision(new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY), (int)direction.Y);
+            bool CollisionX = CheckCollision(new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY), (int)direction.X + 1);*/
+            Vector2 Collision = CheckCollision(new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY), sprite.Position, direction);
+            if (Collision.X == 0)
+                dirX = 0;
+            if (Collision.Y == 0)
+                dirY = 0;
             
             //change sprSheetX and sprSheetY based on previous movement direction
             if (direction.Y == -1)//up
@@ -275,8 +280,6 @@ namespace Game_Test
                 {
                     sprSheetY = PlayerEnums.Action.WalkUp;
                 }
-                if (CollisionY)
-                    dirY = 0;
             }
             if (direction.Y == 1)//down
             {
@@ -286,8 +289,6 @@ namespace Game_Test
                 {
                     sprSheetY = PlayerEnums.Action.WalkDown;
                 }
-                if (CollisionY)
-                    dirY = 0;
             }
             if (direction.X == -1)//left
             {
@@ -297,8 +298,6 @@ namespace Game_Test
                 {
                     sprSheetY = PlayerEnums.Action.WalkLeft;
                 }
-                if (CollisionX)
-                    dirX = 0;
             }
             if (direction.X == 1)//right
             {
@@ -308,69 +307,111 @@ namespace Game_Test
                 {
                     sprSheetY = PlayerEnums.Action.WalkRight;
                 }
-                if (CollisionX)
-                    dirX = 0;
             }
             
             for (int l = 1; l < layer.Length; l++)
                 ChangeAlpha(new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY), l);
             sprite.Position = new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY); //Set new position
             boundingBox.Position = new Vector2(boundingBox.Position.X + dirX, boundingBox.Position.Y + dirY);
-            weapon.setPosition(new Vector2(weapon.getPosition().X + dirX, weapon.getPosition().Y + dirY)); //Move weapon with you
+            weapon.setPosition(new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY)); //Move weapon with you
         }
 
-        private bool CheckCollision(Vector2 PositionNew, int direction)
+        private Vector2 CheckCollision(Vector2 PositionNew, Vector2 PositionOld, Vector2 Direction)
         {
             float tilescale_x = GameSettings.Instance.Tilescale.X, tilescale_y = GameSettings.Instance.Tilescale.Y;
 
-            int x = (int)((PositionNew.X + tilescale_x) / tilescale_x),
-            y = (int)((PositionNew.Y + tilescale_y) / tilescale_y);
+            int xnew = (int)((PositionNew.X + 0.5 * tilescale_x) / tilescale_x),
+            xold = (int)((PositionOld.X + 0.5 * tilescale_x) / tilescale_x),
+            ynew = (int)((PositionNew.Y + tilescale_y) / tilescale_y),
+            yold = (int)((PositionOld.Y + tilescale_y) / tilescale_y);
 
-            int[] x1 = new int[2], y1 = new int[2];
-            x1[0] = x;
-            y1[0] = y;
-            x1[1] = x;
-            y1[1] = y;
+            int[] x1 = new int[2], x2 = new int[2], y1 = new int[2], y2 = new int[2];
+            x1[0] = xnew;
+            x1[1] = xnew;
+            x2[0] = xold;
+            x2[1] = xold;
 
-            switch (direction)
+            y1[0] = ynew;
+            y1[1] = ynew;
+            y2[0] = yold;
+            y2[1] = yold;
+
+            Vector2 temp = new Vector2(1, 1);
+            Vector2 returnvalue = new Vector2(1, 1);
+
+            Rectangle playerRectHor = new Rectangle(new Point((int)(PositionNew.X + 0.5 * tilescale_x), (int)(PositionOld.Y + tilescale_y)), new Point((int)tilescale_x, (int)(tilescale_y))),
+            playerRectVer = new Rectangle(new Point((int)(PositionOld.X + 0.5 * tilescale_x), (int)(PositionNew.Y + tilescale_y)), new Point((int)tilescale_x, (int)(tilescale_y)));
+
+            if (Direction.X == -1)//links
             {
-                case -1://up
-                    x1[1]++;
-                    break;
-                case 1://down
-                    y1[0]++;
-                    y1[1]++;
-                    x1[1]++;
-                    break;
-                case 0://left
-                    y1[1]++;
-                    break;
-                case 2://right
-                    x1[0]++;
-                    x1[1]++;
-                    y1[1]++;
-                    break;
+                returnvalue.X = -1;
+                if (playerRectHor.Y % tilescale_y != 0)
+                    y2[1]++;
+                temp = CheckCollision2(playerRectHor, x1, y2);
+                if (temp.X == 1 || temp.Y == 1)
+                    returnvalue.X = 0;
+            }
+            if (Direction.X == 1)//rechts
+            {
+                x1[0]++;
+                x1[1]++;
+                if (playerRectHor.Y % tilescale_y != 0)
+                    y2[1]++;
+                temp = CheckCollision2(playerRectHor, x1, y2);
+                if (temp.X == 1 || temp.Y == 1)
+                    returnvalue.X = 0;
+            }
+            if (Direction.Y == -1)//omhoog
+            {
+                returnvalue.Y = -1;
+                if (playerRectVer.X % tilescale_x != 0)
+                    x2[1]++;
+                temp = CheckCollision2(playerRectVer, x2, y1);
+                if (temp.X == 1 || temp.Y == 1)
+                    returnvalue.Y = 0;
+            }
+            if (Direction.Y == 1)//omlaag
+            {
+                if (playerRectVer.X % tilescale_x != 0)
+                    x2[1]++;
+                y1[0]++;
+                y1[1]++;
+                temp = CheckCollision2(playerRectVer, x2, y1);
+                if (temp.X == 1 || temp.Y == 1)
+                    returnvalue.Y = 0;
             }
 
-            Rectangle playerRect = new Rectangle(new Point((int)(PositionNew.X + 0.5 * tilescale_x), (int)(PositionNew.Y + tilescale_y)), new Point((int)tilescale_x, (int)(tilescale_y)));
-
+            return returnvalue;
+        }
+        
+        private Vector2 CheckCollision2(Rectangle playerRect, int[] x, int[] y)
+        {
+            float tilescale_x = GameSettings.Instance.Tilescale.X, tilescale_y = GameSettings.Instance.Tilescale.Y;
             int TileID;
+            Rectangle rect;
+            int temp1 = 0, temp2 = 0;
 
-            for (int i = 0; i < 2; i++)
+            TileID = layer[0].getTileID(x[0], y[0]);
+            if (TileID != 0)
             {
-                TileID = layer[0].getTileID(x1[i], y1[i]);
-                Rectangle rect;
-                if (TileID != 0)
+                rect = new Rectangle((x[0]) * (int)tilescale_x, (y[0]) * (int)tilescale_y, (int)tilescale_x, (int)tilescale_y);
+                if (rect.Intersects(playerRect))
                 {
-                    rect = new Rectangle((x1[i]) * (int)tilescale_x, (y1[i]) * (int)tilescale_y, (int)tilescale_x, (int)tilescale_y);
-                    if (rect.Intersects(playerRect))
-                    {
-                        return true;
-                    }
+                    temp1 = 1;
                 }
             }
 
-            return false;
+            TileID = layer[0].getTileID(x[1], y[1]);
+            if (TileID != 0)
+            {
+                rect = new Rectangle((x[1]) * (int)tilescale_x, (y[1]) * (int)tilescale_y, (int)tilescale_x, (int)tilescale_y);
+                if (rect.Intersects(playerRect))
+                {
+                    temp2 = 1;
+                }
+            }
+
+            return new Vector2(temp1, temp2);
         }
 
         private void ChangeAlpha(Vector2 position, int number)
