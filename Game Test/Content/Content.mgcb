@@ -831,3 +831,6 @@
 /processorParam:TextureFormat=Color
 /build:CharacterSprites/Female/Belt/Leather.png
 
+#begin Maps/testmap6.txt
+/copy:Maps/testmap6.txt
+
