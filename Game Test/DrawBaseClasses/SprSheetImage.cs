@@ -40,6 +40,7 @@ namespace Game_Test
             SprSheetY = 10;
             Source = new Rectangle(SprSheetX * ImageSize, SprSheetY * ImageSize, ImageSize, ImageSize);
             Color = Color.White;
+            Real_Scale = new Vector2(0.75f, 0.75f);
         }
 
         public SprSheetImage(string path, int sprSheetX, int sprSheetY)
@@ -50,7 +51,7 @@ namespace Game_Test
             this.SprSheetY = sprSheetY;
             Source = new Rectangle(SprSheetX * ImageSize, SprSheetY * ImageSize, ImageSize, ImageSize);
             Color = Color.White;
-            Real_Scale = new Vector2(0.75f, 075f);
+            Real_Scale = new Vector2(0.75f, 0.75f);
         }
 
         /// <summary>
