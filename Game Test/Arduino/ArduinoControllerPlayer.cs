@@ -20,15 +20,13 @@ namespace Game_Test
             {
                 reader = new ArduinoRead(ports.ReturnPorts()[Controller - 1]);
                 cmnds = new ArduinoCmds(ports.ReturnPorts()[Controller - 1]);
-                
             }
-            allbuttons = "000000000";
             lastconfig = "000000000";
+            allbuttons = "000000000";
         }
 
         public void Update()
         {
-            return;
             lastconfig = allbuttons;
             string x = reader.Read();
             if(x != null && x != "")

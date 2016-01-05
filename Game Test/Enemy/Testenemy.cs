@@ -71,7 +71,7 @@ namespace Game_Test
 
         public void LoadContent()
         {
-            sprite.LoadContent(Position.X, Position.Y, false, new Vector2(64 / (GameSettings.Instance.Tilescale.X * 2), 64 / (GameSettings.Instance.Tilescale.Y * 2)));
+            sprite.LoadContent(Position.X, Position.Y, new Vector2(64 / (GameSettings.Instance.Tilescale.X * 2), 64 / (GameSettings.Instance.Tilescale.Y * 2)));
             weapon.LoadContent((int)Position.X, (int)Position.Y);
         }
 

@@ -25,6 +25,8 @@ namespace Game_Test
 
         public int SprSheetY { get; set; }
 
+        public Vector2 Real_Scale;
+
         private Rectangle Source;
         private Texture2D Texture;
 
@@ -48,6 +50,7 @@ namespace Game_Test
             this.SprSheetY = sprSheetY;
             Source = new Rectangle(SprSheetX * ImageSize, SprSheetY * ImageSize, ImageSize, ImageSize);
             Color = Color.White;
+            Real_Scale = new Vector2(0.75f, 075f);
         }
 
         /// <summary>
@@ -57,7 +60,7 @@ namespace Game_Test
         /// <param name="pos_Y">Defines the Y coordinate for the Position</param>
         /// <param name="centered">If true then if the coordinates are 0 then the image will be centered</param>
         /// <param name="scale">Scale is used to create the Image size</param>
-        public void LoadContent(float pos_X, float pos_Y, bool centered, Vector2 scale)
+        public void LoadContent(float pos_X, float pos_Y, Vector2 scale)
         {
             content = new ContentManager(ScreenManager.Instance.Content.ServiceProvider, "Content");
 
@@ -70,19 +73,23 @@ namespace Game_Test
             dimensions.X = scale.X * dimensions.X;
             dimensions.Y = scale.Y * dimensions.Y;
 
-            //When the Position is 0 and the Texture dimensions are smaller then the window and
-            //the image is supposed to be centered it will center the image
-
-            if (Position.X == 0 && GameSettings.Instance.Dimensions.X > dimensions.X && centered)
-            {
-                pos_X = (GameSettings.Instance.Dimensions.X - dimensions.X) / 2;
-            }
-            if (Position.Y == 0 && GameSettings.Instance.Dimensions.Y > dimensions.Y && centered)
-            {
-                pos_Y = (GameSettings.Instance.Dimensions.Y - dimensions.Y) / 2;
-            }
-
             Position = new Vector2(pos_X, pos_Y);
+
+            Scale = scale;
+        }
+
+        public void LoadContent(Vector2 position, Vector2 scale)
+        {
+            content = new ContentManager(ScreenManager.Instance.Content.ServiceProvider, "Content");
+
+            if (Texture == null)
+                Texture = content.Load<Texture2D>(Path);
+
+            Vector2 dimensions = Vector2.Zero;
+            Position = position;
+
+            dimensions.X = scale.X * dimensions.X;
+            dimensions.Y = scale.Y * dimensions.Y;
 
             Scale = scale;
         }
@@ -105,7 +112,7 @@ namespace Game_Test
             //spriteBatch.Draw(Texture, SourceRect, Color.White * Alpha);
 
             //Draw the Image
-            spriteBatch.Draw(Texture, Position, Source, Color.White, 0, new Vector2(0, 0), 0.75f, SpriteEffects.None, 0.5f);
+            spriteBatch.Draw(Texture, Position, Source, Color.White, 0, new Vector2(0, 0), Real_Scale, SpriteEffects.None, 0.5f);
             //spriteBatch.Draw(Texture, Position, Color.White);
             //spriteBatch.Draw(Texture, Position, SourceRect, Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.0f);
             //spriteBatch.Draw(Texture, Position, null, Color * Alpha, 0.0f, Vector2.Zero, Scale, SpriteEffects.None, 0.0f);

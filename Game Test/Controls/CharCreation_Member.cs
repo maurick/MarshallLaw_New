@@ -64,7 +64,7 @@ namespace Game_Test
 
             string[] stringSkincolors = { "Light", "Tanned", "Tanned2", "Dark", "Dark2" };
             string[] stringGender = { "Male", "Female"};
-            string[] stringHead = { "Red Bandana", "Leather Cap", "Chain Hat", "Coth Hood" };
+            string[] stringHead = { "Red Bandana", "Leather Cap", "Chain Hat", "Cloth Hood" };
             string[] stringBelt = { "Leather", "Cloth"};
             string[] stringPants = { "Red", "Magenta", "White", "Teal" };
 
@@ -72,7 +72,6 @@ namespace Game_Test
             {
                 appearance.Add(stringAppearance[i]);
             }
-
             for (int i = 0; i < stringSkincolors.Length; i++)
             {
                 skincolors.Add(stringSkincolors[i]);
@@ -223,32 +222,41 @@ namespace Game_Test
             return null;
         }
 
-        public string GetString(int itemID, int index)
+        public string GetString(int fieldID, int itemID, int index)
         {
-            switch(itemID)
+            switch(fieldID)
             {
                 case 0:
-                    return gender[index];
+                    return "empty";
                 case 1:
-                    return skincolors[index];
+                    return "empty";
                 case 2:
-                    return head[index];
-                case 3:
-                    return belt[index];
-                case 4:
-                    return pants[index];
-                case 5:
-                    return null;
-                case 6:
-                    return null;
-                case 7:
-                    return null;
-                case 8:
-                    return null;
-                case 9:
-                    return null;
-                case 10:
-                    return null;
+                    switch (itemID)
+                    {
+                        case 0:
+                            return gender[index];
+                        case 1:
+                            return skincolors[index];
+                        case 2:
+                            return head[index];
+                        case 3:
+                            return belt[index];
+                        case 4:
+                            return pants[index];
+                        case 5:
+                            return null;
+                        case 6:
+                            return null;
+                        case 7:
+                            return null;
+                        case 8:
+                            return null;
+                        case 9:
+                            return null;
+                        case 10:
+                            return null;
+                    }
+                    return "error";
             }
             return "error";
         }
