@@ -112,7 +112,7 @@ namespace Game_Test
                 IsVisible = true;
             if (controller != null)
             {
-                controller.Update();
+                //controller.Update();
 
 
                 //If the down key is selected then move the selected 1 down
