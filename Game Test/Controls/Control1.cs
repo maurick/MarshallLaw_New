@@ -11,11 +11,11 @@ namespace Game_Test
     public class Control1
     {
         Image background, field_active, mainbuttonup, mainbuttonmiddle, mainbuttondown, mainbuttonup_pressed, mainbuttondown_pressed;
-        cText buttonleft, buttonright;
+        cText buttonleft, buttonright, buttonback, buttoncontinue;
 
         public enum selection
         {
-            buttonup, buttonmiddle, buttondown, fieldactive, arrow_left, arrow_right, buttonleft, buttonright
+            buttonup, buttonmiddle, buttondown, fieldactive, arrow_left, arrow_right, buttonleft, buttonright, buttonback, buttoncontinue
         };
 
         int numberControlFields;
@@ -37,8 +37,10 @@ namespace Game_Test
             mainbuttondown = new Image("OptionsScreen/buttondown_selected");
             mainbuttonup_pressed = new Image("OptionsScreen/buttonup_selected_pressed");
             mainbuttondown_pressed = new Image("OptionsScreen/buttondown_selected_pressed");
-            buttonleft = new cText("Main Menu", "DryGood");
+            buttonleft = new cText("Cancel", "DryGood");
             buttonright = new cText("Apply Changes", "DryGood");
+            buttonback = new cText("Back", "DryGood");
+            buttoncontinue = new cText("Continue", "DryGood");
             #endregion
 
             this.numberControlFields = numFields;
@@ -104,14 +106,20 @@ namespace Game_Test
 
             buttonleft.LoadContent();
             buttonright.LoadContent();
+            buttonback.LoadContent();
+            buttoncontinue.LoadContent();
 
             buttonleft.Scale = textScale;
             buttonright.Scale = textScale;
+            buttonback.Scale = textScale;
+            buttoncontinue.Scale = textScale;
 
             float x_scale = (GameSettings.Instance.Dimensions.X / 1920);
 
             buttonleft.Position = new Vector2(610 * x_scale, 800 * x_scale);
             buttonright.Position = new Vector2(1360 * x_scale, 800 * x_scale);
+            buttonback.Position = new Vector2(350 * x_scale, 900 * x_scale);
+            buttoncontinue.Position = new Vector2(1400 * x_scale, 900 * x_scale);
 
 
         }
@@ -128,12 +136,15 @@ namespace Game_Test
 
             buttonleft.UnloadContent();
             buttonright.UnloadContent();
+            buttonback.UnloadContent();
+            buttoncontinue.UnloadContent();
 
         }
 
         public virtual void Update(GameTime gameTime)
         {
             background.Update(gameTime);
+
 
             if (currentSelectedMainControl != selection.fieldactive)
             {
@@ -161,6 +172,12 @@ namespace Game_Test
                     break;
                 case selection.buttonright:
                     buttonright.Update(gameTime);
+                    break;
+                case selection.buttonback:
+                    buttonback.Update(gameTime);
+                    break;
+                case selection.buttoncontinue:
+                    buttoncontinue.Update(gameTime);
                     break;
             }
             #endregion
@@ -190,6 +207,15 @@ namespace Game_Test
                 }
                 if (InputManager.Instance.KeyPressed(Keys.Down))
                 {
+                    if (currentSelectedItemControl == selection.buttonleft)
+                    {
+                        currentSelectedMainControl = selection.buttonback;
+                    }
+                    if (currentSelectedItemControl == selection.buttonright)
+                    {
+                        currentSelectedMainControl = selection.buttoncontinue;
+                    }
+
                     if (CurrentActiveItem + 1 >= CurrentNumberControlItems)
                     {
                         currentSelectedItemControl = selection.buttonleft;
@@ -214,8 +240,10 @@ namespace Game_Test
                         if (currentSelectedItemControl == selection.buttonright)
                             currentSelectedItemControl = selection.arrow_right;
                     }
-                    else
+                    else if (CurrentActiveItem != 0)
+                    {
                         CurrentActiveItem--;
+                    }
                 }
             }
             else
@@ -226,6 +254,16 @@ namespace Game_Test
                         currentSelectedMainControl = selection.buttonup;
                     else if (currentSelectedMainControl == selection.buttondown)
                         currentSelectedMainControl = selection.buttonup;
+                    else if (currentSelectedMainControl == selection.buttonback)
+                    {
+                        currentSelectedMainControl = selection.buttondown;
+                    }
+                    else if (currentSelectedMainControl == selection.buttoncontinue)
+                    {
+                        currentSelectedMainControl = selection.fieldactive;
+                        currentSelectedItemControl = selection.buttonright;
+                        CurrentActiveItem = 10;
+                    }
                 }
 
                 if (InputManager.Instance.KeyPressed(Keys.Down))
@@ -234,10 +272,26 @@ namespace Game_Test
                         currentSelectedMainControl = selection.buttondown;
                     else if (currentSelectedMainControl == selection.buttonup)
                         currentSelectedMainControl = selection.buttondown;
+                    else if (currentSelectedMainControl == selection.buttondown)
+                        currentSelectedMainControl = selection.buttonback;
                 }
                 if (InputManager.Instance.KeyPressed(Keys.Right))
                 {
-                    currentSelectedMainControl = selection.fieldactive;
+                    if (currentSelectedMainControl == selection.buttondown || currentSelectedMainControl == selection.buttonup)
+                    {
+                        currentSelectedMainControl = selection.fieldactive;
+                    }
+                    else if (currentSelectedMainControl == selection.buttonback)
+                    {
+                        currentSelectedMainControl = selection.buttoncontinue;
+                    }
+                }
+                if (InputManager.Instance.KeyPressed(Keys.Left))
+                {
+                    if (currentSelectedMainControl == selection.buttoncontinue)
+                    {
+                        currentSelectedMainControl = selection.buttonback;
+                    }
                 }
             }
             #endregion
@@ -297,9 +351,19 @@ namespace Game_Test
             else
                 buttonright.Color = Color.Black;
 
+            if (currentSelectedMainControl == selection.buttonback)
+                buttonback.Color = Color.White;
+            else
+                buttonback.Color = Color.Black;
+            if (currentSelectedMainControl == selection.buttoncontinue)
+                buttoncontinue.Color = Color.White;
+            else
+                buttoncontinue.Color = Color.Black;
 
             buttonleft.DrawString(spriteBatch);
             buttonright.DrawString(spriteBatch);
+            buttonback.DrawString(spriteBatch);
+            buttoncontinue.DrawString(spriteBatch);
              
             //mainbuttonup_pressed.Draw(spriteBatch);
             //mainbuttondown_pressed.Draw(spriteBatch);

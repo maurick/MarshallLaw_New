@@ -38,16 +38,28 @@ namespace Game_Test
             }
         }
 
+        #region "Field 0"
+        List<string> character = new List<string>();
+        List<string> empty0 = new List<string>();
+        #endregion
+
+        #region "Field 1"
+        List<string> attributes = new List<string>();
+        List<string> empty1 = new List<string>();
+        #endregion
+
+        #region "Field 2"
         List<string> appearance = new List<string>();
         List<string> skincolors = new List<string>();
         List<string> gender = new List<string>();
         List<string> head = new List<string>();
         List<string> belt = new List<string>();
         List<string> pants = new List<string>();
+        #endregion
 
         public void Create_Lists()
         {
-            #region "FieldID 1"
+            #region "FieldID 2"
             string[] stringAppearance = { "Gender", "Skincolor", "Head", "Belt", "Pants" };
 
             string[] stringSkincolors = { "Light", "Tanned", "Tanned2", "Dark", "Dark2" };
@@ -83,8 +95,32 @@ namespace Game_Test
             }
             #endregion
 
-            #region "FieldID 2"
+            #region "FieldID 1"
+            string[] stringAttributes = { "empty, uncompleted field" };
 
+            string[] stringEmpty = { "Empty" };
+
+            for (int i = 0; i < stringAttributes.Length; i++)
+            {
+                attributes.Add(stringAttributes[i]);
+            }
+            for (int i = 0; i < stringEmpty.Length; i++)
+            {
+                empty1.Add(stringEmpty[i]);
+            }
+            #endregion
+
+            #region "FieldID 0"
+            string[] stringCharacter = { "Name:" };
+
+            for (int i = 0; i < stringCharacter.Length; i++)
+            {
+                character.Add(stringCharacter[i]);
+            }
+            for (int i = 0; i < stringEmpty.Length; i++)
+            {
+                empty0.Add(stringEmpty[i]);
+            }
             #endregion
         }
 
@@ -92,12 +128,12 @@ namespace Game_Test
         {
             switch(fieldID)
             {
-                #region "Field 1"
-                case 1:
+                #region "Field 0"
+                case 0:
                     switch (itemID)
                     {
                         case 0:
-                            return null;
+                            return empty0;
                         case 1:
                             return null;
                         case 2:
@@ -117,7 +153,37 @@ namespace Game_Test
                         case 9:
                             return null;
                         case 10:
+                            return character;
+                    }
+                    return null;
+                #endregion
+
+                #region "Field 1"
+                case 1:
+                    switch (itemID)
+                    {
+                        case 0:
+                            return empty1;
+                        case 1:
                             return null;
+                        case 2:
+                            return null;
+                        case 3:
+                            return null;
+                        case 4:
+                            return null;
+                        case 5:
+                            return null;
+                        case 6:
+                            return null;
+                        case 7:
+                            return null;
+                        case 8:
+                            return null;
+                        case 9:
+                            return null;
+                        case 10:
+                            return attributes;
                     }
                     return null;
                 #endregion
@@ -152,42 +218,14 @@ namespace Game_Test
                     return null;
                 #endregion
 
-                #region "Field 3"
-                case 3:
-                    switch (itemID)
-                    {
-                        case 0:
-                            return null;
-                        case 1:
-                            return null;
-                        case 2:
-                            return null;
-                        case 3:
-                            return null;
-                        case 4:
-                            return null;
-                        case 5:
-                            return null;
-                        case 6:
-                            return null;
-                        case 7:
-                            return null;
-                        case 8:
-                            return null;
-                        case 9:
-                            return null;
-                        case 10:
-                            return null;
-                    }
-                    return null;
-                    #endregion
+
             }
             return null;
         }
 
-        public string GetString(int ID, int index)
+        public string GetString(int itemID, int index)
         {
-            switch(ID)
+            switch(itemID)
             {
                 case 0:
                     return gender[index];
