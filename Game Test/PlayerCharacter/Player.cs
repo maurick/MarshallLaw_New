@@ -65,7 +65,7 @@ namespace Game_Test
 
         public void LoadContent(int X, int Y)
         {
-            sprite.LoadContent(X, Y, false, new Vector2(64 / (GameSettings.Instance.Tilescale.X * 2), 64 / (GameSettings.Instance.Tilescale.Y * 2)));
+            sprite.LoadContent(X, Y, new Vector2(64 / (GameSettings.Instance.Tilescale.X * 2), 64 / (GameSettings.Instance.Tilescale.Y * 2)));
             weapon.LoadContent(X, Y);
 
             boundingBox = new Image("Images/green");

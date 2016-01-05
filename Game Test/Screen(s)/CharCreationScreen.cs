@@ -26,7 +26,7 @@ namespace Game_Test
         static int numitems3;
         #endregion
 
-
+        CharacterCreator characterCreator;
 
         //Contructor
         public CharCreationScreen()
@@ -48,7 +48,7 @@ namespace Game_Test
                 items1[i] = new Control1_Item(
                     itemID:i,
                     itemname: charCreatin_member.GetList(10, 0)[i], 
-                    itemsetting: charCreatin_member.GetString(i, 0),
+                    itemsetting: charCreatin_member.GetString(0, i, 0),
                     fieldID: 0,
                     maxindex: charCreatin_member.GetList(i, 0).Count
                     );
@@ -59,7 +59,7 @@ namespace Game_Test
                 items2[i] = new Control1_Item(
                     itemID: i,
                     itemname: charCreatin_member.GetList(10, 1)[i],
-                    itemsetting: charCreatin_member.GetString(i, 0),
+                    itemsetting: charCreatin_member.GetString(1, i, 0),
                     fieldID: 1,
                     maxindex: charCreatin_member.GetList(i, 1).Count
                     );
@@ -69,11 +69,13 @@ namespace Game_Test
                 items3[i] = new Control1_Item(
                     itemID: i,
                     itemname: charCreatin_member.GetList(10, 2)[i],
-                    itemsetting: charCreatin_member.GetString(i, 0),
+                    itemsetting: charCreatin_member.GetString(2, i, 0),
                     fieldID: 2,
                     maxindex: charCreatin_member.GetList(i, 2).Count
                     );
             }
+
+            characterCreator = new CharacterCreator();
         }
 
 
@@ -103,6 +105,7 @@ namespace Game_Test
                     item.LoadContent();
             }
 
+            characterCreator.LoadContent();
         }
 
         public override void UnloadContent()
@@ -131,6 +134,8 @@ namespace Game_Test
                 if (item != null)
                     item.UnloadContent();
             }
+
+            characterCreator.UnloadContent();
         }
 
         public override void Update(GameTime gameTime)
@@ -144,11 +149,11 @@ namespace Game_Test
             if(control.CurrentActiveItem != 10)
             {
                 if (control.CurrentActiveField == 0)
-                    items1[control.CurrentActiveItem].itemsetting.Text = charCreatin_member.GetString(control.CurrentActiveItem, items1[control.CurrentActiveItem].currentIndex);
+                    items1[control.CurrentActiveItem].itemsetting.Text = charCreatin_member.GetString( 0, control.CurrentActiveItem, items1[control.CurrentActiveItem].currentIndex);
                 else if(control.CurrentActiveField == 1)
-                    items2[control.CurrentActiveItem].itemsetting.Text = charCreatin_member.GetString(control.CurrentActiveItem, items2[control.CurrentActiveItem].currentIndex);
+                    items2[control.CurrentActiveItem].itemsetting.Text = charCreatin_member.GetString( 1, control.CurrentActiveItem, items2[control.CurrentActiveItem].currentIndex);
                 else if (control.CurrentActiveField == 2)
-                    items3[control.CurrentActiveItem].itemsetting.Text = charCreatin_member.GetString(control.CurrentActiveItem, items3[control.CurrentActiveItem].currentIndex);
+                    items3[control.CurrentActiveItem].itemsetting.Text = charCreatin_member.GetString( 2, control.CurrentActiveItem, items3[control.CurrentActiveItem].currentIndex);
             }
 
             foreach (var control_field in fields)
@@ -209,6 +214,9 @@ namespace Game_Test
 
             }
 
+            if (control.CurrentActiveField == 2)
+                characterCreator.Update(gameTime);
+
             //When the Escape key has been pressed exit the game
             if (InputManager.Instance.KeyPressed(Keys.Escape))
             {
@@ -248,6 +256,8 @@ namespace Game_Test
                         item.Draw(spriteBatch);
             }
 
+            if(control.CurrentActiveField == 2)
+                characterCreator.Draw(spriteBatch);
         }
     }
 }
