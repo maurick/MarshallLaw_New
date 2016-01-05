@@ -10,10 +10,23 @@ namespace Game_Test
     class ArduinoRead
     {
         private SerialPort CurrentPort;
+        private int x;
+        private int y;
 
         public ArduinoRead(SerialPort port)
         {
             CurrentPort = port;
+            x = 0;
+            y = 0;
+        }
+
+        public int X()
+        {
+            if(Read() == "#X%")
+            {
+                x = Convert.ToInt32(Read());
+            }
+            return x;
         }
 
         private string Read()
