@@ -16,8 +16,12 @@ namespace Game_Test
         public ArduinoControllerPlayer(int Controller)
         {
             ports = new ArduinoPortDetection();
-            reader = new ArduinoRead(ports.ReturnPorts()[Controller-1]);
-            cmnds = new ArduinoCmds(ports.ReturnPorts()[Controller-1]);
+            if (ports.portFound)
+            {
+                reader = new ArduinoRead(ports.ReturnPorts()[Controller - 1]);
+                cmnds = new ArduinoCmds(ports.ReturnPorts()[Controller - 1]);
+            }
+            lastconfig = "000000000";
             allbuttons = "000000000";
         }
 
