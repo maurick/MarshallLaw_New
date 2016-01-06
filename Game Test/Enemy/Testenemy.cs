@@ -66,7 +66,7 @@ namespace Game_Test
 
             SpeedScale = 0.75f;
 
-            weapon = new Weapon("Weapons/spear_male");
+            weapon = new Weapon("Weapons/spear_male", PlayerEnums.Weapontype.Spear, sprite.Position, this);
         }
 
         public void LoadContent()

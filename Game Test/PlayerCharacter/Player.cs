@@ -34,13 +34,13 @@ namespace Game_Test
         public PlayerEnums.ActionState EnemyState { get; set; }
         public PlayerEnums.LookDirection lookDirection { get; private set; }
         public PlayerEnums.LookDirection EnemyLookDirection { get; set; }
-        private PlayerEnums.Weapontype weapontype { get; set; }
+
+        private List<Weapon> inventory = new List<Weapon>();
+        private Weapon CurrentWeapon;
 
         private List<Enemy> enemies = new List<Enemy>();
         
         private SprSheetImage sprite;
-
-        private Weapon weapon;
 
         private bool knockback;
         private double knockbacktimer;
@@ -65,15 +65,15 @@ namespace Game_Test
             
             SpeedScale = 1.5f;
 
-            weapon = new Weapon("Weapons/bow", "Weapons/quiver", "Weapons/arrow");
-
-            weapontype = PlayerEnums.Weapontype.Bow;
+            CurrentWeapon = new Weapon("Weapons/bow", "Weapons/quiver", "Weapons/arrow", sprite.Position, this);
+            inventory.Add(CurrentWeapon);
+            Weapon tempweapon = new Weapon("Weapons/spear_male", PlayerEnums.Weapontype.Spear, sprite.Position, this);
+            inventory.Add(tempweapon);
         }
 
         public void LoadContent(int X, int Y)
         {
             sprite.LoadContent(X, Y, new Vector2(64 / (GameSettings.Instance.Tilescale.X * 2), 64 / (GameSettings.Instance.Tilescale.Y * 2)));
-            weapon.LoadContent(X, Y);
 
             boundingBox = new Image("Images/green");
             boundingBox.LoadContent( X + (0.5f * GameSettings.Instance.Tilescale.X), Y + GameSettings.Instance.Tilescale.Y, false, new Vector2(GameSettings.Instance.Tilescale.X, GameSettings.Instance.Tilescale.Y));
@@ -82,7 +82,8 @@ namespace Game_Test
         public void UnloadContent()
         {
             sprite.UnloadContent();
-            weapon.UnloadContent();
+            foreach (Weapon weapon in inventory)
+                weapon.UnloadContent();
             boundingBox.UnloadContent();
             foreach (Arrow arrow in Arrows)
                 arrow.UnloadContent();
@@ -140,7 +141,7 @@ namespace Game_Test
                 {
                     SetAnimationFrame();
                     sprite.Update(gameTime);
-                    weapon.Update(gameTime);
+                    CurrentWeapon.Update(gameTime);
                     return;
                 }
             }
@@ -150,7 +151,7 @@ namespace Game_Test
             #region Attack
             if (InputManager.Instance.KeyDown(Keys.Space))
             {
-                switch (weapontype)
+                switch (CurrentWeapon.weapontype)
                 {
                     case PlayerEnums.Weapontype.Spear:
                         if (!(State == PlayerEnums.ActionState.Thrust))
@@ -209,6 +210,16 @@ namespace Game_Test
             }
             #endregion
 
+            #region SwitchWeapon
+            if (InputManager.Instance.KeyPressed(Keys.LeftShift))
+            {
+                int tempID = 1;
+                if (CurrentWeapon.WeaponID != CurrentWeapon.GetMaxID)
+                    tempID = CurrentWeapon.WeaponID + 1;
+                CurrentWeapon = inventory.Find(x => x.WeaponID == tempID);
+                CurrentWeapon.setPosition(sprite.Position);
+            }
+            #endregion
             #region DebugMode
             if (InputManager.Instance.KeyPressed(Keys.Tab))
             {
@@ -226,7 +237,7 @@ namespace Game_Test
             if (Debug)
                 boundingBox.Update(gameTime);
             sprite.Update(gameTime);
-            weapon.Update(gameTime);
+            CurrentWeapon.Update(gameTime);
 
             foreach (Arrow arrow in Arrows)
             {
@@ -242,7 +253,7 @@ namespace Game_Test
             if (Debug)
                 boundingBox.Draw(spriteBatch);
             sprite.Draw(spriteBatch);
-            weapon.Draw(spriteBatch);
+            CurrentWeapon.Draw(spriteBatch);
             foreach (Arrow arrow in Arrows)
                 arrow.Draw(spriteBatch);
             
@@ -252,7 +263,7 @@ namespace Game_Test
         {
             Arrow arrow;
             PlayerEnums.Action up = PlayerEnums.Action.None, left = PlayerEnums.Action.None, down = PlayerEnums.Action.None, right = PlayerEnums.Action.None;
-            switch (weapontype)
+            switch (CurrentWeapon.weapontype)
             {
                 case PlayerEnums.Weapontype.Spear:
                     up = PlayerEnums.Action.SpearUp;
@@ -282,7 +293,7 @@ namespace Game_Test
                     {
                         sprSheetY = up;
                     }
-                    if (weapontype == PlayerEnums.Weapontype.Bow && sprSheetX == (int)PlayerEnums.ActionState.Shoot - 3)
+                    if (CurrentWeapon.weapontype == PlayerEnums.Weapontype.Bow && sprSheetX == (int)PlayerEnums.ActionState.Shoot - 3)
                     {
                         arrow = new Arrow("Weapons/arrow", 1, new Vector2(sprite.Position.X, sprite.Position.Y));
                         Arrows.Add(arrow);
@@ -295,7 +306,7 @@ namespace Game_Test
                     {
                         sprSheetY = left;
                     }
-                    if (weapontype == PlayerEnums.Weapontype.Bow && sprSheetX == (int)PlayerEnums.ActionState.Shoot - 3)
+                    if (CurrentWeapon.weapontype == PlayerEnums.Weapontype.Bow && sprSheetX == (int)PlayerEnums.ActionState.Shoot - 3)
                     {
                         arrow = new Arrow("Weapons/arrow", 2, new Vector2(sprite.Position.X, sprite.Position.Y + GameSettings.Instance.Tilescale.Y / 4));
                         Arrows.Add(arrow);
@@ -308,7 +319,7 @@ namespace Game_Test
                     {
                         sprSheetY = down;
                     }
-                    if (weapontype == PlayerEnums.Weapontype.Bow && sprSheetX == (int)PlayerEnums.ActionState.Shoot - 3)
+                    if (CurrentWeapon.weapontype == PlayerEnums.Weapontype.Bow && sprSheetX == (int)PlayerEnums.ActionState.Shoot - 3)
                     {
                         arrow = new Arrow("Weapons/arrow", 3, new Vector2(sprite.Position.X, sprite.Position.Y));
                         Arrows.Add(arrow);
@@ -325,7 +336,7 @@ namespace Game_Test
                     {
                         break;
                     }
-                    if (weapontype == PlayerEnums.Weapontype.Bow && sprSheetX == (int)PlayerEnums.ActionState.Shoot - 3)
+                    if (CurrentWeapon.weapontype == PlayerEnums.Weapontype.Bow && sprSheetX == (int)PlayerEnums.ActionState.Shoot - 3)
                     {
                         arrow = new Arrow("Weapons/arrow", 4, new Vector2(sprite.Position.X, sprite.Position.Y + GameSettings.Instance.Tilescale.Y / 4));
                         Arrows.Add(arrow);
@@ -393,7 +404,7 @@ namespace Game_Test
                 ChangeAlpha(new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY), l);
             sprite.Position = new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY); //Set new position
             boundingBox.Position = new Vector2(boundingBox.Position.X + dirX, boundingBox.Position.Y + dirY);
-            weapon.setPosition(new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY)); //Move weapon with you
+            CurrentWeapon.setPosition(new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY)); //Move weapon with you
         }
 
         private Vector2 CheckCollision(Vector2 PositionNew, Vector2 PositionOld, Vector2 Direction)
@@ -547,12 +558,12 @@ namespace Game_Test
         private void SetAnimationFrame()
         {
             sprite.SprSheetX = (int)sprSheetX;
-            weapon.SprSheetX = (int)sprSheetX;
+            CurrentWeapon.SprSheetX = (int)sprSheetX;
 
             if (sprSheetY != PlayerEnums.Action.None)
             {
                 sprite.SprSheetY = (int)sprSheetY;
-                weapon.SprSheetY = (int)sprSheetY;
+                CurrentWeapon.SprSheetY = (int)sprSheetY;
             }
         }
 
