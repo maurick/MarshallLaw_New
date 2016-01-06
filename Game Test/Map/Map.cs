@@ -160,21 +160,28 @@ namespace Game_Test
                 {
                     for (int l = 0; l < layer_player_num; l++)
                     {
-                            Layers[l].DrawTile(spriteBatch, x, y);
+                        Layers[l].DrawTile(spriteBatch, x, y);
                     }
                 }
             }
 
-            spriteBatch.Draw(
-                texture: grid, 
-                position: new Vector2(0, 0), 
-                sourceRectangle: new Rectangle(0, 0, 1920, 1088), 
-                color: Color.White, 
-                rotation: 0f, 
-                origin: Vector2.Zero, 
-                scale: new Vector2(24f / 32f, 24f / 32f), 
-                effects: SpriteEffects.None, 
-                layerDepth: 0.0f);
+            if (player.Debug)
+            {
+                spriteBatch.Draw(
+                    texture: grid,
+                    position: new Vector2(0, 0),
+                    sourceRectangle: new Rectangle(0, 0, 1920, 1088),
+                    color: Color.White,
+                    rotation: 0f,
+                    origin: Vector2.Zero,
+                    scale: new Vector2(24f / 32f, 24f / 32f),
+                    effects: SpriteEffects.None,
+                    layerDepth: 0.0f);
+
+                for (int y = 0; y < mapDimensions.Y; y++)
+                    for (int x = 0; x < mapDimensions.X; x++)
+                        Layers[12].DrawTile(spriteBatch, x, y);
+            }
         }
 
         public void GetLayer(string Name, int number)

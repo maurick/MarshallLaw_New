@@ -55,6 +55,15 @@ namespace Game_Test
             None
         };
 
+        public enum Weapontype
+        {
+            None,
+            Spell,
+            Spear,
+            Sword,
+            Bow
+        };
+
         public enum ActionState
         {
             None,

@@ -66,7 +66,7 @@ namespace Game_Test
 
             SpeedScale = 0.75f;
 
-            weapon = new Weapon();
+            weapon = new Weapon("Weapons/spear_male");
         }
 
         public void LoadContent()
@@ -366,7 +366,7 @@ namespace Game_Test
             for (int l = 2; l < layer.Length; l++)
                 ChangeAlpha(new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY), l);
             sprite.Position = new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY); //Set new position
-            weapon.setPosition(new Vector2(weapon.getPosition().X + dirX, weapon.getPosition().Y + dirY)); //Move weapon with you
+            weapon.setPosition(new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY)); //Move weapon with you
         }
 
         private Vector2 CheckCollision(Vector2 PositionNew, Vector2 PositionOld, Vector2 Direction)

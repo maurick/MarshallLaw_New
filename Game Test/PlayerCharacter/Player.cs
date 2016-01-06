@@ -30,10 +30,11 @@ namespace Game_Test
         Image boundingBox;
         
         private PlayerEnums.Action sprSheetY { get; set; }
-        public PlayerEnums.ActionState State { get; set; }
+        public PlayerEnums.ActionState State { get; private set; }
         public PlayerEnums.ActionState EnemyState { get; set; }
-        public PlayerEnums.LookDirection lookDirection { get; set; }
+        public PlayerEnums.LookDirection lookDirection { get; private set; }
         public PlayerEnums.LookDirection EnemyLookDirection { get; set; }
+        private PlayerEnums.Weapontype weapontype { get; set; }
 
         private List<Enemy> enemies = new List<Enemy>();
         
@@ -44,6 +45,10 @@ namespace Game_Test
         private bool knockback;
         private double knockbacktimer;
         private Vector2 knockbackdirection;
+
+        private List<Arrow> Arrows = new List<Arrow>();
+
+        public bool Debug { get; private set; }
 
         public Player()
         {
@@ -60,7 +65,9 @@ namespace Game_Test
             
             SpeedScale = 1.5f;
 
-            weapon = new Weapon();
+            weapon = new Weapon("Weapons/bow", "Weapons/quiver", "Weapons/arrow");
+
+            weapontype = PlayerEnums.Weapontype.Bow;
         }
 
         public void LoadContent(int X, int Y)
@@ -69,7 +76,7 @@ namespace Game_Test
             weapon.LoadContent(X, Y);
 
             boundingBox = new Image("Images/green");
-            boundingBox.LoadContent(X + (0.5f * GameSettings.Instance.Tilescale.X), Y + GameSettings.Instance.Tilescale.Y, false, new Vector2(GameSettings.Instance.Tilescale.X, GameSettings.Instance.Tilescale.Y));
+            boundingBox.LoadContent( X + (0.5f * GameSettings.Instance.Tilescale.X), Y + GameSettings.Instance.Tilescale.Y, false, new Vector2(GameSettings.Instance.Tilescale.X, GameSettings.Instance.Tilescale.Y));
         }
 
         public void UnloadContent()
@@ -77,6 +84,8 @@ namespace Game_Test
             sprite.UnloadContent();
             weapon.UnloadContent();
             boundingBox.UnloadContent();
+            foreach (Arrow arrow in Arrows)
+                arrow.UnloadContent();
         }
 
         public void Update(GameTime gameTime)
@@ -138,11 +147,26 @@ namespace Game_Test
             #endregion
             //controller.Update();
             //Check if keys are pressed
+            #region Attack
             if (InputManager.Instance.KeyDown(Keys.Space))
             {
-                if (State != PlayerEnums.ActionState.Thrust)
-                    State = PlayerEnums.ActionState.Thrust;
+                switch (weapontype)
+                {
+                    case PlayerEnums.Weapontype.Spear:
+                        if (!(State == PlayerEnums.ActionState.Thrust))
+                            State = PlayerEnums.ActionState.Thrust;
+                        break;
+                    case PlayerEnums.Weapontype.Sword:
+                        if (!(State == PlayerEnums.ActionState.Slash))
+                            State = PlayerEnums.ActionState.Slash;
+                        break;
+                    case PlayerEnums.Weapontype.Bow:
+                        if (!(State == PlayerEnums.ActionState.Shoot))
+                            State = PlayerEnums.ActionState.Shoot;
+                        break;
+                }
             }
+            #endregion
             #region Movement
             else
             {
@@ -184,58 +208,127 @@ namespace Game_Test
                 direction = new Vector2(0, 0);
             }
             #endregion
+
+            #region DebugMode
+            if (InputManager.Instance.KeyPressed(Keys.Tab))
+            {
+                Debug = !Debug;
+            }
+            #endregion
             else if (State == PlayerEnums.ActionState.Walk)
                 Move(direction, gameTime);
-            else if (State == PlayerEnums.ActionState.Thrust)
+            else if (State == PlayerEnums.ActionState.Thrust || State == PlayerEnums.ActionState.Slash || State == PlayerEnums.ActionState.Shoot)
                 Attack(gameTime);
 
+
+            
             SetAnimationFrame();
+            if (Debug)
+                boundingBox.Update(gameTime);
             sprite.Update(gameTime);
             weapon.Update(gameTime);
+
+            foreach (Arrow arrow in Arrows)
+            {
+                arrow.Update(gameTime);
+                if (arrow.CheckCollision(layer[0]))
+                    if (Arrows.Remove(arrow))
+                        break;
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            boundingBox.Draw(spriteBatch);
+            if (Debug)
+                boundingBox.Draw(spriteBatch);
             sprite.Draw(spriteBatch);
             weapon.Draw(spriteBatch);
+            foreach (Arrow arrow in Arrows)
+                arrow.Draw(spriteBatch);
             
         }
 
         private void Attack(GameTime gameTime)
         {
+            Arrow arrow;
+            PlayerEnums.Action up = PlayerEnums.Action.None, left = PlayerEnums.Action.None, down = PlayerEnums.Action.None, right = PlayerEnums.Action.None;
+            switch (weapontype)
+            {
+                case PlayerEnums.Weapontype.Spear:
+                    up = PlayerEnums.Action.SpearUp;
+                    left = PlayerEnums.Action.SpearLeft;
+                    down = PlayerEnums.Action.SpearDown;
+                    right = PlayerEnums.Action.SpearRight;
+                    break;
+                case PlayerEnums.Weapontype.Sword:
+                    up = PlayerEnums.Action.SlashUp;
+                    left = PlayerEnums.Action.SlashLeft;
+                    down = PlayerEnums.Action.SlashDown;
+                    right = PlayerEnums.Action.SlashRight;
+                    break;
+                case PlayerEnums.Weapontype.Bow:
+                    up = PlayerEnums.Action.ShootUp;
+                    left = PlayerEnums.Action.ShootLeft;
+                    down = PlayerEnums.Action.ShootDown;
+                    right = PlayerEnums.Action.ShootRight;
+                    break;
+            }
             switch (lookDirection)
             {
                 case PlayerEnums.LookDirection.Up:
-                    if (sprSheetY == PlayerEnums.Action.SpearUp)
+                    if (sprSheetY == up)
                         UpdateAnimationFrame(gameTime);
                     else
                     {
-                        sprSheetY = PlayerEnums.Action.SpearUp;
+                        sprSheetY = up;
+                    }
+                    if (weapontype == PlayerEnums.Weapontype.Bow && sprSheetX == (int)PlayerEnums.ActionState.Shoot - 3)
+                    {
+                        arrow = new Arrow("Weapons/arrow", 1, new Vector2(sprite.Position.X, sprite.Position.Y));
+                        Arrows.Add(arrow);
                     }
                     break;
                 case PlayerEnums.LookDirection.left:
-                    if (sprSheetY == PlayerEnums.Action.SpearLeft)
+                    if (sprSheetY == left)
                         UpdateAnimationFrame(gameTime);
                     else
                     {
-                        sprSheetY = PlayerEnums.Action.SpearLeft;
+                        sprSheetY = left;
+                    }
+                    if (weapontype == PlayerEnums.Weapontype.Bow && sprSheetX == (int)PlayerEnums.ActionState.Shoot - 3)
+                    {
+                        arrow = new Arrow("Weapons/arrow", 2, new Vector2(sprite.Position.X, sprite.Position.Y + GameSettings.Instance.Tilescale.Y / 4));
+                        Arrows.Add(arrow);
                     }
                     break;
                 case PlayerEnums.LookDirection.Down:
-                    if (sprSheetY == PlayerEnums.Action.SpearDown)
+                    if (sprSheetY == down)
                         UpdateAnimationFrame(gameTime);
                     else
                     {
-                        sprSheetY = PlayerEnums.Action.SpearDown;
+                        sprSheetY = down;
+                    }
+                    if (weapontype == PlayerEnums.Weapontype.Bow && sprSheetX == (int)PlayerEnums.ActionState.Shoot - 3)
+                    {
+                        arrow = new Arrow("Weapons/arrow", 3, new Vector2(sprite.Position.X, sprite.Position.Y));
+                        Arrows.Add(arrow);
                     }
                     break;
                 case PlayerEnums.LookDirection.Right:
-                    if (sprSheetY == PlayerEnums.Action.SpearRight)
+                    if (sprSheetY == right)
                         UpdateAnimationFrame(gameTime);
                     else
                     {
-                        sprSheetY = PlayerEnums.Action.SpearRight;
+                        sprSheetY = right;
+                    }
+                    if (sprSheetX == 12)
+                    {
+                        break;
+                    }
+                    if (weapontype == PlayerEnums.Weapontype.Bow && sprSheetX == (int)PlayerEnums.ActionState.Shoot - 3)
+                    {
+                        arrow = new Arrow("Weapons/arrow", 4, new Vector2(sprite.Position.X, sprite.Position.Y + GameSettings.Instance.Tilescale.Y / 4));
+                        Arrows.Add(arrow);
                     }
                     break;
             }
