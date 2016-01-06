@@ -477,32 +477,121 @@ namespace Game_Test
         
         private Vector2 CheckCollision2(Rectangle playerRect, int[] x, int[] y)
         {
-            float tilescale_x = GameSettings.Instance.Tilescale.X, tilescale_y = GameSettings.Instance.Tilescale.Y;
-            int TileID;
-            Rectangle rect;
             int temp1 = 0, temp2 = 0;
-
-            TileID = layer[0].getTileID(x[0], y[0]);
-            if (TileID != 0)
-            {
-                rect = new Rectangle((x[0]) * (int)tilescale_x, (y[0]) * (int)tilescale_y, (int)tilescale_x, (int)tilescale_y);
-                if (rect.Intersects(playerRect))
-                {
-                    temp1 = 1;
-                }
-            }
-
-            TileID = layer[0].getTileID(x[1], y[1]);
-            if (TileID != 0)
-            {
-                rect = new Rectangle((x[1]) * (int)tilescale_x, (y[1]) * (int)tilescale_y, (int)tilescale_x, (int)tilescale_y);
-                if (rect.Intersects(playerRect))
-                {
-                    temp2 = 1;
-                }
-            }
+            
+            temp1 = CheckCollision3(x[0], y[0], playerRect);
+            temp2 = CheckCollision3(x[1], y[1], playerRect);
 
             return new Vector2(temp1, temp2);
+        }
+
+        private int CheckCollision3(int x, int y, Rectangle playerRect)
+        {
+            float tilescale_x = GameSettings.Instance.Tilescale.X, tilescale_y = GameSettings.Instance.Tilescale.Y;
+            Rectangle rect;
+            int temp = 0;
+            int TileID = layer[0].getTileID(x, y);
+
+            if (TileID != 0)
+            {
+                switch (TileID)
+                {
+                    case 1677: //Full
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)tilescale_x, (int)tilescale_y);
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1678: //Tophalf
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)tilescale_x, (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1679: //Bottomhalf
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y + (int)(0.5 * tilescale_y), (int)tilescale_x, (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1680: //Diagonallefttoright
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        if (temp == 1)
+                            break;
+                        rect = new Rectangle(x * (int)tilescale_x + (int)(tilescale_x * 0.5), y * (int)tilescale_y + (int)(tilescale_x * 0.5), (int)(tilescale_x * 0.5), (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1681: //Diagonalrighttoleft
+                        rect = new Rectangle(x * (int)tilescale_x + (int)(tilescale_x * 0.5), y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        if (temp == 1)
+                            break;
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y + (int)(tilescale_x * 0.5), (int)(tilescale_x * 0.5), (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1682: //Righthalf
+                        rect = new Rectangle(x * (int)tilescale_x + (int)(tilescale_x * 0.5), y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)tilescale_y);
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1683: //Lefttopcorner
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)tilescale_x, (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        if (temp == 1)
+                            break;
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)tilescale_y);
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1684: //Righttopcorner
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)tilescale_x, (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        if (temp == 1)
+                            break;
+                        rect = new Rectangle(x * (int)tilescale_x + (int)(tilescale_x * 0.5), y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)tilescale_y);
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1685: //Lefttop
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1686: //Righttop
+                        rect = new Rectangle(x * (int)tilescale_x + (int)(tilescale_x * 0.5), y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1687: //Lefthalf
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)tilescale_y);
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1688: //Leftbottomcorner
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)tilescale_y);
+                        temp = CheckCollision4(rect, playerRect);
+                        if (temp == 1)
+                            break;
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y + (int)(0.5 * tilescale_y), (int)tilescale_x, (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1689: //Rightbottomcorner
+                        rect = new Rectangle(x * (int)tilescale_x + (int)(tilescale_x * 0.5), y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)tilescale_y);
+                        temp = CheckCollision4(rect, playerRect);
+                        if (temp == 1)
+                            break;
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y + (int)(0.5 * tilescale_y), (int)tilescale_x, (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1690: //Leftbottom
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y + (int)(tilescale_x * 0.5), (int)(tilescale_x * 0.5), (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1691: //Rightbottom
+                        rect = new Rectangle(x * (int)tilescale_x + (int)(tilescale_x * 0.5), y * (int)tilescale_y + (int)(tilescale_x * 0.5), (int)(tilescale_x * 0.5), (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                }
+            }
+            return temp;
+        }
+
+        private int CheckCollision4(Rectangle rect, Rectangle playerRect)
+        {
+            if (rect.Intersects(playerRect))
+            {
+                return 1;
+            }
+            else return 0;
         }
 
         private void ChangeAlpha(Vector2 position, int number)
