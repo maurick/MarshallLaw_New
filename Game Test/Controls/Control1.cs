@@ -314,6 +314,9 @@ namespace Game_Test
                         else 
                             CurrentActiveField--;
                         break;
+                    case selection.buttonback:
+                        ScreenManager.Instance.ChangeScreen("MenuScreen");
+                        break;
                 }
             }
 

@@ -16,7 +16,7 @@ namespace Game_Test
         SprSheetImage[,] Belt;
         SprSheetImage[,] Pants;
 
-        int[] curCharactersettings = { 0, 0, 0, 0, 0 };// 1.Gender 2.Skincolor 3.Head 4.Belt 5.Pants
+        public int[] curCharactersettings = { 0, 0, 0, 0, 0 };// 1.Gender 2.Skincolor 3.Head 4.Belt 5.Pants
         int[] prevCharactersettings = { 0, 0, 0, 0, 0 };// 1.Gender 2.Skincolor 3.Head 4.Belt 5.Pants
 
         public CharacterCreator()
@@ -27,6 +27,8 @@ namespace Game_Test
             Head = new SprSheetImage[2, charCreation_member.GetList(2, 2).Count];
             Belt = new SprSheetImage[2, charCreation_member.GetList(3, 2).Count];
             Pants = new SprSheetImage[2, charCreation_member.GetList(4, 2).Count];
+
+            Random random = new Random();
 
             FillArrays();
 
@@ -116,6 +118,8 @@ namespace Game_Test
                 sprSheetImage.Update(gameTime);
             }
             #endregion
+
+
         }
 
         public void Draw(SpriteBatch spriteBatch)

@@ -26,6 +26,7 @@ namespace Game_Test
         static int numitems3;
         #endregion
 
+        bool refresh;
         CharacterCreator characterCreator;
 
         //Contructor
@@ -146,14 +147,35 @@ namespace Game_Test
 
             control.Update(gameTime);
 
-            if(control.CurrentActiveItem != 10)
+            if (control.CurrentActiveField == 0)
             {
-                if (control.CurrentActiveField == 0)
-                    items1[control.CurrentActiveItem].itemsetting.Text = charCreatin_member.GetString( 0, control.CurrentActiveItem, items1[control.CurrentActiveItem].currentIndex);
-                else if(control.CurrentActiveField == 1)
-                    items2[control.CurrentActiveItem].itemsetting.Text = charCreatin_member.GetString( 1, control.CurrentActiveItem, items2[control.CurrentActiveItem].currentIndex);
-                else if (control.CurrentActiveField == 2)
-                    items3[control.CurrentActiveItem].itemsetting.Text = charCreatin_member.GetString( 2, control.CurrentActiveItem, items3[control.CurrentActiveItem].currentIndex);
+                for (int i = 0; i < items1.Length; i++)
+                {
+                    if(i != 10 && items1[i] != null)
+                    {
+                        items1[i].itemsetting.Text = charCreatin_member.GetString(0, i, items1[i].currentIndex);
+                    }
+                }
+            }
+            else if(control.CurrentActiveField == 1)
+            {
+                for (int i = 0; i < items2.Length; i++)
+                {
+                    if (i != 10 && items2[i] != null)
+                    {
+                        items2[i].itemsetting.Text = charCreatin_member.GetString(1, i, items2[i].currentIndex);
+                    }
+                }
+            }
+            else if (control.CurrentActiveField == 2)
+            {
+                for (int i = 0; i < items3.Length; i++)
+                {
+                    if (i != 10 && items3[i] != null)
+                    {
+                        items3[i].itemsetting.Text = charCreatin_member.GetString(2, i, items3[i].currentIndex);
+                    }
+                }
             }
 
             foreach (var control_field in fields)
@@ -215,12 +237,18 @@ namespace Game_Test
             }
 
             if (control.CurrentActiveField == 2)
+            {
+                for (int i = 0; i < characterCreator.curCharactersettings.Length; i++)
+                {
+                    characterCreator.curCharactersettings[i] = items3[i].currentIndex;
+                }
                 characterCreator.Update(gameTime);
+            }
 
             //When the Escape key has been pressed exit the game
             if (InputManager.Instance.KeyPressed(Keys.Escape))
             {
-                ScreenManager.Instance.ChangeScreen("MenuScreen");
+                //ScreenManager.Instance.ChangeScreen("MenuScreen");
             }
         }
 

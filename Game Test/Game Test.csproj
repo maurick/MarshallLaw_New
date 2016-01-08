@@ -71,7 +71,7 @@
     <Compile Include="Arduino\ArduinoRead.cs" />
     <Compile Include="Arduino\ArduinoCmds.cs" />
     <Compile Include="Arduino\ArduinoPortDetection.cs" />
-    <Compile Include="CharacterCreator.cs" />
+    <Compile Include="PlayerCharacter\CharacterCreator.cs" />
     <Compile Include="Controls\CharCreation_Member.cs" />
     <Compile Include="Controls\Options_Members.cs" />
     <Compile Include="Controls\Control1_Item.cs" />
