@@ -91,6 +91,7 @@ namespace Game_Test
 
         public void Update(GameTime gameTime)
         {
+            #region Knockback
             Vector2 temp;
             foreach (Enemy enemy in enemies)
             {
@@ -109,8 +110,7 @@ namespace Game_Test
                     return;
                 }
             }
-
-            #region Knockback
+            
             if (knockback)
             {
                 SpeedScale = 2.0f;
@@ -295,7 +295,7 @@ namespace Game_Test
                     }
                     if (CurrentWeapon.weapontype == PlayerEnums.Weapontype.Bow && sprSheetX == (int)PlayerEnums.ActionState.Shoot - 3)
                     {
-                        arrow = new Arrow("Weapons/arrow", new Vector2(sprite.Position.X, sprite.Position.Y), (float)(0.5 * Math.PI));
+                        arrow = new Arrow("Weapons/arrow", new Vector2(sprite.Position.X, sprite.Position.Y), 1);
                         Arrows.Add(arrow);
                     }
                     break;
@@ -308,7 +308,7 @@ namespace Game_Test
                     }
                     if (CurrentWeapon.weapontype == PlayerEnums.Weapontype.Bow && sprSheetX == (int)PlayerEnums.ActionState.Shoot - 3)
                     {
-                        arrow = new Arrow("Weapons/arrow", new Vector2(sprite.Position.X, sprite.Position.Y + GameSettings.Instance.Tilescale.Y / 4), 0);
+                        arrow = new Arrow("Weapons/arrow", new Vector2(sprite.Position.X, sprite.Position.Y + GameSettings.Instance.Tilescale.Y / 4), 2);
                         Arrows.Add(arrow);
                     }
                     break;
@@ -321,7 +321,7 @@ namespace Game_Test
                     }
                     if (CurrentWeapon.weapontype == PlayerEnums.Weapontype.Bow && sprSheetX == (int)PlayerEnums.ActionState.Shoot - 3)
                     {
-                        arrow = new Arrow("Weapons/arrow", new Vector2(sprite.Position.X, sprite.Position.Y), (float)-(0.5 * Math.PI));
+                        arrow = new Arrow("Weapons/arrow", new Vector2(sprite.Position.X, sprite.Position.Y), 3);
                         Arrows.Add(arrow);
                     }
                     break;
@@ -338,7 +338,7 @@ namespace Game_Test
                     }
                     if (CurrentWeapon.weapontype == PlayerEnums.Weapontype.Bow && sprSheetX == (int)PlayerEnums.ActionState.Shoot - 3)
                     {
-                        arrow = new Arrow("Weapons/arrow", new Vector2(sprite.Position.X, sprite.Position.Y + GameSettings.Instance.Tilescale.Y / 4), (float)Math.PI);
+                        arrow = new Arrow("Weapons/arrow", new Vector2(sprite.Position.X, sprite.Position.Y + GameSettings.Instance.Tilescale.Y / 4), 4);
                         Arrows.Add(arrow);
                     }
                     break;
