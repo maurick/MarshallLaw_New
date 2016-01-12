@@ -14,7 +14,7 @@ namespace Game_Test
         private Vector2 P_menuLenght;
         private Vector2 P_menuPosition;
         private int P_currentSelected;
-        private string[] P_text = { "Continue", "Exit to menu" };
+        private string[] P_text = { "Continue", "Add Controller", "Exit to menu" };
         private PauseMenuItem[] P_menuItems;
         public bool Pause { get; private set; }
 
@@ -48,7 +48,7 @@ namespace Game_Test
                 P_menuItems[i].LoadContent(i);
                 P_menuLenght.Y += P_menuItems[i].Text.SourceRect.Height;
             }
-            P_menuPosition.Y = P_poster.Position.Y + (((P_poster.SourceRect.Height) - P_menuLenght.Y));
+            P_menuPosition.Y = P_poster.Position.Y + (((P_poster.SourceRect.Height) - P_menuLenght.Y)/ 2);
 
             float temp = 0;
             for (int i = 0; i < P_text.Length; i++)
@@ -61,6 +61,7 @@ namespace Game_Test
                 else
                     P_menuItems[i].Position.Y = P_menuPosition.Y;
 
+                P_menuItems[i].Position.X = P_poster.Position.X + P_poster.SourceRect.Width / 2;
                 P_menuItems[i].SetPosition();
             }
         }
@@ -102,8 +103,15 @@ namespace Game_Test
                 Pause = true;
             }
 
+            int exitID = -1;
+            foreach (PauseMenuItem item in P_menuItems)
+            {
+                exitID = item.GetID("Exit to menu");
+                if (exitID != -1)
+                    break;
+            }
             //If the Exit button is selected and Enter has been pressed exit the game
-            if (P_menuItems[P_currentSelected].ItemID == 1 && (InputManager.Instance.KeyPressed(Keys.Enter)))
+            if (P_menuItems[P_currentSelected].ItemID == exitID && (InputManager.Instance.KeyPressed(Keys.Enter)) && exitID != -1)
             {
                 ScreenManager.Instance.ChangeScreen("MenuScreen");
             }
@@ -131,23 +139,24 @@ namespace Game_Test
             private FadeEffect fadeEffect;
             public float Alpha { get; private set; }
             public cText Text;
+            private string Name;
             public Vector2 Position;
 
             public PauseMenuItem(string Text, int ID)
             {
                 this.Text = new cText(Text, "DryGood");
+                Name = Text;
                 ItemID = ID;
             }
 
             public void LoadContent(int temp)
             {
-                Text.Scale = new Vector2(GameSettings.Instance.Dimensions.X / 1366, GameSettings.Instance.Dimensions.Y / 768);
                 Text.LoadContent();
             }
 
             public void SetPosition()
             {
-                Text.Position = new Vector2((GameSettings.Instance.Dimensions.X - Text.SourceRect.Width) / 2, Position.Y);
+                Text.Position = new Vector2(Position.X - (Text.SourceRect.Width / 2), Position.Y);
             }
 
             public void Update(GameTime gameTime)
@@ -166,6 +175,14 @@ namespace Game_Test
             public void Draw(SpriteBatch spriteBatch)
             {
                 Text.DrawString(spriteBatch);
+            }
+
+            public int GetID(string Text)
+            {
+                if (Name == Text)
+                    return ItemID;
+                else
+                    return -1;
             }
         }
     }

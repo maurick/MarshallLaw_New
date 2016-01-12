@@ -51,15 +51,14 @@ namespace Game_Test
 
             if (GamePaused)
             {
-                base.Update(gameTime);
                 menu.Update(gameTime);
                 if (menu.Pause == true)
                 {
                     menu.UnloadContent();
                     GamePaused = false;
                 }
-                //else
-                    //return;
+                else
+                    return;
             }
 
             map.Update(gameTime);
