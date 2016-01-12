@@ -21,7 +21,7 @@ namespace Game_Test
         public MapTestScreen()
         {
 
-            map = new Map("testmap6");
+            map = new Map("testmap7");
         }
 
         public override void LoadContent()

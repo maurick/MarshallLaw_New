@@ -1134,3 +1134,31 @@
 /processorParam:TextureFormat=Color
 /build:EnemySprites/Female/red_orc.png
 
+#begin Maps/testmap6-2.txt
+/copy:Maps/testmap6-2.txt
+
+#begin Maps/testmap7.txt
+/copy:Maps/testmap7.txt
+
+#begin SpriteSheets/Collision_3.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:TextureFormat=Color
+/build:SpriteSheets/Collision_3.png
+
+#begin Weapons/Arrows/arrow_flying.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:TextureFormat=Color
+/build:Weapons/Arrows/arrow_flying.png
+

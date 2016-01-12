@@ -22,7 +22,8 @@ namespace Game_Test
         private Vector2 direction;
 
         //Slow down animation speed
-        private float Interval = 0.125f;
+        private const float BaseInterval = 0.15f;
+        private float Interval = 0.15f;
 
         //Collisionlayer and Tree layer(s)
         Layer[] layer;
@@ -47,6 +48,8 @@ namespace Game_Test
         private Vector2 knockbackdirection;
 
         public List<Arrow> Arrows = new List<Arrow>();
+        private string ArrowPath = "Weapons/Arrows/arrow_flying";
+        private bool RecentlyShot = false;
 
         public bool Debug { get; private set; }
 
@@ -171,36 +174,48 @@ namespace Game_Test
             #region Movement
             else
             {
-                
                 if (InputManager.Instance.KeyDown(Keys.W))
                 {
                     State = PlayerEnums.ActionState.Walk;
                     lookDirection = PlayerEnums.LookDirection.Up;
                     direction.Y = -1;
+                    Interval = BaseInterval * (int)State / (int)PlayerEnums.ActionState.Walk;
                 }
                 if (InputManager.Instance.KeyDown(Keys.S))
                 {
                     State = PlayerEnums.ActionState.Walk;
                     lookDirection = PlayerEnums.LookDirection.Down;
                     direction.Y = 1;
+                    Interval = BaseInterval * (int)State / (int)PlayerEnums.ActionState.Walk;
                 }
                 if (InputManager.Instance.KeyDown(Keys.A))
                 {
                     State = PlayerEnums.ActionState.Walk;
                     lookDirection = PlayerEnums.LookDirection.left;
                     direction.X = -1;
+                    Interval = BaseInterval * (int)State / (int)PlayerEnums.ActionState.Walk;
                 }
                 if (InputManager.Instance.KeyDown(Keys.D))
                 {
                     State = PlayerEnums.ActionState.Walk;
                     lookDirection = PlayerEnums.LookDirection.Right;
                     direction.X = 1;
+                    Interval = BaseInterval * (int)State / (int)PlayerEnums.ActionState.Walk;
                 }
             }
             #endregion
 
             #region Keyreleased
-            if (/*!ControlsActive ||*/ (InputManager.Instance.KeyReleased(Keys.W) || InputManager.Instance.KeyReleased(Keys.A) || InputManager.Instance.KeyReleased(Keys.S) || InputManager.Instance.KeyReleased(Keys.D)) && InputManager.Instance.KeyDown(Keys.Space) == false || InputManager.Instance.KeyReleased(Keys.Space))
+            if (InputManager.Instance.KeyReleased(Keys.Space))
+            {
+                RecentlyShot = false;
+                State = PlayerEnums.ActionState.None;
+                sprSheetY = PlayerEnums.Action.None;
+                sprSheetX = 0;
+                sprite.SprSheetX = 0;
+                direction = new Vector2(0, 0);
+            }
+            if (/*!ControlsActive ||*/ (InputManager.Instance.KeyReleased(Keys.W) || InputManager.Instance.KeyReleased(Keys.A) || InputManager.Instance.KeyReleased(Keys.S) || InputManager.Instance.KeyReleased(Keys.D)) && InputManager.Instance.KeyDown(Keys.Space) == false)
             {
                 State = PlayerEnums.ActionState.None;
                 sprSheetY = PlayerEnums.Action.None;
@@ -230,8 +245,6 @@ namespace Game_Test
                 Move(direction, gameTime);
             else if (State == PlayerEnums.ActionState.Thrust || State == PlayerEnums.ActionState.Slash || State == PlayerEnums.ActionState.Shoot)
                 Attack(gameTime);
-
-
             
             SetAnimationFrame();
             if (Debug)
@@ -252,6 +265,8 @@ namespace Game_Test
         {
             if (Debug)
                 boundingBox.Draw(spriteBatch);
+            if (CurrentWeapon.Quiver)
+                CurrentWeapon.DrawQuiver(spriteBatch);
             sprite.Draw(spriteBatch);
             CurrentWeapon.Draw(spriteBatch);
             foreach (Arrow arrow in Arrows)
@@ -270,18 +285,21 @@ namespace Game_Test
                     left = PlayerEnums.Action.SpearLeft;
                     down = PlayerEnums.Action.SpearDown;
                     right = PlayerEnums.Action.SpearRight;
+                    Interval = BaseInterval * (int)State / (int)PlayerEnums.ActionState.Walk;
                     break;
                 case PlayerEnums.Weapontype.Sword:
                     up = PlayerEnums.Action.SlashUp;
                     left = PlayerEnums.Action.SlashLeft;
                     down = PlayerEnums.Action.SlashDown;
                     right = PlayerEnums.Action.SlashRight;
+                    Interval = BaseInterval * (int)State / (int)PlayerEnums.ActionState.Walk;
                     break;
                 case PlayerEnums.Weapontype.Bow:
                     up = PlayerEnums.Action.ShootUp;
                     left = PlayerEnums.Action.ShootLeft;
                     down = PlayerEnums.Action.ShootDown;
                     right = PlayerEnums.Action.ShootRight;
+                    Interval = BaseInterval * (int)State / (int)PlayerEnums.ActionState.Walk;
                     break;
             }
             switch (lookDirection)
@@ -293,10 +311,11 @@ namespace Game_Test
                     {
                         sprSheetY = up;
                     }
-                    if (CurrentWeapon.weapontype == PlayerEnums.Weapontype.Bow && sprSheetX == (int)PlayerEnums.ActionState.Shoot - 3)
+                    if (CurrentWeapon.weapontype == PlayerEnums.Weapontype.Bow && sprSheetX >= (int)PlayerEnums.ActionState.Shoot - 3 && RecentlyShot == false)
                     {
-                        arrow = new Arrow("Weapons/arrow", new Vector2(sprite.Position.X, sprite.Position.Y), 1);
+                        arrow = new Arrow(ArrowPath, new Vector2(sprite.Position.X, sprite.Position.Y), 2, 1);
                         Arrows.Add(arrow);
+                        RecentlyShot = true;
                     }
                     break;
                 case PlayerEnums.LookDirection.left:
@@ -306,10 +325,11 @@ namespace Game_Test
                     {
                         sprSheetY = left;
                     }
-                    if (CurrentWeapon.weapontype == PlayerEnums.Weapontype.Bow && sprSheetX == (int)PlayerEnums.ActionState.Shoot - 3)
+                    if (CurrentWeapon.weapontype == PlayerEnums.Weapontype.Bow && sprSheetX >= (int)PlayerEnums.ActionState.Shoot - 3 && RecentlyShot == false)
                     {
-                        arrow = new Arrow("Weapons/arrow", new Vector2(sprite.Position.X, sprite.Position.Y + GameSettings.Instance.Tilescale.Y / 4), 2);
+                        arrow = new Arrow(ArrowPath, new Vector2(sprite.Position.X, sprite.Position.Y + GameSettings.Instance.Tilescale.Y / 4), 1, 2);
                         Arrows.Add(arrow);
+                        RecentlyShot = true;
                     }
                     break;
                 case PlayerEnums.LookDirection.Down:
@@ -319,10 +339,11 @@ namespace Game_Test
                     {
                         sprSheetY = down;
                     }
-                    if (CurrentWeapon.weapontype == PlayerEnums.Weapontype.Bow && sprSheetX == (int)PlayerEnums.ActionState.Shoot - 3)
+                    if (CurrentWeapon.weapontype == PlayerEnums.Weapontype.Bow && sprSheetX >= (int)PlayerEnums.ActionState.Shoot - 3 && RecentlyShot == false)
                     {
-                        arrow = new Arrow("Weapons/arrow", new Vector2(sprite.Position.X, sprite.Position.Y), 3);
+                        arrow = new Arrow(ArrowPath, new Vector2(sprite.Position.X, sprite.Position.Y), 2, 2);
                         Arrows.Add(arrow);
+                        RecentlyShot = true;
                     }
                     break;
                 case PlayerEnums.LookDirection.Right:
@@ -336,10 +357,11 @@ namespace Game_Test
                     {
                         break;
                     }
-                    if (CurrentWeapon.weapontype == PlayerEnums.Weapontype.Bow && sprSheetX == (int)PlayerEnums.ActionState.Shoot - 3)
+                    if (CurrentWeapon.weapontype == PlayerEnums.Weapontype.Bow && sprSheetX >= (int)PlayerEnums.ActionState.Shoot - 3 && RecentlyShot == false)
                     {
-                        arrow = new Arrow("Weapons/arrow", new Vector2(sprite.Position.X, sprite.Position.Y + GameSettings.Instance.Tilescale.Y / 4), 4);
+                        arrow = new Arrow(ArrowPath, new Vector2(sprite.Position.X, sprite.Position.Y + GameSettings.Instance.Tilescale.Y / 4), 1, 1);
                         Arrows.Add(arrow);
+                        RecentlyShot = true;
                     }
                     break;
             }
@@ -525,11 +547,11 @@ namespace Game_Test
                         rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y + (int)(tilescale_x * 0.5), (int)(tilescale_x * 0.5), (int)(tilescale_y * 0.5));
                         temp = CheckCollision4(rect, playerRect);
                         break;
-                    case 1682: //Righthalf
+                    case 1683: //Righthalf
                         rect = new Rectangle(x * (int)tilescale_x + (int)(tilescale_x * 0.5), y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)tilescale_y);
                         temp = CheckCollision4(rect, playerRect);
                         break;
-                    case 1683: //Lefttopcorner
+                    case 1684: //Lefttopcorner
                         rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)tilescale_x, (int)(tilescale_y * 0.5));
                         temp = CheckCollision4(rect, playerRect);
                         if (temp == 1)
@@ -537,7 +559,7 @@ namespace Game_Test
                         rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)tilescale_y);
                         temp = CheckCollision4(rect, playerRect);
                         break;
-                    case 1684: //Righttopcorner
+                    case 1685: //Righttopcorner
                         rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)tilescale_x, (int)(tilescale_y * 0.5));
                         temp = CheckCollision4(rect, playerRect);
                         if (temp == 1)
@@ -545,19 +567,19 @@ namespace Game_Test
                         rect = new Rectangle(x * (int)tilescale_x + (int)(tilescale_x * 0.5), y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)tilescale_y);
                         temp = CheckCollision4(rect, playerRect);
                         break;
-                    case 1685: //Lefttop
+                    case 1686: //Lefttop
                         rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)(tilescale_y * 0.5));
                         temp = CheckCollision4(rect, playerRect);
                         break;
-                    case 1686: //Righttop
+                    case 1687: //Righttop
                         rect = new Rectangle(x * (int)tilescale_x + (int)(tilescale_x * 0.5), y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)(tilescale_y * 0.5));
                         temp = CheckCollision4(rect, playerRect);
                         break;
-                    case 1687: //Lefthalf
+                    case 1689: //Lefthalf
                         rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)tilescale_y);
                         temp = CheckCollision4(rect, playerRect);
                         break;
-                    case 1688: //Leftbottomcorner
+                    case 1690: //Leftbottomcorner
                         rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)tilescale_y);
                         temp = CheckCollision4(rect, playerRect);
                         if (temp == 1)
@@ -565,7 +587,7 @@ namespace Game_Test
                         rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y + (int)(0.5 * tilescale_y), (int)tilescale_x, (int)(tilescale_y * 0.5));
                         temp = CheckCollision4(rect, playerRect);
                         break;
-                    case 1689: //Rightbottomcorner
+                    case 1691: //Rightbottomcorner
                         rect = new Rectangle(x * (int)tilescale_x + (int)(tilescale_x * 0.5), y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)tilescale_y);
                         temp = CheckCollision4(rect, playerRect);
                         if (temp == 1)
@@ -573,14 +595,39 @@ namespace Game_Test
                         rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y + (int)(0.5 * tilescale_y), (int)tilescale_x, (int)(tilescale_y * 0.5));
                         temp = CheckCollision4(rect, playerRect);
                         break;
-                    case 1690: //Leftbottom
+                    case 1692: //Leftbottom
                         rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y + (int)(tilescale_x * 0.5), (int)(tilescale_x * 0.5), (int)(tilescale_y * 0.5));
                         temp = CheckCollision4(rect, playerRect);
                         break;
-                    case 1691: //Rightbottom
+                    case 1693: //Rightbottom
                         rect = new Rectangle(x * (int)tilescale_x + (int)(tilescale_x * 0.5), y * (int)tilescale_y + (int)(tilescale_x * 0.5), (int)(tilescale_x * 0.5), (int)(tilescale_y * 0.5));
                         temp = CheckCollision4(rect, playerRect);
                         break;
+                    case 1694: //Bridgeright
+                        rect = new Rectangle(x * (int)tilescale_x + (int)(0.125 * tilescale_x), y * (int)tilescale_y, (int)(tilescale_x * 0.875), (int)(tilescale_y));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1688: //Bridgeleft
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)(tilescale_x * 0.875), (int)(tilescale_y));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1695: //Bridgebottomright
+                        rect = new Rectangle(x * (int)tilescale_x + (int)(0.125 * tilescale_x), y * (int)tilescale_y + (int)(tilescale_y * 0.5), (int)(tilescale_x * 0.875), (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1696: //Bridgebottomleft
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y + (int)(tilescale_y * 0.5), (int)(tilescale_x * 0.875), (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1697: //Bridgetopright
+                        rect = new Rectangle(x * (int)tilescale_x + (int)(0.125 * tilescale_x), y * (int)tilescale_y, (int)(tilescale_x * 0.875), (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1698: //Bridgetopleft
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)(tilescale_x * 0.875), (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+
                 }
             }
             return temp;
@@ -640,10 +687,15 @@ namespace Game_Test
         private void UpdateAnimationFrame(GameTime gameTime)
         {
             sprSheetX += (float)gameTime.ElapsedGameTime.TotalMilliseconds / gameTime.ElapsedGameTime.Milliseconds * Interval;
-            
+
             //Reset X at the final animation frame
             if ((int)sprSheetX >= (int)State)
+            {
                 sprSheetX = 0;
+                if (RecentlyShot == true)
+                    RecentlyShot = false;
+            }
+            
         }
         
         private void SetAnimationFrame()

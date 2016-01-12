@@ -64,9 +64,9 @@ namespace Game_Test
 
             direction = new Vector2(0, 1);
 
-            sprite = new SprSheetImage("EnemySprites/Male/SkinColor/red_orc");
+            sprite = new SprSheetImage("EnemySprites/Male/red_orc");
 
-            SpeedScale = 0.75f;
+            SpeedScale = 0.5f;
 
             weapon = new Weapon("Weapons/Spear/Male/spear_male", PlayerEnums.Weapontype.Spear, sprite.Position, this);
         }
@@ -101,7 +101,11 @@ namespace Game_Test
                     sprSheetY = PlayerEnums.Action.Hit;
                     sprSheetX = 4;
                     if (temp.X == 0)
+                    {
                         knockbackdirection = temp2;
+                        arrows.Remove(Arrow);
+                        break;
+                    }
                     else
                         knockbackdirection = temp;
                 }
@@ -154,7 +158,7 @@ namespace Game_Test
                     (PlayerPosition.Y - sprite.Position.Y < AggroDistance && PlayerPosition.Y - sprite.Position.Y > 0))) &&
                     PlayerinZone())
                 {
-                    SpeedScale = 1.0f;
+                    SpeedScale = 0.15f;
                     if (sprite.Position.Y - GameSettings.Instance.Tilescale.Y - PlayerPosition.Y > 0)
                     {
                         lookDirection = PlayerEnums.LookDirection.Up;
@@ -194,7 +198,7 @@ namespace Game_Test
                 #region Random Movement
                 else
                 {
-                    SpeedScale = 0.75f;
+                    SpeedScale = 0.5f;
                     if (duration <= 0)
                     {
                         duration = rnd.Next(1, 3);
@@ -494,11 +498,11 @@ namespace Game_Test
                         rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y + (int)(tilescale_x * 0.5), (int)(tilescale_x * 0.5), (int)(tilescale_y * 0.5));
                         temp = CheckCollision4(rect, playerRect);
                         break;
-                    case 1682: //Righthalf
+                    case 1683: //Righthalf
                         rect = new Rectangle(x * (int)tilescale_x + (int)(tilescale_x * 0.5), y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)tilescale_y);
                         temp = CheckCollision4(rect, playerRect);
                         break;
-                    case 1683: //Lefttopcorner
+                    case 1684: //Lefttopcorner
                         rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)tilescale_x, (int)(tilescale_y * 0.5));
                         temp = CheckCollision4(rect, playerRect);
                         if (temp == 1)
@@ -506,7 +510,7 @@ namespace Game_Test
                         rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)tilescale_y);
                         temp = CheckCollision4(rect, playerRect);
                         break;
-                    case 1684: //Righttopcorner
+                    case 1685: //Righttopcorner
                         rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)tilescale_x, (int)(tilescale_y * 0.5));
                         temp = CheckCollision4(rect, playerRect);
                         if (temp == 1)
@@ -514,19 +518,19 @@ namespace Game_Test
                         rect = new Rectangle(x * (int)tilescale_x + (int)(tilescale_x * 0.5), y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)tilescale_y);
                         temp = CheckCollision4(rect, playerRect);
                         break;
-                    case 1685: //Lefttop
+                    case 1686: //Lefttop
                         rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)(tilescale_y * 0.5));
                         temp = CheckCollision4(rect, playerRect);
                         break;
-                    case 1686: //Righttop
+                    case 1687: //Righttop
                         rect = new Rectangle(x * (int)tilescale_x + (int)(tilescale_x * 0.5), y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)(tilescale_y * 0.5));
                         temp = CheckCollision4(rect, playerRect);
                         break;
-                    case 1687: //Lefthalf
+                    case 1689: //Lefthalf
                         rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)tilescale_y);
                         temp = CheckCollision4(rect, playerRect);
                         break;
-                    case 1688: //Leftbottomcorner
+                    case 1690: //Leftbottomcorner
                         rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)tilescale_y);
                         temp = CheckCollision4(rect, playerRect);
                         if (temp == 1)
@@ -534,7 +538,7 @@ namespace Game_Test
                         rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y + (int)(0.5 * tilescale_y), (int)tilescale_x, (int)(tilescale_y * 0.5));
                         temp = CheckCollision4(rect, playerRect);
                         break;
-                    case 1689: //Rightbottomcorner
+                    case 1691: //Rightbottomcorner
                         rect = new Rectangle(x * (int)tilescale_x + (int)(tilescale_x * 0.5), y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)tilescale_y);
                         temp = CheckCollision4(rect, playerRect);
                         if (temp == 1)
@@ -542,14 +546,39 @@ namespace Game_Test
                         rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y + (int)(0.5 * tilescale_y), (int)tilescale_x, (int)(tilescale_y * 0.5));
                         temp = CheckCollision4(rect, playerRect);
                         break;
-                    case 1690: //Leftbottom
+                    case 1692: //Leftbottom
                         rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y + (int)(tilescale_x * 0.5), (int)(tilescale_x * 0.5), (int)(tilescale_y * 0.5));
                         temp = CheckCollision4(rect, playerRect);
                         break;
-                    case 1691: //Rightbottom
+                    case 1693: //Rightbottom
                         rect = new Rectangle(x * (int)tilescale_x + (int)(tilescale_x * 0.5), y * (int)tilescale_y + (int)(tilescale_x * 0.5), (int)(tilescale_x * 0.5), (int)(tilescale_y * 0.5));
                         temp = CheckCollision4(rect, playerRect);
                         break;
+                    case 1694: //Bridgeright
+                        rect = new Rectangle(x * (int)tilescale_x + (int)(0.125 * tilescale_x), y * (int)tilescale_y, (int)(tilescale_x * 0.875), (int)(tilescale_y));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1688: //Bridgeleft
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)(tilescale_x * 0.875), (int)(tilescale_y));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1695: //Bridgebottomright
+                        rect = new Rectangle(x * (int)tilescale_x + (int)(0.125 * tilescale_x), y * (int)tilescale_y + (int)(tilescale_y * 0.5), (int)(tilescale_x * 0.875), (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1696: //Bridgebottomleft
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y + (int)(tilescale_y * 0.5), (int)(tilescale_x * 0.875), (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1697: //Bridgetopright
+                        rect = new Rectangle(x * (int)tilescale_x + (int)(0.125 * tilescale_x), y * (int)tilescale_y, (int)(tilescale_x * 0.875), (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1698: //Bridgetopleft
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)(tilescale_x * 0.875), (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+
                 }
             }
             return temp;
@@ -688,21 +717,14 @@ namespace Game_Test
             if (Enemyrect.Intersects(Arrow.ArrowRect))
             {
                 returnvalue.X = 1;
-                switch (Arrow.sprSheetX)
-                {
-                    case 1:
-                        returnvalue.Y = 1;
-                        break;
-                    case 2:
-                        returnvalue.Y = 2;
-                        break;
-                    case 3:
-                        returnvalue.Y = 3;
-                        break;
-                    case 4:
-                        returnvalue.Y = 4;
-                        break;
-                }
+                if (Arrow.sprSheet == new Vector2(2, 1))
+                    returnvalue.Y = 1;
+                if (Arrow.sprSheet == new Vector2(1, 2))
+                    returnvalue.Y = 2;
+                if (Arrow.sprSheet == new Vector2(2, 2))
+                    returnvalue.Y = 3;
+                if (Arrow.sprSheet == new Vector2(1, 1))
+                    returnvalue.Y = 4;
             }
 
             return returnvalue;

@@ -14,6 +14,7 @@ namespace Game_Test
 
         private SprSheetImage sprite;
         private SprSheetImage sprbow, sprquiver, sprarrow;
+        public bool Quiver { get; private set; }
 
         public PlayerEnums.Weapontype weapontype { get; private set; }
         public int WeaponID { get; private set; }
@@ -61,6 +62,7 @@ namespace Game_Test
             this.weapontype = weapontype;
             LoadContent((int)Position.X, (int)Position.Y);
             WeaponID = NextAvailableID;
+            Quiver = false;
             if (sender is Player)
                 NextAvailableID++;
         }
@@ -79,6 +81,7 @@ namespace Game_Test
             weapontype = PlayerEnums.Weapontype.Bow;
             LoadContent((int)Position.X, (int)Position.Y);
             WeaponID = NextAvailableID;
+            Quiver = true;
             if (sender is Player)
                 NextAvailableID++;
         }
@@ -125,10 +128,14 @@ namespace Game_Test
                 sprite.Draw(spriteBatch);
             else
             {
-                sprquiver.Draw(spriteBatch);
                 sprbow.Draw(spriteBatch);
                 sprarrow.Draw(spriteBatch);
             }
+        }
+
+        public void DrawQuiver(SpriteBatch spriteBatch)
+        {
+            sprquiver.Draw(spriteBatch);
         }
 
         public void setPosition(Vector2 position)
