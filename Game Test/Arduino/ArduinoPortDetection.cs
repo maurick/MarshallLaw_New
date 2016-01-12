@@ -73,6 +73,11 @@ namespace Game_Test
                 currentPort.Close();
                 if (returnMessage.Contains("HELLO FROM ARDUINO"))
                 {
+                    buffer[0] = Convert.ToByte(16);
+                    buffer[1] = Convert.ToByte(32);
+                    currentPort.Open();
+                    currentPort.Write(buffer, 0, 2);
+                    currentPort.Close();
                     return true;
                 }
                 else

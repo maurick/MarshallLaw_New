@@ -10,7 +10,8 @@ namespace Game_Test
         ArduinoPortDetection ports;
         ArduinoRead reader;
         ArduinoCmds cmnds;
-        string allbuttons;
+        public string allbuttons;
+        public string previousbuttons;
 
         public ArduinoControllerPlayer(int Controller)
         {
@@ -18,6 +19,7 @@ namespace Game_Test
             reader = new ArduinoRead(ports.ReturnPorts()[Controller-1]);
             cmnds = new ArduinoCmds(ports.ReturnPorts()[Controller-1]);
             allbuttons = "000000000";
+            previousbuttons = "000000000";
         }
 
         public void Read()
@@ -25,6 +27,7 @@ namespace Game_Test
             string x = reader.Read();
             if(x != null && x != "")
             {
+                previousbuttons = allbuttons;
                 allbuttons = x;
             }
 

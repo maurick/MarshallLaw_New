@@ -181,14 +181,14 @@ namespace Game_Test
             bool test = false;
             for (int i = 0; i < 8; i++)
             {
-                if(controller.fbutt(i))
+                if (controller.previousbuttons[i] == '1' && !controller.fbutt(i))
                 {
                     test = true;
                 }
             }
 
             #region Keyreleased
-            if (!test || (InputManager.Instance.KeyReleased(Keys.W) || InputManager.Instance.KeyReleased(Keys.A) || InputManager.Instance.KeyReleased(Keys.S) || InputManager.Instance.KeyReleased(Keys.D)) && InputManager.Instance.KeyDown(Keys.Space) == false || InputManager.Instance.KeyReleased(Keys.Space))
+            if (test || (InputManager.Instance.KeyReleased(Keys.W) || InputManager.Instance.KeyReleased(Keys.A) || InputManager.Instance.KeyReleased(Keys.S) || InputManager.Instance.KeyReleased(Keys.D)) && InputManager.Instance.KeyDown(Keys.Space) == false || InputManager.Instance.KeyReleased(Keys.Space))
             {
                 State = PlayerEnums.ActionState.None;
                 sprSheetY = PlayerEnums.Action.None;
