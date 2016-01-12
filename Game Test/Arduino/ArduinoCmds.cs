@@ -21,6 +21,11 @@ namespace Game_Test
             Write(32);
         }
 
+        public void SendStats(int[] Stats)
+        {
+            Write(Stats);
+        }
+
         public void Save()
         {
             Write(64);
@@ -34,6 +39,22 @@ namespace Game_Test
 
             CurrentPort.Open();
             CurrentPort.Write(buffer, 0, 2);
+            Thread.Sleep(1000);
+            CurrentPort.Close();
+        }
+
+        private void Write(int[] Array)
+        {
+            byte[] buffer = new byte[2];
+            buffer[0] = Convert.ToByte(16);
+            buffer[1] = Convert.ToByte(8);
+
+            CurrentPort.Open();
+            CurrentPort.Write(buffer, 0, 2);
+            foreach (var nr in Array)
+            {
+                CurrentPort.Write(nr.ToString());
+            }
             Thread.Sleep(1000);
             CurrentPort.Close();
         }
