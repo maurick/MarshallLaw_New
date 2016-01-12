@@ -17,9 +17,7 @@ namespace Game_Test
         private Vector2 PlayerPosition;
 
         private float SpeedScale; //Scales up the movementspeed
-
-        private float sprSheetX;
-
+        
         private Vector2 direction;
 
         //Slow down animation speed
@@ -28,11 +26,13 @@ namespace Game_Test
         //Collisionlayer and Tree layer(s)
         Layer[] layer;
 
+        public float sprSheetX { get; private set; }
         private PlayerEnums.Action sprSheetY { get; set; }
         public PlayerEnums.ActionState State { get; set; }
         public PlayerEnums.ActionState PlayerState { get; set; }
         public PlayerEnums.LookDirection lookDirection { get; set; }
         public PlayerEnums.LookDirection PlayerLookDirection { get; set; }
+        public int PlayerSprSheetX { get; set; }
 
         private SprSheetImage sprite;
 
@@ -87,10 +87,22 @@ namespace Game_Test
         {
             #region Knockback
             Vector2 temp = CheckHit();
-            foreach (Arrow Arrow in arrows)
+            if (temp.X == 1)
+            {
+                //TODO
+                //Lose health
+                knockback = true;
+                knockbacktimer = 0.2f;
+                duration = 0;
+                knockbackdirection.X = 0;
+                sprSheetY = PlayerEnums.Action.Hit;
+                sprSheetX = 4;
+                knockbackdirection = temp;
+            }
+                foreach (Arrow Arrow in arrows)
             {
                 Vector2 temp2 = CheckArrowHit(Arrow);
-                if (temp.X == 1 || temp2.X == 1)
+                if (temp2.X == 1)
                 {
                     //TODO
                     //Lose health
@@ -100,14 +112,9 @@ namespace Game_Test
                     knockbackdirection.X = 0;
                     sprSheetY = PlayerEnums.Action.Hit;
                     sprSheetX = 4;
-                    if (temp.X == 0)
-                    {
-                        knockbackdirection = temp2;
-                        arrows.Remove(Arrow);
-                        break;
-                    }
-                    else
-                        knockbackdirection = temp;
+                    knockbackdirection = temp2;
+                    arrows.Remove(Arrow);
+                    break;
                 }
             }
             
@@ -673,32 +680,32 @@ namespace Game_Test
         private Vector2 CheckHit()
         {
             Vector2 returnvalue = new Vector2(0, 0);
-            Rectangle Enemyrect = new Rectangle(new Point((int)(sprite.Position.X + 0.5 * GameSettings.Instance.Tilescale.X), (int)(sprite.Position.Y + GameSettings.Instance.Tilescale.Y)), new Point((int)GameSettings.Instance.Tilescale.X, (int)(GameSettings.Instance.Tilescale.Y))),
+            Rectangle Enemyrect = new Rectangle(new Point((int)(sprite.Position.X + 0.5 * GameSettings.Instance.Tilescale.X), (int)sprite.Position.Y), new Point((int)GameSettings.Instance.Tilescale.X, (int)(GameSettings.Instance.Tilescale.Y * 2))),
                 Playerrect = new Rectangle((int)(PlayerPosition.X + 0.5 * GameSettings.Instance.Tilescale.X), (int)(PlayerPosition.Y + GameSettings.Instance.Tilescale.Y), (int)GameSettings.Instance.Tilescale.X, (int)(GameSettings.Instance.Tilescale.Y));
-            if (PlayerState == PlayerEnums.ActionState.Thrust)
+            if (PlayerState == PlayerEnums.ActionState.Thrust && PlayerSprSheetX == 5)
             {
                 switch (PlayerLookDirection)
                 {
                     case PlayerEnums.LookDirection.Up:
-                        Playerrect.X -= (int)GameSettings.Instance.Tilescale.X / 4;
-                        Playerrect.Height = 2 * (int)GameSettings.Instance.Tilescale.Y / 4;
+                        Playerrect.Y -= (int)GameSettings.Instance.Tilescale.Y / 4;
+                        Playerrect.Height = (int)GameSettings.Instance.Tilescale.Y;
                         if (Enemyrect.Intersects(Playerrect))
                             returnvalue = new Vector2(1, 1);
                         break;
                     case PlayerEnums.LookDirection.left:
-                        Playerrect.Y -= (int)GameSettings.Instance.Tilescale.Y / 4;
-                        Playerrect.Width = 2 * (int)GameSettings.Instance.Tilescale.X / 4;
+                        Playerrect.X -= (int)GameSettings.Instance.Tilescale.X / 4;
+                        Playerrect.Width = (int)GameSettings.Instance.Tilescale.X;
                         if (Enemyrect.Intersects(Playerrect))
                             returnvalue = new Vector2(1, 2);
                         break;
                     case PlayerEnums.LookDirection.Down:
-                        Playerrect.Height = 2 * (int)GameSettings.Instance.Tilescale.Y / 4;
+                        Playerrect.Height = (int)GameSettings.Instance.Tilescale.Y;
                         Playerrect.Y = (int)(PlayerPosition.Y + (2 * GameSettings.Instance.Tilescale.Y -  0.5 * Playerrect.Height));
                         if (Enemyrect.Intersects(Playerrect))
                             returnvalue = new Vector2(1, 3);
                         break;
                     case PlayerEnums.LookDirection.Right:
-                        Playerrect.Width = 2 * (int)GameSettings.Instance.Tilescale.X / 4;
+                        Playerrect.Width = (int)GameSettings.Instance.Tilescale.X;
                         Playerrect.X = (int)(PlayerPosition.X + (1.5 * GameSettings.Instance.Tilescale.X -  0.5 * Playerrect.Width));
                         if (Enemyrect.Intersects(Playerrect))
                             returnvalue = new Vector2(1, 4);

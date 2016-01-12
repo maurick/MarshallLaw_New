@@ -112,11 +112,13 @@ namespace Game_Test
                 enemy.SendPosition(player.GetPosition());
                 enemy.PlayerLookDirection = player.lookDirection;
                 enemy.PlayerState = player.State;
+                enemy.PlayerSprSheetX = (int)player.sprSheetX;
                 enemy.Update(gameTime);
 
                 player.SendPosition(enemy.GetPosition());
                 player.EnemyLookDirection = enemy.lookDirection;
                 player.EnemyState = enemy.State;
+                player.EnemySprSheetX = (int)enemy.sprSheetX;
 
                 enemy.arrows = player.Arrows;
             }

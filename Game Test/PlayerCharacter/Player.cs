@@ -16,8 +16,6 @@ namespace Game_Test
         private Vector2 EnemyPosition;
 
         private float SpeedScale; //Scales up the movementspeed
-
-        private float sprSheetX;
         
         private Vector2 direction;
 
@@ -30,11 +28,13 @@ namespace Game_Test
 
         Image boundingBox;
 
+        public float sprSheetX { get; private set; }
         private PlayerEnums.Action sprSheetY { get; set; }
         public PlayerEnums.ActionState State { get; private set; }
         public PlayerEnums.ActionState EnemyState { get; set; }
         public PlayerEnums.LookDirection lookDirection { get; private set; }
         public PlayerEnums.LookDirection EnemyLookDirection { get; set; }
+        public int EnemySprSheetX { get; set; }
 
         private List<Weapon> inventory = new List<Weapon>();
         private Weapon CurrentWeapon;
@@ -718,32 +718,32 @@ namespace Game_Test
         private Vector2 CheckHit()
         {
             Vector2 returnvalue = new Vector2(0, 0);
-            Rectangle Playerrect = new Rectangle(new Point((int)(sprite.Position.X + 0.5 * GameSettings.Instance.Tilescale.X), (int)(sprite.Position.Y + GameSettings.Instance.Tilescale.Y)), new Point((int)GameSettings.Instance.Tilescale.X, (int)(GameSettings.Instance.Tilescale.Y))),
+            Rectangle Playerrect = new Rectangle(new Point((int)(sprite.Position.X + 0.5 * GameSettings.Instance.Tilescale.X), (int)sprite.Position.Y), new Point((int)GameSettings.Instance.Tilescale.X, (int)(GameSettings.Instance.Tilescale.Y * 2))),
                 Enemyrect = new Rectangle((int)(EnemyPosition.X + 0.5 * GameSettings.Instance.Tilescale.X), (int)(EnemyPosition.Y + GameSettings.Instance.Tilescale.Y), (int)GameSettings.Instance.Tilescale.X, (int)(GameSettings.Instance.Tilescale.Y));
-            if (EnemyState == PlayerEnums.ActionState.Thrust)
+            if (EnemyState == PlayerEnums.ActionState.Thrust && EnemySprSheetX == 5)
             {
                 switch (EnemyLookDirection)
                 {
                     case PlayerEnums.LookDirection.Up:
-                        Enemyrect.X = (int)GameSettings.Instance.Tilescale.X / 4;
-                        Enemyrect.Height = 2 * (int)GameSettings.Instance.Tilescale.Y / 4;
+                        Enemyrect.Y -= (int)GameSettings.Instance.Tilescale.Y / 4;
+                        Enemyrect.Height = (int)GameSettings.Instance.Tilescale.Y;
                         if (Enemyrect.Intersects(Playerrect))
                             returnvalue = new Vector2(1, 1);
                         break;
                     case PlayerEnums.LookDirection.left:
-                        Enemyrect.Y = (int)GameSettings.Instance.Tilescale.Y / 4;
-                        Enemyrect.Width = 2 * (int)GameSettings.Instance.Tilescale.X / 4;
+                        Enemyrect.X -= (int)GameSettings.Instance.Tilescale.X / 4;
+                        Enemyrect.Width = (int)GameSettings.Instance.Tilescale.X;
                         if (Enemyrect.Intersects(Playerrect))
                             returnvalue = new Vector2(1, 2);
                         break;
                     case PlayerEnums.LookDirection.Down:
-                        Enemyrect.Height = 2 * (int)GameSettings.Instance.Tilescale.Y / 4;
+                        Enemyrect.Height = (int)GameSettings.Instance.Tilescale.Y;
                         Enemyrect.Y = (int)(EnemyPosition.Y + (2 * GameSettings.Instance.Tilescale.Y - 0.5 * Playerrect.Height));
                         if (Enemyrect.Intersects(Playerrect))
                             returnvalue = new Vector2(1, 3);
                         break;
                     case PlayerEnums.LookDirection.Right:
-                        Enemyrect.Width = 2 * (int)GameSettings.Instance.Tilescale.X / 4;
+                        Enemyrect.Width = (int)GameSettings.Instance.Tilescale.X;
                         Enemyrect.X = (int)(EnemyPosition.X + (1.5 * GameSettings.Instance.Tilescale.X - 0.5 * Playerrect.Width));
                         if (Enemyrect.Intersects(Playerrect))
                             returnvalue = new Vector2(1, 4);

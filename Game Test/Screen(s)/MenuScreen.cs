@@ -17,7 +17,7 @@ namespace Game_Test
         int currentSelected;
         string[] text = { "Start", "Options", "Exit"};
 
-    public MenuScreen()
+        public MenuScreen()
         {
             //Create the Images for the Menuscreen
             background = new Image("TitleScreen/background");
@@ -211,7 +211,6 @@ namespace Game_Test
 
         public void SetPosition()
         {
-            
             imageselected.Position =  new Vector2(imageselected.Position.X, Position.Y);
             imageunselected.Position = new Vector2(imageunselected.Position.X, Position.Y);
         }

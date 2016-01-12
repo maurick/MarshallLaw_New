@@ -18,6 +18,10 @@ namespace Game_Test
 
         private bool background = false;
 
+        public bool GamePaused;
+
+        private PauseMenu menu;
+
         public MapTestScreen()
         {
 
@@ -43,19 +47,38 @@ namespace Game_Test
 
         public override void Update(GameTime gameTime)
         {
+            if (GamePaused)
+            {
+                menu.Update(gameTime);
+                if (menu.Pause == true)
+                {
+                    menu.UnloadContent();
+                    GamePaused = false;
+                }
+                else
+                    return;
+            }
+
             base.Update(gameTime);
 
             map.Update(gameTime);
 
             //When the Escape key has been pressed exit the game
-            if (InputManager.Instance.KeyPressed(Keys.Escape))
+            if (InputManager.Instance.KeyReleased(Keys.Escape) && GamePaused == false)
             {
-                ScreenManager.Instance.ChangeScreen("MenuScreen");
+                //ScreenManager.Instance.ChangeScreen("MenuScreen");
+                GamePaused = true;
+                menu = new PauseMenu();
             }
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+            if (GamePaused)
+            {
+                menu.Draw(spriteBatch);
+                return;
+            }
             base.Draw(spriteBatch);
             
             map.DrawBackground(spriteBatch);

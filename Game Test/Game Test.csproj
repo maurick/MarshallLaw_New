@@ -101,6 +101,7 @@
     <Compile Include="DrawBaseClasses\Screen.cs" />
     <Compile Include="GameManager%28s%29\ScreenManager.cs" />
     <Compile Include="DrawBaseClasses\cText.cs" />
+    <Compile Include="Screen%28s%29\PauseMenu.cs" />
     <Compile Include="Screen%28s%29\SplashScreen.cs" />
     <Compile Include="Controls\Control1.cs" />
     <Compile Include="Screen%28s%29\Test.cs" />
