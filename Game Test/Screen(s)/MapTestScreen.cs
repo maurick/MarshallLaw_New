@@ -47,6 +47,8 @@ namespace Game_Test
 
         public override void Update(GameTime gameTime)
         {
+            base.Update(gameTime);
+
             if (GamePaused)
             {
                 menu.Update(gameTime);
@@ -55,11 +57,9 @@ namespace Game_Test
                     menu.UnloadContent();
                     GamePaused = false;
                 }
-                else
-                    return;
+                //else
+                    //return;
             }
-
-            base.Update(gameTime);
 
             map.Update(gameTime);
 

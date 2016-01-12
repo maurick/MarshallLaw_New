@@ -73,16 +73,12 @@ namespace Game_Test
 
         public void Update(GameTime gameTime)
         {
+
             P_sign.Update(gameTime);
             P_poster.Update(gameTime);
 
-            for (int i = 0; i < P_text.Length; i++)
-            {
-                P_menuItems[i].Update(gameTime);
-            }
-
             //If the down key is selected then move the selected 1 down
-            if (InputManager.Instance.KeyPressed(Keys.Q))
+            if (InputManager.Instance.KeyPressed(Keys.Down))
             {
                 P_menuItems[P_currentSelected].Selected = false;
                 P_currentSelected++;
@@ -116,6 +112,11 @@ namespace Game_Test
             if (P_menuItems[P_currentSelected].ItemID == 2 && (InputManager.Instance.KeyPressed(Keys.Enter)))
             {
                 ScreenManager.Instance.ChangeScreen("MenuScreen");
+            }
+
+            for (int i = 0; i < P_text.Length; i++)
+            {
+                P_menuItems[i].Update(gameTime);
             }
         }
 
