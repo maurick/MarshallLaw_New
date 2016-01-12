@@ -117,6 +117,8 @@ namespace Game_Test
                 player.SendPosition(enemy.GetPosition());
                 player.EnemyLookDirection = enemy.lookDirection;
                 player.EnemyState = enemy.State;
+
+                enemy.arrows = player.Arrows;
             }
 
             //foreach (var layer in Layers)

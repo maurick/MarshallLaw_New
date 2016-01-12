@@ -77,7 +77,7 @@
     <Compile Include="Controls\Control1_Item.cs" />
     <Compile Include="Controls\Control1_Field.cs" />
     <Compile Include="DrawBaseClasses\SprSheetImage.cs" />
-    <Compile Include="Enemy\Testenemy.cs" />
+    <Compile Include="Enemy\Enemy.cs" />
     <Compile Include="GameObjects\Arrow.cs" />
     <Compile Include="GameObjects\Items.cs" />
     <Compile Include="GameObjects\Weapon.cs" />

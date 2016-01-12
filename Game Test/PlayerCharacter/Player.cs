@@ -28,7 +28,7 @@ namespace Game_Test
         Layer[] layer;
 
         Image boundingBox;
-        
+
         private PlayerEnums.Action sprSheetY { get; set; }
         public PlayerEnums.ActionState State { get; private set; }
         public PlayerEnums.ActionState EnemyState { get; set; }
@@ -46,7 +46,7 @@ namespace Game_Test
         private double knockbacktimer;
         private Vector2 knockbackdirection;
 
-        private List<Arrow> Arrows = new List<Arrow>();
+        public List<Arrow> Arrows = new List<Arrow>();
 
         public bool Debug { get; private set; }
 
@@ -64,11 +64,6 @@ namespace Game_Test
             sprite = new SprSheetImage("Character/light");
             
             SpeedScale = 1.5f;
-
-            CurrentWeapon = new Weapon("Weapons/bow", "Weapons/quiver", "Weapons/arrow", sprite.Position, this);
-            inventory.Add(CurrentWeapon);
-            Weapon tempweapon = new Weapon("Weapons/spear_male", PlayerEnums.Weapontype.Spear, sprite.Position, this);
-            inventory.Add(tempweapon);
         }
 
         public void LoadContent(int X, int Y)
@@ -77,6 +72,11 @@ namespace Game_Test
 
             boundingBox = new Image("Images/green");
             boundingBox.LoadContent( X + (0.5f * GameSettings.Instance.Tilescale.X), Y + GameSettings.Instance.Tilescale.Y, false, new Vector2(GameSettings.Instance.Tilescale.X, GameSettings.Instance.Tilescale.Y));
+
+            CurrentWeapon = new Weapon("Weapons/bow", "Weapons/quiver", "Weapons/arrow", sprite.Position, this);
+            inventory.Add(CurrentWeapon);
+            Weapon tempweapon = new Weapon("Weapons/spear_male", PlayerEnums.Weapontype.Spear, sprite.Position, this);
+            inventory.Add(tempweapon);
         }
 
         public void UnloadContent()
@@ -295,7 +295,7 @@ namespace Game_Test
                     }
                     if (CurrentWeapon.weapontype == PlayerEnums.Weapontype.Bow && sprSheetX == (int)PlayerEnums.ActionState.Shoot - 3)
                     {
-                        arrow = new Arrow("Weapons/arrow", 1, new Vector2(sprite.Position.X, sprite.Position.Y));
+                        arrow = new Arrow("Weapons/arrow", new Vector2(sprite.Position.X, sprite.Position.Y), (float)(0.5 * Math.PI));
                         Arrows.Add(arrow);
                     }
                     break;
@@ -308,7 +308,7 @@ namespace Game_Test
                     }
                     if (CurrentWeapon.weapontype == PlayerEnums.Weapontype.Bow && sprSheetX == (int)PlayerEnums.ActionState.Shoot - 3)
                     {
-                        arrow = new Arrow("Weapons/arrow", 2, new Vector2(sprite.Position.X, sprite.Position.Y + GameSettings.Instance.Tilescale.Y / 4));
+                        arrow = new Arrow("Weapons/arrow", new Vector2(sprite.Position.X, sprite.Position.Y + GameSettings.Instance.Tilescale.Y / 4), 0);
                         Arrows.Add(arrow);
                     }
                     break;
@@ -321,7 +321,7 @@ namespace Game_Test
                     }
                     if (CurrentWeapon.weapontype == PlayerEnums.Weapontype.Bow && sprSheetX == (int)PlayerEnums.ActionState.Shoot - 3)
                     {
-                        arrow = new Arrow("Weapons/arrow", 3, new Vector2(sprite.Position.X, sprite.Position.Y));
+                        arrow = new Arrow("Weapons/arrow", new Vector2(sprite.Position.X, sprite.Position.Y), (float)-(0.5 * Math.PI));
                         Arrows.Add(arrow);
                     }
                     break;
@@ -338,7 +338,7 @@ namespace Game_Test
                     }
                     if (CurrentWeapon.weapontype == PlayerEnums.Weapontype.Bow && sprSheetX == (int)PlayerEnums.ActionState.Shoot - 3)
                     {
-                        arrow = new Arrow("Weapons/arrow", 4, new Vector2(sprite.Position.X, sprite.Position.Y + GameSettings.Instance.Tilescale.Y / 4));
+                        arrow = new Arrow("Weapons/arrow", new Vector2(sprite.Position.X, sprite.Position.Y + GameSettings.Instance.Tilescale.Y / 4), (float)Math.PI);
                         Arrows.Add(arrow);
                     }
                     break;
@@ -367,7 +367,7 @@ namespace Game_Test
             {
                 if (sprSheetY == PlayerEnums.Action.WalkUp)
                     UpdateAnimationFrame(gameTime);
-                else if (direction.X == 0)
+                else if (direction.X == 0 && knockback == false)
                 {
                     sprSheetY = PlayerEnums.Action.WalkUp;
                 }
@@ -376,7 +376,7 @@ namespace Game_Test
             {
                 if (sprSheetY == PlayerEnums.Action.WalkDown)
                     UpdateAnimationFrame(gameTime);
-                else if(direction.X == 0)
+                else if(direction.X == 0 && knockback == false)
                 {
                     sprSheetY = PlayerEnums.Action.WalkDown;
                 }
@@ -385,7 +385,7 @@ namespace Game_Test
             {
                 if (sprSheetY == PlayerEnums.Action.WalkLeft)
                     UpdateAnimationFrame(gameTime);
-                else
+                else if (!(knockback))
                 {
                     sprSheetY = PlayerEnums.Action.WalkLeft;
                 }
@@ -394,7 +394,7 @@ namespace Game_Test
             {
                 if (sprSheetY == PlayerEnums.Action.WalkRight)
                     UpdateAnimationFrame(gameTime);
-                else
+                else if (!(knockback))
                 {
                     sprSheetY = PlayerEnums.Action.WalkRight;
                 }
@@ -407,6 +407,7 @@ namespace Game_Test
             CurrentWeapon.setPosition(new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY)); //Move weapon with you
         }
 
+        #region CheckCollision
         private Vector2 CheckCollision(Vector2 PositionNew, Vector2 PositionOld, Vector2 Direction)
         {
             float tilescale_x = GameSettings.Instance.Tilescale.X, tilescale_y = GameSettings.Instance.Tilescale.Y;
@@ -593,6 +594,7 @@ namespace Game_Test
             }
             else return 0;
         }
+#endregion
 
         private void ChangeAlpha(Vector2 position, int number)
         {

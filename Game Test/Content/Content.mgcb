@@ -867,3 +867,6 @@
 /processorParam:TextureFormat=Color
 /build:Weapons/quiver.png
 
+#begin Config/Config.txt
+/copy:Config/Config.txt
+
