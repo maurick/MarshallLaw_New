@@ -49,6 +49,7 @@ namespace Game_Test
         {
             if (GamePaused)
             {
+                base.Update(gameTime);
                 menu.Update(gameTime);
                 if (menu.Pause == true)
                 {

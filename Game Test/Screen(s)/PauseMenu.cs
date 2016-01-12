@@ -14,7 +14,7 @@ namespace Game_Test
         private Vector2 P_menuLenght;
         private Vector2 P_menuPosition;
         private int P_currentSelected;
-        private string[] P_text = { "Continue", "Options", "Exit to menu" };
+        private string[] P_text = { "Continue", "Exit to menu" };
         private PauseMenuItem[] P_menuItems;
         public bool Pause { get; private set; }
 
@@ -82,7 +82,7 @@ namespace Game_Test
             }
 
             //If the down key is selected then move the selected 1 down
-            if (InputManager.Instance.KeyPressed(Keys.Q))
+            if (InputManager.Instance.KeyPressed(Keys.Down))
             {
                 P_menuItems[P_currentSelected].Selected = false;
                 P_currentSelected++;
@@ -108,12 +108,6 @@ namespace Game_Test
 
             //If the Exit button is selected and Enter has been pressed exit the game
             if (P_menuItems[P_currentSelected].ItemID == 1 && (InputManager.Instance.KeyPressed(Keys.Enter)))
-            {
-                //No function yet
-            }
-
-            //If the Exit button is selected and Enter has been pressed exit the game
-            if (P_menuItems[P_currentSelected].ItemID == 2 && (InputManager.Instance.KeyPressed(Keys.Enter)))
             {
                 ScreenManager.Instance.ChangeScreen("MenuScreen");
             }

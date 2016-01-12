@@ -11,7 +11,7 @@ namespace Game_Test
     {
         SprSheetImage sprite;
         public Vector2 sprSheet { get; private set; }
-        private const int Velocity = 3;
+        private const int Velocity = 5;
 
         public Rectangle ArrowRect { get; private set; }
 
