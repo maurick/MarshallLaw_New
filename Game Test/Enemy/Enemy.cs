@@ -64,11 +64,11 @@ namespace Game_Test
 
             direction = new Vector2(0, 1);
 
-            sprite = new SprSheetImage("Character/red_orc");
+            sprite = new SprSheetImage("EnemySprites/Male/SkinColor/red_orc");
 
             SpeedScale = 0.75f;
 
-            weapon = new Weapon("Weapons/spear_male", PlayerEnums.Weapontype.Spear, sprite.Position, this);
+            weapon = new Weapon("Weapons/Spear/Male/spear_male", PlayerEnums.Weapontype.Spear, sprite.Position, this);
         }
 
         public void LoadContent()

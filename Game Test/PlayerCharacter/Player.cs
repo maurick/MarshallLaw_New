@@ -61,7 +61,7 @@ namespace Game_Test
             
             direction = new Vector2(0, 1);
             
-            sprite = new SprSheetImage("Character/light");
+            sprite = new SprSheetImage("CharacterSprites/Male/SkinColor/Light");
             
             SpeedScale = 1.5f;
         }
@@ -73,9 +73,9 @@ namespace Game_Test
             boundingBox = new Image("Images/green");
             boundingBox.LoadContent( X + (0.5f * GameSettings.Instance.Tilescale.X), Y + GameSettings.Instance.Tilescale.Y, false, new Vector2(GameSettings.Instance.Tilescale.X, GameSettings.Instance.Tilescale.Y));
 
-            CurrentWeapon = new Weapon("Weapons/bow", "Weapons/quiver", "Weapons/arrow", sprite.Position, this);
+            CurrentWeapon = new Weapon("Weapons/Bow/bow", "Weapons/Bow/quiver", "Weapons/Bow/arrow", sprite.Position, this);
             inventory.Add(CurrentWeapon);
-            Weapon tempweapon = new Weapon("Weapons/spear_male", PlayerEnums.Weapontype.Spear, sprite.Position, this);
+            Weapon tempweapon = new Weapon("Weapons/Spear/Male/spear_male", PlayerEnums.Weapontype.Spear, sprite.Position, this);
             inventory.Add(tempweapon);
         }
 
