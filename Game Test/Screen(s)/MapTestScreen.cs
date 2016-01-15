@@ -16,8 +16,6 @@ namespace Game_Test
         Texture2D Texture;
         string Path = "SpriteSheets/terrain";
 
-        private bool background = false;
-
         public bool GamePaused;
 
         private PauseMenu menu;

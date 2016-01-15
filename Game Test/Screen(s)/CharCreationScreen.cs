@@ -26,7 +26,6 @@ namespace Game_Test
         static int numitems3;
         #endregion
 
-        bool refresh;
         CharacterCreator characterCreator;
 
         //Contructor
