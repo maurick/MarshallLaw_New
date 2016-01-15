@@ -48,8 +48,9 @@ namespace Game_Test
             arrow_right.Color = Color.Black;
             fadeeffect = new FadeEffect(1.5f, 1.0f, 0.3f);
             currentSelected = selection.arrowleft;
-            currentIndex = 0;
             this.maxIndex = maxindex;
+            Random random = new Random();
+            currentIndex = random.Next(0, maxindex);
         }
 
         public void LoadContent()

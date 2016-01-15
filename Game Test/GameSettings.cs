@@ -47,7 +47,8 @@ namespace Game_Test
 
             //Fullscreen
             //Dimensions = Screensize;
-            Dimensions = new Vector2(1280, 720);
+            Dimensions = new Vector2(1440, 810);
+            Console.OpenStandardInput();
 
             tilescale = new Vector2();
 

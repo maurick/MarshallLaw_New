@@ -67,17 +67,22 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Animation_Effects\FadeEffect.cs" />
-    <Compile Include="Arduino\Arduino.cs" />
-    <Compile Include="CharacterCreator.cs" />
+    <Compile Include="Arduino\ArduinoControllerPlayer.cs" />
+    <Compile Include="Arduino\ArduinoRead.cs" />
+    <Compile Include="Arduino\ArduinoCmds.cs" />
+    <Compile Include="Arduino\ArduinoPortDetection.cs" />
+    <Compile Include="PlayerCharacter\CharacterCreator.cs" />
     <Compile Include="Controls\CharCreation_Member.cs" />
     <Compile Include="Controls\Options_Members.cs" />
     <Compile Include="Controls\Control1_Item.cs" />
     <Compile Include="Controls\Control1_Field.cs" />
     <Compile Include="DrawBaseClasses\SprSheetImage.cs" />
-    <Compile Include="Enemy\Testenemy.cs" />
+    <Compile Include="Enemy\Enemy.cs" />
+    <Compile Include="GameObjects\Arrow.cs" />
     <Compile Include="GameObjects\Items.cs" />
     <Compile Include="GameObjects\Weapon.cs" />
     <Compile Include="GameSettings.cs" />
+    <Compile Include="PlayerCharacter\Healthbar.cs" />
     <Compile Include="PlayerCharacter\PlayerEnums.cs" />
     <Compile Include="Screen%28s%29\MapTestScreen.cs" />
     <Compile Include="Map\Layer.cs" />
@@ -97,6 +102,7 @@
     <Compile Include="DrawBaseClasses\Screen.cs" />
     <Compile Include="GameManager%28s%29\ScreenManager.cs" />
     <Compile Include="DrawBaseClasses\cText.cs" />
+    <Compile Include="Screen%28s%29\PauseMenu.cs" />
     <Compile Include="Screen%28s%29\SplashScreen.cs" />
     <Compile Include="Controls\Control1.cs" />
     <Compile Include="Screen%28s%29\Test.cs" />
@@ -107,11 +113,6 @@
       <HintPath>$(MSBuildProgramFiles32)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Data.SQLite, Version=1.0.99.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files\System.Data.SQLite\2015\bin\System.Data.SQLite.dll</HintPath>
-    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -141,9 +142,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Database\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

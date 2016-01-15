@@ -103,7 +103,7 @@ namespace Game_Test
             {
                 temp_int = 2;
             }
-            else if (tileID > 1676 && tileID <= 1691)
+            else if (tileID > 1676 && tileID <= 1699)
             {
                 temp_int = 3;
             }
@@ -163,10 +163,10 @@ namespace Game_Test
                     }
                 }
             }
-            else if (tileID > 1676 && tileID <= 1691)
+            else if (tileID > 1676 && tileID <= 1699)
             {
                 int temp_tileID = 1;
-                Vector2 tileSheetDimension = new Vector2(5, 3);
+                Vector2 tileSheetDimension = new Vector2(6, 4);
                 for (int y = 0; y < tileSheetDimension.Y; y++)
                 {
                     for (int x = 0; x < tileSheetDimension.X; x++)

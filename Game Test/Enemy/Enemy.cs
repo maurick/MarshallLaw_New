@@ -17,9 +17,7 @@ namespace Game_Test
         private Vector2 PlayerPosition;
 
         private float SpeedScale; //Scales up the movementspeed
-
-        private float sprSheetX;
-
+        
         private Vector2 direction;
 
         //Slow down animation speed
@@ -28,11 +26,13 @@ namespace Game_Test
         //Collisionlayer and Tree layer(s)
         Layer[] layer;
 
+        public float sprSheetX { get; private set; }
         private PlayerEnums.Action sprSheetY { get; set; }
         public PlayerEnums.ActionState State { get; set; }
         public PlayerEnums.ActionState PlayerState { get; set; }
         public PlayerEnums.LookDirection lookDirection { get; set; }
         public PlayerEnums.LookDirection PlayerLookDirection { get; set; }
+        public int PlayerSprSheetX { get; set; }
 
         private SprSheetImage sprite;
 
@@ -46,6 +46,10 @@ namespace Game_Test
         private double duration = 0;
 
         private const int AggroDistance = 250;
+
+        public List<Arrow> arrows = new List<Arrow>();
+
+        private Healthbar healthbar;
 
         public Enemy(int X, int Y)
         {
@@ -62,11 +66,13 @@ namespace Game_Test
 
             direction = new Vector2(0, 1);
 
-            sprite = new SprSheetImage("Character/red_orc");
+            sprite = new SprSheetImage("EnemySprites/Male/red_orc");
 
-            SpeedScale = 0.75f;
+            SpeedScale = 0.5f;
 
-            weapon = new Weapon();
+            weapon = new Weapon("Weapons/Spear/Male/spear_male", PlayerEnums.Weapontype.Spear, sprite.Position, this);
+
+            healthbar = new Healthbar();
         }
 
         public void LoadContent()
@@ -83,11 +89,11 @@ namespace Game_Test
 
         public void Update(GameTime gameTime)
         {
+            #region Knockback
             Vector2 temp = CheckHit();
             if (temp.X == 1)
             {
-                //TODO
-                //Lose health
+                healthbar.LoseHealth(2 * GameSettings.Instance.Tilescale.X * 0.1f);
                 knockback = true;
                 knockbacktimer = 0.2f;
                 duration = 0;
@@ -96,8 +102,24 @@ namespace Game_Test
                 sprSheetX = 4;
                 knockbackdirection = temp;
             }
-
-            #region Knockback
+                foreach (Arrow Arrow in arrows)
+            {
+                Vector2 temp2 = CheckArrowHit(Arrow);
+                if (temp2.X == 1)
+                {
+                    healthbar.LoseHealth(2 * GameSettings.Instance.Tilescale.X * 0.1f);
+                    knockback = true;
+                    knockbacktimer = 0.2f;
+                    duration = 0;
+                    knockbackdirection.X = 0;
+                    sprSheetY = PlayerEnums.Action.Hit;
+                    sprSheetX = 4;
+                    knockbackdirection = temp2;
+                    arrows.Remove(Arrow);
+                    break;
+                }
+            }
+            
             if (knockback)
             {
                 SpeedScale = 2.0f;
@@ -134,7 +156,7 @@ namespace Game_Test
             }
             #endregion
 
-            Random rnd = new Random(), rnd2 = new Random();
+            Random rnd = new Random();
 
             if (State != PlayerEnums.ActionState.Thrust)
             {
@@ -145,7 +167,7 @@ namespace Game_Test
                     (PlayerPosition.Y - sprite.Position.Y < AggroDistance && PlayerPosition.Y - sprite.Position.Y > 0))) &&
                     PlayerinZone())
                 {
-                    SpeedScale = 1.0f;
+                    SpeedScale = 0.15f;
                     if (sprite.Position.Y - GameSettings.Instance.Tilescale.Y - PlayerPosition.Y > 0)
                     {
                         lookDirection = PlayerEnums.LookDirection.Up;
@@ -185,10 +207,10 @@ namespace Game_Test
                 #region Random Movement
                 else
                 {
-                    SpeedScale = 0.75f;
+                    SpeedScale = 0.5f;
                     if (duration <= 0)
                     {
-                        duration = rnd2.Next(1, 3);
+                        duration = rnd.Next(1, 3);
                         dir = rnd.Next(12);
                     }
                     else
@@ -265,6 +287,7 @@ namespace Game_Test
         {
             sprite.Draw(spriteBatch);
             weapon.Draw(spriteBatch);
+            healthbar.Draw(spriteBatch, sprite.Position);
         }
 
         private void Attack(GameTime gameTime)
@@ -311,7 +334,6 @@ namespace Game_Test
             float dirX = direction.X,
             dirY = direction.Y;
             
-
             //Scale the movement
             dirX *= SpeedScale * (32 / GameSettings.Instance.Tilescale.X);
             dirY *= SpeedScale * (32 / GameSettings.Instance.Tilescale.X);
@@ -366,7 +388,7 @@ namespace Game_Test
             for (int l = 2; l < layer.Length; l++)
                 ChangeAlpha(new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY), l);
             sprite.Position = new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY); //Set new position
-            weapon.setPosition(new Vector2(weapon.getPosition().X + dirX, weapon.getPosition().Y + dirY)); //Move weapon with you
+            weapon.setPosition(new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY)); //Move weapon with you
         }
 
         private Vector2 CheckCollision(Vector2 PositionNew, Vector2 PositionOld, Vector2 Direction)
@@ -439,57 +461,146 @@ namespace Game_Test
 
         private Vector2 CheckCollision2(Rectangle playerRect, int[] x, int[] y)
         {
-            float tilescale_x = GameSettings.Instance.Tilescale.X, tilescale_y = GameSettings.Instance.Tilescale.Y;
-            int TileID;
-            Rectangle rect;
             int temp1 = 0, temp2 = 0;
 
-            
-            TileID = layer[0].getTileID(x[0], y[0]);
-            if (TileID != 0)
-            {
-                rect = new Rectangle((x[0]) * (int)tilescale_x, (y[0]) * (int)tilescale_y, (int)tilescale_x, (int)tilescale_y);
-                if (rect.Intersects(playerRect))
-                {
-                    temp1 = 1;
-                }
-            }
-
-            TileID = layer[1].getTileID(x[0], y[0]);
-            if (TileID == 0)
-            {
-                rect = new Rectangle((x[0]) * (int)tilescale_x, (y[0]) * (int)tilescale_y, (int)tilescale_x, (int)tilescale_y);
-                if (rect.Intersects(playerRect))
-                {
-                    temp1 = 1;
-                    temp2 = 1;
-                }
-            }
-
-
-            TileID = layer[0].getTileID(x[1], y[1]);
-            if (TileID != 0)
-            {
-                rect = new Rectangle((x[1]) * (int)tilescale_x, (y[1]) * (int)tilescale_y, (int)tilescale_x, (int)tilescale_y);
-                if (rect.Intersects(playerRect))
-                {
-                    temp2 = 1;
-                }
-            }
-
-            TileID = layer[1].getTileID(x[1], y[1]);
-            if (TileID == 0)
-            {
-                rect = new Rectangle((x[1]) * (int)tilescale_x, (y[1]) * (int)tilescale_y, (int)tilescale_x, (int)tilescale_y);
-                if (rect.Intersects(playerRect))
-                {
-                    temp1 = 1;
-                    temp2 = 1;
-                }
-            }
-
+            temp1 = CheckCollision3(x[0], y[0], playerRect);
+            temp2 = CheckCollision3(x[1], y[1], playerRect);
 
             return new Vector2(temp1, temp2);
+        }
+
+        private int CheckCollision3(int x, int y, Rectangle playerRect)
+        {
+            float tilescale_x = GameSettings.Instance.Tilescale.X, tilescale_y = GameSettings.Instance.Tilescale.Y;
+            Rectangle rect;
+            int temp = 0;
+            int TileID = layer[0].getTileID(x, y);
+
+            if (TileID != 0)
+            {
+                switch (TileID)
+                {
+                    case 1677: //Full
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)tilescale_x, (int)tilescale_y);
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1678: //Tophalf
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)tilescale_x, (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1679: //Bottomhalf
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y + (int)(0.5 * tilescale_y), (int)tilescale_x, (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1680: //Diagonallefttoright
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        if (temp == 1)
+                            break;
+                        rect = new Rectangle(x * (int)tilescale_x + (int)(tilescale_x * 0.5), y * (int)tilescale_y + (int)(tilescale_x * 0.5), (int)(tilescale_x * 0.5), (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1681: //Diagonalrighttoleft
+                        rect = new Rectangle(x * (int)tilescale_x + (int)(tilescale_x * 0.5), y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        if (temp == 1)
+                            break;
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y + (int)(tilescale_x * 0.5), (int)(tilescale_x * 0.5), (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1683: //Righthalf
+                        rect = new Rectangle(x * (int)tilescale_x + (int)(tilescale_x * 0.5), y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)tilescale_y);
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1684: //Lefttopcorner
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)tilescale_x, (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        if (temp == 1)
+                            break;
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)tilescale_y);
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1685: //Righttopcorner
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)tilescale_x, (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        if (temp == 1)
+                            break;
+                        rect = new Rectangle(x * (int)tilescale_x + (int)(tilescale_x * 0.5), y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)tilescale_y);
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1686: //Lefttop
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1687: //Righttop
+                        rect = new Rectangle(x * (int)tilescale_x + (int)(tilescale_x * 0.5), y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1689: //Lefthalf
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)tilescale_y);
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1690: //Leftbottomcorner
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)tilescale_y);
+                        temp = CheckCollision4(rect, playerRect);
+                        if (temp == 1)
+                            break;
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y + (int)(0.5 * tilescale_y), (int)tilescale_x, (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1691: //Rightbottomcorner
+                        rect = new Rectangle(x * (int)tilescale_x + (int)(tilescale_x * 0.5), y * (int)tilescale_y, (int)(tilescale_x * 0.5), (int)tilescale_y);
+                        temp = CheckCollision4(rect, playerRect);
+                        if (temp == 1)
+                            break;
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y + (int)(0.5 * tilescale_y), (int)tilescale_x, (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1692: //Leftbottom
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y + (int)(tilescale_x * 0.5), (int)(tilescale_x * 0.5), (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1693: //Rightbottom
+                        rect = new Rectangle(x * (int)tilescale_x + (int)(tilescale_x * 0.5), y * (int)tilescale_y + (int)(tilescale_x * 0.5), (int)(tilescale_x * 0.5), (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1694: //Bridgeright
+                        rect = new Rectangle(x * (int)tilescale_x + (int)(0.125 * tilescale_x), y * (int)tilescale_y, (int)(tilescale_x * 0.875), (int)(tilescale_y));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1688: //Bridgeleft
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)(tilescale_x * 0.875), (int)(tilescale_y));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1695: //Bridgebottomright
+                        rect = new Rectangle(x * (int)tilescale_x + (int)(0.125 * tilescale_x), y * (int)tilescale_y + (int)(tilescale_y * 0.5), (int)(tilescale_x * 0.875), (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1696: //Bridgebottomleft
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y + (int)(tilescale_y * 0.5), (int)(tilescale_x * 0.875), (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1697: //Bridgetopright
+                        rect = new Rectangle(x * (int)tilescale_x + (int)(0.125 * tilescale_x), y * (int)tilescale_y, (int)(tilescale_x * 0.875), (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+                    case 1698: //Bridgetopleft
+                        rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)(tilescale_x * 0.875), (int)(tilescale_y * 0.5));
+                        temp = CheckCollision4(rect, playerRect);
+                        break;
+
+                }
+            }
+            return temp;
+        }
+
+        private int CheckCollision4(Rectangle rect, Rectangle playerRect)
+        {
+            if (rect.Intersects(playerRect))
+            {
+                return 1;
+            }
+            else return 0;
         }
 
         private void ChangeAlpha(Vector2 position, int number)
@@ -572,38 +683,60 @@ namespace Game_Test
         private Vector2 CheckHit()
         {
             Vector2 returnvalue = new Vector2(0, 0);
-            Rectangle Enemyrect = new Rectangle(new Point((int)(sprite.Position.X + 0.5 * GameSettings.Instance.Tilescale.X), (int)(sprite.Position.Y + GameSettings.Instance.Tilescale.Y)), new Point((int)GameSettings.Instance.Tilescale.X, (int)(GameSettings.Instance.Tilescale.Y))),
+            Rectangle Enemyrect = new Rectangle(new Point((int)(sprite.Position.X + 0.5 * GameSettings.Instance.Tilescale.X), (int)sprite.Position.Y), new Point((int)GameSettings.Instance.Tilescale.X, (int)(GameSettings.Instance.Tilescale.Y * 2))),
                 Playerrect = new Rectangle((int)(PlayerPosition.X + 0.5 * GameSettings.Instance.Tilescale.X), (int)(PlayerPosition.Y + GameSettings.Instance.Tilescale.Y), (int)GameSettings.Instance.Tilescale.X, (int)(GameSettings.Instance.Tilescale.Y));
-            if (PlayerState == PlayerEnums.ActionState.Thrust)
+            if (PlayerState == PlayerEnums.ActionState.Thrust && PlayerSprSheetX == 5)
             {
                 switch (PlayerLookDirection)
                 {
                     case PlayerEnums.LookDirection.Up:
-                        Playerrect.X -= (int)GameSettings.Instance.Tilescale.X / 4;
-                        Playerrect.Height = 2 * (int)GameSettings.Instance.Tilescale.Y / 4;
+                        Playerrect.Y -= (int)GameSettings.Instance.Tilescale.Y / 4;
+                        Playerrect.Height = (int)GameSettings.Instance.Tilescale.Y;
                         if (Enemyrect.Intersects(Playerrect))
                             returnvalue = new Vector2(1, 1);
                         break;
                     case PlayerEnums.LookDirection.left:
-                        Playerrect.Y -= (int)GameSettings.Instance.Tilescale.Y / 4;
-                        Playerrect.Width = 2 * (int)GameSettings.Instance.Tilescale.X / 4;
+                        Playerrect.X -= (int)GameSettings.Instance.Tilescale.X / 4;
+                        Playerrect.Width = (int)GameSettings.Instance.Tilescale.X;
                         if (Enemyrect.Intersects(Playerrect))
                             returnvalue = new Vector2(1, 2);
                         break;
                     case PlayerEnums.LookDirection.Down:
-                        Playerrect.Height = 2 * (int)GameSettings.Instance.Tilescale.Y / 4;
+                        Playerrect.Height = (int)GameSettings.Instance.Tilescale.Y;
                         Playerrect.Y = (int)(PlayerPosition.Y + (2 * GameSettings.Instance.Tilescale.Y -  0.5 * Playerrect.Height));
                         if (Enemyrect.Intersects(Playerrect))
                             returnvalue = new Vector2(1, 3);
                         break;
                     case PlayerEnums.LookDirection.Right:
-                        Playerrect.Width = 2 * (int)GameSettings.Instance.Tilescale.X / 4;
+                        Playerrect.Width = (int)GameSettings.Instance.Tilescale.X;
                         Playerrect.X = (int)(PlayerPosition.X + (1.5 * GameSettings.Instance.Tilescale.X -  0.5 * Playerrect.Width));
                         if (Enemyrect.Intersects(Playerrect))
                             returnvalue = new Vector2(1, 4);
                         break;
                 }
             }
+            return returnvalue;
+        }
+
+        private Vector2 CheckArrowHit(Arrow Arrow)
+        {
+            float tilescale_x = GameSettings.Instance.Tilescale.X, tilescale_y = GameSettings.Instance.Tilescale.Y;
+            Vector2 returnvalue = new Vector2(0, 0);
+            Rectangle Enemyrect = new Rectangle(new Point((int)(sprite.Position.X + 0.5 * GameSettings.Instance.Tilescale.X), (int)(sprite.Position.Y + GameSettings.Instance.Tilescale.Y)), new Point((int)GameSettings.Instance.Tilescale.X, (int)(GameSettings.Instance.Tilescale.Y)));
+            
+            if (Enemyrect.Intersects(Arrow.ArrowRect))
+            {
+                returnvalue.X = 1;
+                if (Arrow.sprSheet == new Vector2(2, 1))
+                    returnvalue.Y = 1;
+                if (Arrow.sprSheet == new Vector2(1, 2))
+                    returnvalue.Y = 2;
+                if (Arrow.sprSheet == new Vector2(2, 2))
+                    returnvalue.Y = 3;
+                if (Arrow.sprSheet == new Vector2(1, 1))
+                    returnvalue.Y = 4;
+            }
+
             return returnvalue;
         }
 
