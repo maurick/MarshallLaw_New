@@ -14,14 +14,14 @@ namespace Game_Test
         MenuItem[] menuItems; //The Class MenuItem is at the bottom of the this Code
         Vector2 menuLenght;
         Vector2 menuPosition;
-        ArduinoControllerPlayer controller;
+        Arduino controller;
         int currentSelected;
         string[] text = { "Start", "Options", "Exit"};
 
     public MenuScreen()
         {
             //Create the Images for the Menuscreen
-            controller = new ArduinoControllerPlayer(1);
+            controller = new Arduino(1);
             background = new Image("TitleScreen/background");
             sign = new Image("TitleScreen/woodsign_marshal_law");
             poster = new Image("TitleScreen/gun_poster1280x720");

@@ -45,7 +45,7 @@ namespace Game_Test
         private double knockbacktimer;
         private Vector2 knockbackdirection;
 
-        ArduinoControllerPlayer controller;
+        Arduino controller;
 
         public Player()
         {
@@ -64,7 +64,7 @@ namespace Game_Test
 
             weapon = new Weapon();
 
-            controller = new ArduinoControllerPlayer(1);
+            controller = new Arduino(1);
         }
 
         public void LoadContent(int X, int Y)
@@ -181,7 +181,7 @@ namespace Game_Test
             bool ControlsActive = false;
             for (int i = 0; i < 8; i++)
             {
-                if(controller.fbutt(i))
+                if(controller.Button(i))
                 {
                     ControlsActive = true;
                 }
