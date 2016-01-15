@@ -10,7 +10,7 @@ namespace Game_Test
     public class Arduino
     {
         private SerialPort Port;
-        List<SerialPort> Ports;
+        public List<SerialPort> Ports;
         public bool portFound;
         public bool ControllerConnected;
 
@@ -321,6 +321,8 @@ namespace Game_Test
         {
             if (ControllerConnected)
             {
+                //SendStats();
+                Save();
                 Write("ControllerOff");
             }
         }

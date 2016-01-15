@@ -79,7 +79,7 @@ namespace Game_Test
             P_poster.Update(gameTime);
 
             //If the down key is selected then move the selected 1 down
-            if (InputManager.Instance.KeyPressed(Keys.Down) || ScreenManager.Instance.Controller.Down(true))
+            if (InputManager.Instance.KeyPressed(Keys.Down) || ScreenManager.Instance.Controllers[0].Down(true))
             {
                 P_menuItems[P_currentSelected].Selected = false;
                 P_currentSelected++;
@@ -89,7 +89,7 @@ namespace Game_Test
             }
 
             //If the up key is selected then move the selected 1 up
-            if (InputManager.Instance.KeyPressed(Keys.Up) || ScreenManager.Instance.Controller.Up(true))
+            if (InputManager.Instance.KeyPressed(Keys.Up) || ScreenManager.Instance.Controllers[0].Up(true))
             {
                 P_menuItems[P_currentSelected].Selected = false;
                 P_currentSelected--;
@@ -98,7 +98,7 @@ namespace Game_Test
                 P_menuItems[P_currentSelected].Selected = true;
             }
 
-            if (P_menuItems[P_currentSelected].ItemID == 0 && ((InputManager.Instance.KeyPressed(Keys.Enter)) || ScreenManager.Instance.Controller.dbutt(true)))
+            if (P_menuItems[P_currentSelected].ItemID == 0 && ((InputManager.Instance.KeyPressed(Keys.Enter)) || ScreenManager.Instance.Controllers[0].dbutt(true)))
             {
                 Pause = true;
             }
@@ -111,7 +111,7 @@ namespace Game_Test
                     break;
             }
             //If the Exit button is selected and Enter has been pressed exit the game
-            if (P_menuItems[P_currentSelected].ItemID == exitID && ((InputManager.Instance.KeyPressed(Keys.Enter)) || ScreenManager.Instance.Controller.dbutt(true)) && exitID != -1)
+            if (P_menuItems[P_currentSelected].ItemID == exitID && ((InputManager.Instance.KeyPressed(Keys.Enter)) || ScreenManager.Instance.Controllers[0].dbutt(true)) && exitID != -1)
             {
                 ScreenManager.Instance.ChangeScreen("MenuScreen");
             }

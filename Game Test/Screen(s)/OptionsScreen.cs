@@ -98,7 +98,7 @@ namespace Game_Test
             }
 
             //When the Escape key has been pressed exit the game
-            if (InputManager.Instance.KeyPressed(Keys.Escape) || ScreenManager.Instance.Controller.ubutt(true))
+            if (InputManager.Instance.KeyPressed(Keys.Escape) || ScreenManager.Instance.Controllers[0].ubutt(true))
             {
                 ScreenManager.Instance.ChangeScreen("MenuScreen");
             }

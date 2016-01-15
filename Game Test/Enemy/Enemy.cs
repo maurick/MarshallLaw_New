@@ -73,7 +73,7 @@ namespace Game_Test
 
             SpeedScale = 0.5f;
 
-            weapon = new Weapon("Weapons/Spear/Male/spear_male", PlayerEnums.Weapontype.Spear, sprite.Position, this);
+            weapon = new Weapon("Weapons/Spear/Male/spear_male", PlayerEnums.Weapontype.Spear, sprite.Position, 1, this);
 
             healthbar = new Healthbar();
         }
@@ -121,6 +121,7 @@ namespace Game_Test
                     sprSheetX = 4;
                     knockbackdirection = temp2;
                     arrows.Remove(Arrow);
+                    
                     break;
                 }
             }

@@ -22,7 +22,6 @@ namespace Game_Test
         private int currentStamina;
 
         private List<Perks> playerPerks;
-        private List<Items> inventory;
 
         //properties
         public string Name {  get { return this.name; } }
@@ -50,7 +49,6 @@ namespace Game_Test
             this.xP = 0; //Default Value
             this.lvl = 1; //Default Value
             this.playerPerks = new List<Perks> {startperk };
-            this.inventory = new List<Items> { };
 
             this.currentHP = this.totalHP;
             this.currentEnergy = this.totalEnergy;
@@ -58,15 +56,7 @@ namespace Game_Test
         }
 
         //methods
-        public Items InventoryItem(int index)
-        {
-            return inventory[index];
-        }
 
-        public List<Items> Inventory()
-        {
-            return inventory;
-        }
 
         public Perks PlayerPerk(int index)
         {
