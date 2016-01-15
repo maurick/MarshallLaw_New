@@ -109,18 +109,26 @@ namespace Game_Test
             player.Update(gameTime);
             foreach (Enemy enemy in enemies)
             {
-                enemy.SendPosition(player.GetPosition());
-                enemy.PlayerLookDirection = player.lookDirection;
-                enemy.PlayerState = player.State;
-                enemy.PlayerSprSheetX = (int)player.sprSheetX;
-                enemy.Update(gameTime);
+                if (enemy.healthbar.rectwidth == 1)
+                {
+                    enemy.UnloadContent();
+                    enemies.Remove(enemy);
+                }
+                else
+                {
+                    enemy.SendPosition(player.GetPosition());
+                    enemy.PlayerLookDirection = player.lookDirection;
+                    enemy.PlayerState = player.State;
+                    enemy.PlayerSprSheetX = (int)player.sprSheetX;
+                    enemy.Update(gameTime);
 
-                player.SendPosition(enemy.GetPosition());
-                player.EnemyLookDirection = enemy.lookDirection;
-                player.EnemyState = enemy.State;
-                player.EnemySprSheetX = (int)enemy.sprSheetX;
+                    player.SendPosition(enemy.GetPosition());
+                    player.EnemyLookDirection = enemy.lookDirection;
+                    player.EnemyState = enemy.State;
+                    player.EnemySprSheetX = (int)enemy.sprSheetX;
 
-                enemy.arrows = player.Arrows;
+                    enemy.arrows = player.Arrows;
+                }
             }
 
             //foreach (var layer in Layers)

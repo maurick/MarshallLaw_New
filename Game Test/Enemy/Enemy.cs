@@ -49,7 +49,7 @@ namespace Game_Test
 
         public List<Arrow> arrows = new List<Arrow>();
 
-        private Healthbar healthbar;
+        public Healthbar healthbar;
 
         public Enemy(int X, int Y)
         {
