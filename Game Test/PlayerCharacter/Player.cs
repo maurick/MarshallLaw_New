@@ -155,7 +155,7 @@ namespace Game_Test
             //controller.Update();
             //Check if keys are pressed
             #region Attack
-            if (InputManager.Instance.KeyDown(Keys.Space) || ScreenManager.Instance.Controller.dbutt())
+            if (InputManager.Instance.KeyDown(Keys.Space) || ScreenManager.Instance.Controller.dbutt(false))
             {
                 switch (CurrentWeapon.weapontype)
                 {
@@ -177,28 +177,28 @@ namespace Game_Test
             #region Movement
             else
             {
-                if (InputManager.Instance.KeyDown(Keys.W) || ScreenManager.Instance.Controller.Up())
+                if (InputManager.Instance.KeyDown(Keys.W) || ScreenManager.Instance.Controller.Up(false))
                 {
                     State = PlayerEnums.ActionState.Walk;
                     lookDirection = PlayerEnums.LookDirection.Up;
                     direction.Y = -1;
                     Interval = BaseInterval * (int)State / (int)PlayerEnums.ActionState.Walk;
                 }
-                if (InputManager.Instance.KeyDown(Keys.S) || ScreenManager.Instance.Controller.Down())
+                if (InputManager.Instance.KeyDown(Keys.S) || ScreenManager.Instance.Controller.Down(false))
                 {
                     State = PlayerEnums.ActionState.Walk;
                     lookDirection = PlayerEnums.LookDirection.Down;
                     direction.Y = 1;
                     Interval = BaseInterval * (int)State / (int)PlayerEnums.ActionState.Walk;
                 }
-                if (InputManager.Instance.KeyDown(Keys.A) || ScreenManager.Instance.Controller.Left())
+                if (InputManager.Instance.KeyDown(Keys.A) || ScreenManager.Instance.Controller.Left(false))
                 {
                     State = PlayerEnums.ActionState.Walk;
                     lookDirection = PlayerEnums.LookDirection.left;
                     direction.X = -1;
                     Interval = BaseInterval * (int)State / (int)PlayerEnums.ActionState.Walk;
                 }
-                if (InputManager.Instance.KeyDown(Keys.D) || ScreenManager.Instance.Controller.Right())
+                if (InputManager.Instance.KeyDown(Keys.D) || ScreenManager.Instance.Controller.Right(false))
                 {
                     State = PlayerEnums.ActionState.Walk;
                     lookDirection = PlayerEnums.LookDirection.Right;
@@ -241,7 +241,7 @@ namespace Game_Test
             #endregion
 
             #region SwitchWeapon
-            if (InputManager.Instance.KeyPressed(Keys.LeftShift) || ScreenManager.Instance.Controller.lbutt())
+            if (InputManager.Instance.KeyPressed(Keys.LeftShift) || ScreenManager.Instance.Controller.lbutt(true))
             {
                 int tempID = 1;
                 if (CurrentWeapon.WeaponID != CurrentWeapon.GetMaxID)
