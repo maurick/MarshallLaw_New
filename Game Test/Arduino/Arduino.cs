@@ -319,7 +319,10 @@ namespace Game_Test
 
         public void Exit()
         {
-            Write("ControllerOff");
+            if (ControllerConnected)
+            {
+                Write("ControllerOff");
+            }
         }
     }
 }
