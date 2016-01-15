@@ -7,11 +7,12 @@ using Microsoft.Xna.Framework;
 
 namespace Game_Test
 {
-    class Healthbar
+    public class Healthbar
     {
         Texture2D TextureRect, HorLine, VerLine;
         Color[] HorLineData, VerLineData, Rectangle;
-        float width, height, rectwidth;
+        private float width, height;
+        public float rectwidth;
 
         public Healthbar()
         {
@@ -48,8 +49,9 @@ namespace Game_Test
 
         public void LoseHealth(float value)
         {
-            if (rectwidth - value >= 0)
-                rectwidth -= value;
+            rectwidth -= value;
+            if (rectwidth < 1)
+                rectwidth = 0;
             Rectangle = new Color[(int)(rectwidth * height)];
         }
     }
