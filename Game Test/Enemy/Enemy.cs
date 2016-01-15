@@ -50,6 +50,9 @@ namespace Game_Test
         public List<Arrow> arrows = new List<Arrow>();
 
         public Healthbar healthbar;
+        public bool Die { get; set; }
+        public bool AnimationFinished { get; private set; }
+        private double deathtimer = 0;
 
         public Enemy(int X, int Y)
         {
@@ -89,9 +92,11 @@ namespace Game_Test
 
         public void Update(GameTime gameTime)
         {
+            if (Die)
+                return;
             #region Knockback
             Vector2 temp = CheckHit();
-            if (temp.X == 1)
+            if (temp.X == 1 && knockback == false)
             {
                 healthbar.LoseHealth(2 * GameSettings.Instance.Tilescale.X * 0.1f);
                 knockback = true;
@@ -105,9 +110,9 @@ namespace Game_Test
                 foreach (Arrow Arrow in arrows)
             {
                 Vector2 temp2 = CheckArrowHit(Arrow);
-                if (temp2.X == 1)
+                if (temp2.X == 1 && knockback == false)
                 {
-                    healthbar.LoseHealth(2 * GameSettings.Instance.Tilescale.X * 0.1f);
+                    healthbar.LoseHealth(2 * GameSettings.Instance.Tilescale.X * 0.05f);
                     knockback = true;
                     knockbacktimer = 0.2f;
                     duration = 0;
@@ -766,6 +771,26 @@ namespace Game_Test
                 }
             }
             return returnvalue;
+        }
+
+        public void DieAnimation(GameTime gameTime)
+        {
+            if (deathtimer >= 5)
+            {
+                AnimationFinished = true;
+                return;
+            }
+            if (sprSheetY != PlayerEnums.Action.Hit)
+            {
+                sprSheetY = PlayerEnums.Action.Hit;
+                sprite.SprSheetY = (int)sprSheetY;
+                sprite.SprSheetX = 5;
+                sprite.Update(gameTime);
+                weapon.SprSheetX = 1;
+                weapon.SprSheetY = (int)PlayerEnums.Action.WalkLeft;
+                weapon.Update(gameTime);
+            }
+            deathtimer += gameTime.ElapsedGameTime.TotalSeconds;
         }
     }
 }

@@ -109,10 +109,16 @@ namespace Game_Test
             player.Update(gameTime);
             foreach (Enemy enemy in enemies)
             {
-                if (enemy.healthbar.rectwidth == 1)
+                if (enemy.healthbar.rectwidth == 1 && enemy.AnimationFinished == false)
+                {
+                    enemy.Die = true;
+                    enemy.DieAnimation(gameTime);
+                }
+                if (enemy.AnimationFinished)
                 {
                     enemy.UnloadContent();
                     enemies.Remove(enemy);
+                    break;
                 }
                 else
                 {
