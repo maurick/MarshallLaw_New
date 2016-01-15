@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace Game_Test
 {
-    class Arduino
+    public class Arduino
     {
         private SerialPort Port;
         List<SerialPort> Ports;
@@ -59,7 +59,7 @@ namespace Game_Test
             }
             catch (Exception e)
             {
-
+                portFound = false;
             }
         }
 
@@ -134,6 +134,7 @@ namespace Game_Test
             Port.Close();
             return message;
         }
+
 
         public bool MessageAvailable()
         {

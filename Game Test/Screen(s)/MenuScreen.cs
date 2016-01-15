@@ -14,14 +14,12 @@ namespace Game_Test
         MenuItem[] menuItems; //The Class MenuItem is at the bottom of the this Code
         Vector2 menuLenght;
         Vector2 menuPosition;
-        Arduino controller;
         int currentSelected;
         string[] text = { "Start", "Options", "Exit"};
 
     public MenuScreen()
         {
             //Create the Images for the Menuscreen
-            controller = new Arduino(1);
             background = new Image("TitleScreen/background");
             sign = new Image("TitleScreen/woodsign_marshal_law");
             poster = new Image("TitleScreen/gun_poster1280x720");
@@ -110,13 +108,10 @@ namespace Game_Test
 
             if (background.Alpha > 0.0f)
                 IsVisible = true;
-            if (controller != null)
-            {
-                controller.Update();
-
+            
 
                 //If the down key is selected then move the selected 1 down
-                if (InputManager.Instance.KeyPressed(Keys.Down) || controller.MenuDown())
+                if (InputManager.Instance.KeyPressed(Keys.Down) || ScreenManager.Instance.Controller.MenuDown())
                 {
                     menuItems[currentSelected].Selected = false;
                     currentSelected++;
@@ -127,7 +122,7 @@ namespace Game_Test
                 }
 
                 //If the up key is selected then move the selected 1 up
-                if (InputManager.Instance.KeyPressed(Keys.Up) || controller.MenuUp())
+                if (InputManager.Instance.KeyPressed(Keys.Up) || ScreenManager.Instance.Controller.MenuUp())
                 {
                     menuItems[currentSelected].Selected = false;
                     currentSelected--;
@@ -136,27 +131,24 @@ namespace Game_Test
                     menuItems[currentSelected].Selected = true;
                 }
 
-                if (menuItems[currentSelected].ItemID == 0 && (InputManager.Instance.KeyPressed(Keys.Enter) || controller.dbutt()))
+                if (menuItems[currentSelected].ItemID == 0 && (InputManager.Instance.KeyPressed(Keys.Enter) || ScreenManager.Instance.Controller.dbutt()))
                 {
-                    controller = null;
                     ScreenManager.Instance.ChangeScreen("CharCreationScreen");
                 }
 
                 //If the Exit button is selected and Enter has been pressed exit the game
-                if (menuItems[currentSelected].ItemID == 1 && (InputManager.Instance.KeyPressed(Keys.Enter) || controller.dbutt()))
+                if (menuItems[currentSelected].ItemID == 1 && (InputManager.Instance.KeyPressed(Keys.Enter) || ScreenManager.Instance.Controller.dbutt()))
                 {
-                    controller = null;
                     ScreenManager.Instance.ChangeScreen("MapTestScreen");
                 }
 
                 //If the Exit button is selected and Enter has been pressed exit the game
-                if (menuItems[currentSelected].ItemID == 2 && (InputManager.Instance.KeyPressed(Keys.Enter) || controller.dbutt()))
+                if (menuItems[currentSelected].ItemID == 2 && (InputManager.Instance.KeyPressed(Keys.Enter) || ScreenManager.Instance.Controller.dbutt()))
                 {
-                    controller = null;
                     GameInstance.ExitGame = true;
                 }
             }
-        }
+        
 
         public override void Draw(SpriteBatch spriteBatch)
         {
