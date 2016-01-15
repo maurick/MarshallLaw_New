@@ -53,6 +53,9 @@ namespace Game_Test
 
         public bool Debug { get; private set; }
 
+        Texture2D TextureRect, HorLine, VerLine;
+        Color[] HorLineData, VerLineData, Rectangle;
+
         public Player()
         {
             //TODO add playerstats
@@ -80,6 +83,10 @@ namespace Game_Test
             inventory.Add(CurrentWeapon);
             Weapon tempweapon = new Weapon("Weapons/Spear/Male/spear_male", PlayerEnums.Weapontype.Spear, sprite.Position, this);
             inventory.Add(tempweapon);
+            
+            HorLineData = new Color[(int)(2 * GameSettings.Instance.Tilescale.X * 1)];
+            VerLineData = new Color[(int)(1 * 0.25 * GameSettings.Instance.Tilescale.Y)];
+            Rectangle = new Color[(int)(2 * GameSettings.Instance.Tilescale.X * 0.25 * GameSettings.Instance.Tilescale.Y)];
         }
 
         public void UnloadContent()
@@ -271,7 +278,26 @@ namespace Game_Test
             CurrentWeapon.Draw(spriteBatch);
             foreach (Arrow arrow in Arrows)
                 arrow.Draw(spriteBatch);
-            
+
+            TextureRect = new Texture2D(spriteBatch.GraphicsDevice, (int)(2 * GameSettings.Instance.Tilescale.X), (int)(0.25 * GameSettings.Instance.Tilescale.Y));
+            HorLine = new Texture2D(spriteBatch.GraphicsDevice, (int)(2 * GameSettings.Instance.Tilescale.X), 1);
+            VerLine = new Texture2D(spriteBatch.GraphicsDevice, 1, (int)(0.25 * GameSettings.Instance.Tilescale.Y));
+            for (int i = 0; i < HorLineData.Length; i++)
+                HorLineData[i] = Color.Black;
+            for (int i = 0; i < VerLineData.Length; i++)
+                VerLineData[i] = Color.Black;
+            for (int i = 0; i < Rectangle.Length; i++)
+                Rectangle[i] = Color.Red;
+
+            TextureRect.SetData(Rectangle);
+            HorLine.SetData(HorLineData);
+            VerLine.SetData(VerLineData);
+
+            spriteBatch.Draw(TextureRect, sprite.Position, Color.White);
+            spriteBatch.Draw(HorLine, sprite.Position, Color.White);
+            spriteBatch.Draw(HorLine, sprite.Position + new Vector2(0,(int)(0.25 * GameSettings.Instance.Tilescale.Y)), Color.White);
+            spriteBatch.Draw(VerLine, sprite.Position, Color.White);
+            spriteBatch.Draw(VerLine, sprite.Position + new Vector2((int)(2 * GameSettings.Instance.Tilescale.X), 0), Color.White);
         }
 
         private void Attack(GameTime gameTime)
@@ -762,6 +788,11 @@ namespace Game_Test
         {
             this.enemies.Clear();
             this.enemies = enemies;            
+        }
+
+        private void LoseHealth(int value)
+        {
+            Rectangle = new Color[value * (int)(0.25 * GameSettings.Instance.Tilescale.Y)];
         }
     }
 }
