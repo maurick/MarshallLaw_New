@@ -82,6 +82,7 @@
     <Compile Include="GameObjects\Items.cs" />
     <Compile Include="GameObjects\Weapon.cs" />
     <Compile Include="GameSettings.cs" />
+    <Compile Include="PlayerCharacter\Healthbar.cs" />
     <Compile Include="PlayerCharacter\PlayerEnums.cs" />
     <Compile Include="Screen%28s%29\MapTestScreen.cs" />
     <Compile Include="Map\Layer.cs" />

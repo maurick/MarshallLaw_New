@@ -49,6 +49,8 @@ namespace Game_Test
 
         public List<Arrow> arrows = new List<Arrow>();
 
+        private Healthbar healthbar;
+
         public Enemy(int X, int Y)
         {
             //TODO add playerstats
@@ -69,6 +71,8 @@ namespace Game_Test
             SpeedScale = 0.5f;
 
             weapon = new Weapon("Weapons/Spear/Male/spear_male", PlayerEnums.Weapontype.Spear, sprite.Position, this);
+
+            healthbar = new Healthbar();
         }
 
         public void LoadContent()
@@ -89,8 +93,7 @@ namespace Game_Test
             Vector2 temp = CheckHit();
             if (temp.X == 1)
             {
-                //TODO
-                //Lose health
+                healthbar.LoseHealth(2 * GameSettings.Instance.Tilescale.X * 0.1f);
                 knockback = true;
                 knockbacktimer = 0.2f;
                 duration = 0;
@@ -104,8 +107,7 @@ namespace Game_Test
                 Vector2 temp2 = CheckArrowHit(Arrow);
                 if (temp2.X == 1)
                 {
-                    //TODO
-                    //Lose health
+                    healthbar.LoseHealth(2 * GameSettings.Instance.Tilescale.X * 0.1f);
                     knockback = true;
                     knockbacktimer = 0.2f;
                     duration = 0;
@@ -285,6 +287,7 @@ namespace Game_Test
         {
             sprite.Draw(spriteBatch);
             weapon.Draw(spriteBatch);
+            healthbar.Draw(spriteBatch, sprite.Position);
         }
 
         private void Attack(GameTime gameTime)
