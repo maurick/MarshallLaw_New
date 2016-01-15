@@ -103,7 +103,7 @@ namespace Game_Test
             foreach (Enemy enemy in enemies)
             {
                 temp = CheckHit();
-                if (temp.X == 1)
+                if (temp.X == 1 && knockback == false)
                 {
                     Healthbar.LoseHealth(2 * GameSettings.Instance.Tilescale.X * 0.1f);
                     knockback = true;
