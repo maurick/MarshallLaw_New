@@ -67,10 +67,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Animation_Effects\FadeEffect.cs" />
-    <Compile Include="Arduino\ArduinoControllerPlayer.cs" />
-    <Compile Include="Arduino\ArduinoRead.cs" />
-    <Compile Include="Arduino\ArduinoCmds.cs" />
-    <Compile Include="Arduino\ArduinoPortDetection.cs" />
+    <Compile Include="Arduino\Arduino.cs" />
     <Compile Include="PlayerCharacter\CharacterCreator.cs" />
     <Compile Include="Controls\CharCreation_Member.cs" />
     <Compile Include="Controls\Options_Members.cs" />
