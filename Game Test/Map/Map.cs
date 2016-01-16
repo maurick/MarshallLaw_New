@@ -40,7 +40,7 @@ namespace Game_Test
             mapDimensions = mapLoader.GetMapDimensions();
             NumberLayers = mapLoader.GetNumLayers();
             spriteSheets = mapLoader.GetSpritesheetList();
-
+            
             for (int i = 0; i < ScreenManager.Instance.Controllers.Count; i++)
             {
                 players.Add(new Player(i));

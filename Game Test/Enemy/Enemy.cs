@@ -54,7 +54,6 @@ namespace Game_Test
         public Healthbar healthbar;
         public bool Die { get; set; }
         public bool AnimationFinished { get; private set; }
-        private double deathtimer = 0;
 
         public Enemy(int X, int Y)
         {
@@ -126,7 +125,7 @@ namespace Game_Test
                 Vector2 temp2 = CheckArrowHit(Arrow);
                 if (temp2.X == 1 && knockback == false)
                 {
-                    healthbar.LoseHealth(2 * GameSettings.Instance.Tilescale.X * 0.125f);
+                    healthbar.LoseHealth(2 * GameSettings.Instance.Tilescale.X * 1f);
                     knockback = true;
                     knockbacktimer = 0.2f;
                     duration = 0;
@@ -791,22 +790,26 @@ namespace Game_Test
 
         public void DieAnimation(GameTime gameTime)
         {
-            if (deathtimer >= 5)
+            if (sprSheetX >= (int)PlayerEnums.ActionState.Slash)
             {
                 AnimationFinished = true;
                 return;
             }
             if (sprSheetY != PlayerEnums.Action.Hit)
             {
+                Interval = 0.2f;
                 sprSheetY = PlayerEnums.Action.Hit;
                 sprite.SprSheetY = (int)sprSheetY;
-                sprite.SprSheetX = 5;
+                sprite.SprSheetX = 0;
+                sprSheetX = 0;
                 sprite.Update(gameTime);
                 weapon.SprSheetX = 1;
                 weapon.SprSheetY = (int)PlayerEnums.Action.WalkLeft;
                 weapon.Update(gameTime);
             }
-            deathtimer += gameTime.ElapsedGameTime.TotalSeconds;
+            sprSheetX += (float)gameTime.ElapsedGameTime.TotalMilliseconds / gameTime.ElapsedGameTime.Milliseconds * Interval;
+            sprite.SprSheetX = (int)sprSheetX;
+            sprite.Update(gameTime);
         }
     }
 }

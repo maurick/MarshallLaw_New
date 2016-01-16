@@ -14,7 +14,7 @@ namespace Game_Test
         private Vector2 P_menuLenght;
         private Vector2 P_menuPosition;
         private int P_currentSelected;
-        private string[] P_text = { "Continue", "Add Controller", "Exit to menu" };
+        private string[] P_text = { "Continue", "Exit to menu" };
         private PauseMenuItem[] P_menuItems;
         public bool Pause { get; private set; }
 
