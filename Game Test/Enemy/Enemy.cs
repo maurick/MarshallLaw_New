@@ -508,6 +508,13 @@ namespace Game_Test
             Rectangle rect;
             int temp = 0;
             int TileID = layer[0].getTileID(x, y);
+            int TileID2 = layer[1].getTileID(x, y);
+
+            if (TileID2 != 0)
+            {
+                rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)tilescale_x, (int)tilescale_y);
+                temp = CheckCollision4(rect, playerRect);
+            }
 
             if (TileID != 0)
             {
