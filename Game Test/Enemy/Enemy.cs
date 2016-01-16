@@ -49,6 +49,7 @@ namespace Game_Test
         private bool Aggro = false;
 
         public List<Arrow> arrows = new List<Arrow>();
+        public List<Arrow> HitArrows = new List<Arrow>();
 
         public Healthbar healthbar;
         public bool Die { get; set; }
@@ -82,6 +83,7 @@ namespace Game_Test
             PlayerLookDirection = new List<PlayerEnums.LookDirection>();
             PlayerState = new List<PlayerEnums.ActionState>();
             PlayerSprSheetX = new List<int>();
+            PlayerPosition = new List<Vector2>();
         }
 
         public void LoadContent()
@@ -132,6 +134,7 @@ namespace Game_Test
                     sprSheetY = PlayerEnums.Action.Hit;
                     sprSheetX = 4;
                     knockbackdirection = temp2;
+                    HitArrows.Add(Arrow);
                     arrows.Remove(Arrow);
                     break;
                 }

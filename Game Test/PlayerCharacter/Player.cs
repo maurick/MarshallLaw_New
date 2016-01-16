@@ -13,6 +13,8 @@ namespace Game_Test
     {
         //Playerstats player;
 
+        public int PlayerID { get; set; }
+
         private Vector2 EnemyPosition;
 
         private float SpeedScale; //Scales up the movementspeed
@@ -329,7 +331,7 @@ namespace Game_Test
                     }
                     if (CurrentWeapon.weapontype == PlayerEnums.Weapontype.Bow && sprSheetX >= (int)PlayerEnums.ActionState.Shoot - 3 && RecentlyShot == false)
                     {
-                        arrow = new Arrow(ArrowPath, new Vector2(sprite.Position.X, sprite.Position.Y), 2, 1);
+                        arrow = new Arrow(ArrowPath, new Vector2(sprite.Position.X, sprite.Position.Y), 2, 1, PlayerID);
                         Arrows.Add(arrow);
                         RecentlyShot = true;
                     }
@@ -343,7 +345,7 @@ namespace Game_Test
                     }
                     if (CurrentWeapon.weapontype == PlayerEnums.Weapontype.Bow && sprSheetX >= (int)PlayerEnums.ActionState.Shoot - 3 && RecentlyShot == false)
                     {
-                        arrow = new Arrow(ArrowPath, new Vector2(sprite.Position.X, sprite.Position.Y + GameSettings.Instance.Tilescale.Y / 4), 1, 2);
+                        arrow = new Arrow(ArrowPath, new Vector2(sprite.Position.X, sprite.Position.Y + GameSettings.Instance.Tilescale.Y / 4), 1, 2, PlayerID);
                         Arrows.Add(arrow);
                         RecentlyShot = true;
                     }
@@ -357,7 +359,7 @@ namespace Game_Test
                     }
                     if (CurrentWeapon.weapontype == PlayerEnums.Weapontype.Bow && sprSheetX >= (int)PlayerEnums.ActionState.Shoot - 3 && RecentlyShot == false)
                     {
-                        arrow = new Arrow(ArrowPath, new Vector2(sprite.Position.X, sprite.Position.Y), 2, 2);
+                        arrow = new Arrow(ArrowPath, new Vector2(sprite.Position.X, sprite.Position.Y), 2, 2, PlayerID);
                         Arrows.Add(arrow);
                         RecentlyShot = true;
                     }
@@ -375,7 +377,7 @@ namespace Game_Test
                     }
                     if (CurrentWeapon.weapontype == PlayerEnums.Weapontype.Bow && sprSheetX >= (int)PlayerEnums.ActionState.Shoot - 3 && RecentlyShot == false)
                     {
-                        arrow = new Arrow(ArrowPath, new Vector2(sprite.Position.X, sprite.Position.Y + GameSettings.Instance.Tilescale.Y / 4), 1, 1);
+                        arrow = new Arrow(ArrowPath, new Vector2(sprite.Position.X, sprite.Position.Y + GameSettings.Instance.Tilescale.Y / 4), 1, 1, PlayerID);
                         Arrows.Add(arrow);
                         RecentlyShot = true;
                     }

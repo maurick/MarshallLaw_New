@@ -12,6 +12,7 @@ namespace Game_Test
         SprSheetImage sprite;
         public Vector2 sprSheet { get; private set; }
         private const int Velocity = 5;
+        public int PlayerID { get; private set; }
 
         public Rectangle ArrowRect { get; private set; }
 
@@ -25,7 +26,7 @@ namespace Game_Test
         /// <param name="path"></param>
         /// <param name="sprSheetY"></param>
         /// <param name="Position"></param>
-        public Arrow(string path, Vector2 Position, int sprSheetX, int sprSheetY)
+        public Arrow(string path, Vector2 Position, int sprSheetX, int sprSheetY, int PlayerID)
         {
             float tilescale_x = GameSettings.Instance.Tilescale.X, tilescale_y = GameSettings.Instance.Tilescale.Y;
             sprite = new SprSheetImage(path, sprSheetX - 1, sprSheetY - 1);
@@ -47,6 +48,7 @@ namespace Game_Test
             {
                 ArrowRect = new Rectangle((int)sprite.Position.X, (int)(sprite.Position.Y + 0.5 * tilescale_y), (int)tilescale_x, (int)(tilescale_y * 0.5));
             }
+            this.PlayerID = PlayerID;
         }
 
         private void LoadContent(int X, int Y)

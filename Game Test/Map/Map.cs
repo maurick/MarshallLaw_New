@@ -56,9 +56,8 @@ namespace Game_Test
 
             foreach (Enemy enemy in enemies)
                 enemy.SetLayernumber(NumberLayers - layer_player_num);
-            player[0].SetLayernumber(NumberLayers - layer_player_num);
-            if (player.Count > 1)
-                player[1].SetLayernumber(NumberLayers - layer_player_num);
+            foreach (Player player in player)
+                player.SetLayernumber(NumberLayers - layer_player_num);
             GetLayer("Collision", temp++);
             GetLayer("Zone", temp++);
 
@@ -93,9 +92,8 @@ namespace Game_Test
 
         public virtual void UnloadContent()
         {
-            player[0].UnloadContent();
-            if (player.Count > 1)
-                player[1].UnloadContent();
+            foreach (Player player in player)
+                player.UnloadContent();
 
             foreach (Enemy enemy in enemies)
             enemy.UnloadContent();
@@ -110,9 +108,9 @@ namespace Game_Test
 
         public virtual void Update(GameTime gameTime)
         {
-            player[0].Update(gameTime);
-            if (player.Count > 1)
-                player[1].Update(gameTime);
+            foreach (Player player in player)
+                player.Update(gameTime);
+
             foreach (Enemy enemy in enemies)
             {
                 if (enemy.healthbar.rectwidth == 1 && enemy.AnimationFinished == false)
@@ -145,6 +143,12 @@ namespace Game_Test
                         player[i].EnemySprSheetX = (int)enemy.sprSheetX;
                     }
                     enemy.Update(gameTime);
+
+                    foreach (Arrow arrow in enemy.HitArrows)
+                    {
+                        player[arrow.PlayerID].Arrows.Remove(arrow);
+                        arrow.UnloadContent();
+                    }
 
                     List<Arrow> temp = new List<Arrow>();
                     foreach (Player player in player)
@@ -248,6 +252,7 @@ namespace Game_Test
         public void CreatePlayers()
         {
             Player player = new Player();
+            player.PlayerID = 0;
             this.player.Add(player);
         }
     }
