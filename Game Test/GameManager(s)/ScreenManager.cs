@@ -45,7 +45,7 @@ namespace Game_Test
 
         Image fade;
         FadeEffect fadeEffect;
-        public Arduino Controller;
+        public List<Arduino> Controllers;
 
         //Contructor
         private ScreenManager()
@@ -53,7 +53,12 @@ namespace Game_Test
             //CurrentScreen begint met het SplashScreen
             currentscreen = new MenuScreen();
             IsTransitioning = false;
-            Controller = new Arduino(1);
+
+            Controllers = new List<Arduino> { new Arduino(1) };
+            for(int i=2;Controllers.Count !=  Controllers[0].Ports.Count;i++)
+            {
+                Controllers.Add(new Arduino(i));
+            }
         }
 
         public void LoadContent(ContentManager Content)
@@ -79,10 +84,13 @@ namespace Game_Test
         {
             TransitionScreen(gameTime);
             currentscreen.Update(gameTime);
-            if (Controller.ControllerConnected)
+            foreach (Arduino Controller in Controllers)
             {
-                Controller.Update();
-            }
+                if (Controller.ControllerConnected)
+                {
+                    Controller.Update();
+                }
+            }      
         }
 
         public void Draw(SpriteBatch spriteBatch)

@@ -11,11 +11,15 @@ namespace Game_Test
     public class Test : Screen
     {
         Image background;
-        Player player;
+        List<Player> players;
 
         public Test()
         {
-            player = new Player();
+            players = new List<Player> { };
+            for (int i = 0; i < ScreenManager.Instance.Controllers.Count; i++)
+            {
+                players.Add(new Player(i));
+            }
             background = new Image("TitleScreen/background");
         }
 
@@ -23,7 +27,11 @@ namespace Game_Test
         {
             base.LoadContent();
 
-            player.LoadContent(0, 0);
+            foreach (Player player in players)
+            {
+                player.LoadContent(0, 0);
+            }
+            
             background.LoadContent(0, 0, true, Vector2.One);
         }
 
@@ -31,7 +39,11 @@ namespace Game_Test
         {
             base.UnloadContent();
 
-            player.UnloadContent();
+            foreach (Player player in players)
+            {
+                player.UnloadContent();
+            }
+            
             background.UnloadContent();
         }
 
@@ -39,7 +51,11 @@ namespace Game_Test
         {
             base.Update(gameTime);
 
-            player.Update(gameTime);
+            foreach (Player player in players)
+            {
+                player.Update(gameTime);
+            }
+            
 
             if (InputManager.Instance.KeyPressed(Keys.Escape))
             {
@@ -52,7 +68,11 @@ namespace Game_Test
             base.Draw(spriteBatch);
 
             background.Draw(spriteBatch);
-            player.Draw(spriteBatch);
+            foreach (Player player in players)
+            {
+                player.Draw(spriteBatch);
+            }
+            
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Game_Test
     public class Arduino
     {
         private SerialPort Port;
-        List<SerialPort> Ports;
+        public List<SerialPort> Ports;
         public bool portFound;
         public bool ControllerConnected;
 
@@ -157,8 +157,21 @@ namespace Game_Test
             buffer[0] = Convert.ToByte(16);
             buffer[1] = Convert.ToByte(CmdByte);
 
-            Port.Open();
+            if (!Port.IsOpen)
+            {
+                Port.Open();
+            }
             Port.Write(buffer, 0, 2);
+            Port.Close();
+        }
+
+        private void Write(string Text)
+        {
+            if (!Port.IsOpen)
+            {
+                Port.Open();
+            }
+            Port.Write("#"+Text+"%");
             Port.Close();
         }
 
@@ -168,7 +181,10 @@ namespace Game_Test
             buffer[0] = Convert.ToByte(16);
             buffer[1] = Convert.ToByte(8);
 
-            Port.Open();
+            if (!Port.IsOpen)
+            {
+                Port.Open();
+            }
             Port.Write(buffer, 0, 2);
             foreach (var nr in Array)
             {
@@ -184,6 +200,10 @@ namespace Game_Test
             if(MessageAvailable())
             {
                 allbuttons = this.Read();
+                if(allbuttons.Length < 9)
+                {
+                    allbuttons = "000000000";
+                }
             }
         }
 
@@ -199,58 +219,86 @@ namespace Game_Test
             }
         }
 
-        //Methods
-        public bool MenuUp()
+        private bool Debounce(int Button)
         {
-            if(allbuttons[2] > prevbuttons[2])
-            {
-                return true;
-            }
-            return false;        
-        }
-        public bool MenuDown()
-        {
-            if (allbuttons[3] > prevbuttons[3])
+            if (allbuttons[Button] > prevbuttons[Button])
             {
                 return true;
             }
             return false;
         }
 
-        public bool Up()
+        //Methods
+        public bool Up(bool debounce)
         {
+            if (debounce)
+            {
+                return Debounce(2);
+            }
             return Button(2);
         }
-        public bool Down()
+        public bool Down(bool debounce)
         {
+            if (debounce)
+            {
+                return Debounce(3);
+            }
             return Button(3);
         }
-        public bool Left()
+        public bool Left(bool debounce)
         {
-            return Button(1);
+            if (debounce)
+            {
+                return Debounce(1);
+            }
+            return Button(1); 
         }
-        public bool Right()
+        public bool Right(bool debounce)
         {
+            if (debounce)
+            {
+                return Debounce(0);
+            }
             return Button(0);
         }
-        public bool rbutt()
+        public bool rbutt(bool debounce)
         {
+            if (debounce)
+            {
+                return Debounce(4);
+            }
             return Button(4);
         }
-        public bool ubutt()
+        public bool ubutt(bool debounce)
         {
+            if (debounce)
+            {
+                return Debounce(5);
+            }
             return Button(5);
         }
-        public bool dbutt()
+        public bool dbutt(bool debounce)
         {
+            if (debounce)
+            {
+                return Debounce(6);
+            }
             return Button(6);
         }
-        public bool lbutt()
+        public bool lbutt(bool debounce)
         {
+            if (debounce)
+            {
+                return Debounce(7);
+            }
             return Button(7);
         }
-        public bool jbutt()
+        public bool jbutt(bool debounce)
         {
+            if (debounce)
+            {
+                return Debounce(8);
+            }
             return Button(8);
         }
 
@@ -267,6 +315,16 @@ namespace Game_Test
         public void Save()
         {
             Write(64);
+        }
+
+        public void Exit()
+        {
+            if (ControllerConnected)
+            {
+                //SendStats();
+                Save();
+                Write("ControllerOff");
+            }
         }
     }
 }

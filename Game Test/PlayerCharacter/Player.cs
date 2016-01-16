@@ -57,23 +57,38 @@ namespace Game_Test
 
         private Healthbar Healthbar;
 
-        public Player()
-        {
-            //TODO add playerstats
-            //this.player = player;
-            State = PlayerEnums.ActionState.None;
-            lookDirection = PlayerEnums.LookDirection.Down;
-            sprSheetY = PlayerEnums.Action.None;
-            sprSheetX = 0;
-            
-            direction = new Vector2(0, 1);
-            
-            sprite = new SprSheetImage("CharacterSprites/Male/SkinColor/Light");
-            
-            SpeedScale = 1.5f;
+        private Arduino Controller;
+        public bool NoConnect;
 
-            Healthbar = new Healthbar();
+        public Player(int controller)
+        {
+            NoConnect = false;
+            if (ScreenManager.Instance.Controllers[controller] != null)
+            {
+                //TODO add playerstats
+                //this.player = player;
+                State = PlayerEnums.ActionState.None;
+                lookDirection = PlayerEnums.LookDirection.Down;
+                sprSheetY = PlayerEnums.Action.None;
+                sprSheetX = 0;
+
+
+                Controller = ScreenManager.Instance.Controllers[controller];
+
+                direction = new Vector2(0, 1);
+
+                sprite = new SprSheetImage("CharacterSprites/Male/SkinColor/Light");
+
+                SpeedScale = 1.5f;
+
+                Healthbar = new Healthbar();
+            }else
+            {
+                NoConnect = true;
+            }
         }
+
+        
 
         public void LoadContent(int X, int Y)
         {
@@ -82,9 +97,9 @@ namespace Game_Test
             boundingBox = new Image("Images/green");
             boundingBox.LoadContent( X + (0.5f * GameSettings.Instance.Tilescale.X), Y + GameSettings.Instance.Tilescale.Y, false, new Vector2(GameSettings.Instance.Tilescale.X, GameSettings.Instance.Tilescale.Y));
 
-            CurrentWeapon = new Weapon("Weapons/Bow/bow", "Weapons/Bow/quiver", "Weapons/Bow/arrow", sprite.Position, this);
+            CurrentWeapon = new Weapon("Weapons/Bow/bow", "Weapons/Bow/quiver", "Weapons/Bow/arrow", sprite.Position,1, this);
             inventory.Add(CurrentWeapon);
-            Weapon tempweapon = new Weapon("Weapons/Spear/Male/spear_male", PlayerEnums.Weapontype.Spear, sprite.Position, this);
+            Weapon tempweapon = new Weapon("Weapons/Spear/Male/spear_male", PlayerEnums.Weapontype.Spear, sprite.Position,2, this);
             inventory.Add(tempweapon);
         }
 
@@ -157,7 +172,7 @@ namespace Game_Test
             //controller.Update();
             //Check if keys are pressed
             #region Attack
-            if (InputManager.Instance.KeyDown(Keys.Space) || ScreenManager.Instance.Controller.dbutt())
+            if (InputManager.Instance.KeyDown(Keys.Space) || Controller.dbutt(false))
             {
                 switch (CurrentWeapon.weapontype)
                 {
@@ -179,28 +194,28 @@ namespace Game_Test
             #region Movement
             else
             {
-                if (InputManager.Instance.KeyDown(Keys.W) || ScreenManager.Instance.Controller.Up())
+                if (InputManager.Instance.KeyDown(Keys.W) || Controller.Up(false))
                 {
                     State = PlayerEnums.ActionState.Walk;
                     lookDirection = PlayerEnums.LookDirection.Up;
                     direction.Y = -1;
                     Interval = BaseInterval * (int)State / (int)PlayerEnums.ActionState.Walk;
                 }
-                if (InputManager.Instance.KeyDown(Keys.S) || ScreenManager.Instance.Controller.Down())
+                if (InputManager.Instance.KeyDown(Keys.S) || Controller.Down(false))
                 {
                     State = PlayerEnums.ActionState.Walk;
                     lookDirection = PlayerEnums.LookDirection.Down;
                     direction.Y = 1;
                     Interval = BaseInterval * (int)State / (int)PlayerEnums.ActionState.Walk;
                 }
-                if (InputManager.Instance.KeyDown(Keys.A) || ScreenManager.Instance.Controller.Left())
+                if (InputManager.Instance.KeyDown(Keys.A) || Controller.Left(false))
                 {
                     State = PlayerEnums.ActionState.Walk;
                     lookDirection = PlayerEnums.LookDirection.left;
                     direction.X = -1;
                     Interval = BaseInterval * (int)State / (int)PlayerEnums.ActionState.Walk;
                 }
-                if (InputManager.Instance.KeyDown(Keys.D) || ScreenManager.Instance.Controller.Right())
+                if (InputManager.Instance.KeyDown(Keys.D) || Controller.Right(false))
                 {
                     State = PlayerEnums.ActionState.Walk;
                     lookDirection = PlayerEnums.LookDirection.Right;
@@ -224,7 +239,7 @@ namespace Game_Test
             bool ControlsActive = false;
             for (int i = 0; i < 8; i++)
             {
-                    if (ScreenManager.Instance.Controller.prevbuttons[i] == '1' && !ScreenManager.Instance.Controller.Button(i))
+                    if (Controller.prevbuttons[i] == '1' && !Controller.Button(i))
                     {
                     ControlsActive = true;
                     }
@@ -243,12 +258,12 @@ namespace Game_Test
             #endregion
 
             #region SwitchWeapon
-            if (InputManager.Instance.KeyPressed(Keys.LeftShift) || ScreenManager.Instance.Controller.lbutt())
+            if (InputManager.Instance.KeyPressed(Keys.LeftShift) || Controller.lbutt(true))
             {
                 int tempID = 1;
                 if (CurrentWeapon.WeaponID != CurrentWeapon.GetMaxID)
                     tempID = CurrentWeapon.WeaponID + 1;
-                CurrentWeapon = inventory.Find(x => x.WeaponID == tempID);
+                CurrentWeapon = this.inventory.Find(x => x.WeaponID == tempID);
                 CurrentWeapon.setPosition(sprite.Position);
             }
             #endregion
