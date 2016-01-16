@@ -13,7 +13,7 @@ namespace Game_Test
     {
         //Playerstats player;
 
-        public int PlayerID { get; set; }
+        public int PlayerID { get; private set; }
 
         private Vector2 EnemyPosition;
 
@@ -62,6 +62,7 @@ namespace Game_Test
 
         public Player(int controller)
         {
+            PlayerID = controller;
             NoConnect = false;
             if (ScreenManager.Instance.Controllers[controller] != null)
             {

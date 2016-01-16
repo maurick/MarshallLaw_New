@@ -17,7 +17,7 @@ namespace Game_Test
         public List<Layer> Layers = new List<Layer>();
         List<string> spriteSheets = new List<string>();
 
-        List<Player> player = new List<Player>();
+        List<Player> players = new List<Player>();
 
         List<Enemy> enemies;
 
@@ -40,9 +40,12 @@ namespace Game_Test
             mapDimensions = mapLoader.GetMapDimensions();
             NumberLayers = mapLoader.GetNumLayers();
             spriteSheets = mapLoader.GetSpritesheetList();
-            
+
+            for (int i = 0; i < ScreenManager.Instance.Controllers.Count; i++)
+            {
+                players.Add(new Player(i));
+            }
             CreateEnemies();
-            CreatePlayers();
 
             for (int l = 0; l < Layers.Count; l++)
             {
@@ -56,7 +59,7 @@ namespace Game_Test
 
             foreach (Enemy enemy in enemies)
                 enemy.SetLayernumber(NumberLayers - layer_player_num);
-            foreach (Player player in player)
+            foreach (Player player in players)
                 player.SetLayernumber(NumberLayers - layer_player_num);
             GetLayer("Collision", temp++);
             GetLayer("Zone", temp++);
@@ -75,7 +78,8 @@ namespace Game_Test
 
         public virtual void LoadContent()
         {
-            player[0].LoadContent(32, 32);
+            foreach (Player player in players)
+                player.LoadContent(32, 32);
 
             foreach (Enemy enemy in enemies)
                 enemy.LoadContent();
@@ -92,7 +96,7 @@ namespace Game_Test
 
         public virtual void UnloadContent()
         {
-            foreach (Player player in player)
+            foreach (Player player in players)
                 player.UnloadContent();
 
             foreach (Enemy enemy in enemies)
@@ -108,7 +112,7 @@ namespace Game_Test
 
         public virtual void Update(GameTime gameTime)
         {
-            foreach (Player player in player)
+            foreach (Player player in players)
                 player.Update(gameTime);
 
             foreach (Enemy enemy in enemies)
@@ -130,28 +134,28 @@ namespace Game_Test
                     enemy.PlayerLookDirection.Clear();
                     enemy.PlayerPosition.Clear();
                     enemy.PlayerSprSheetX.Clear();
-                    for (int i = 0; i < player.Count; i++)
+                    for (int i = 0; i < players.Count; i++)
                     {
-                        enemy.PlayerPosition.Insert(i, player[i].GetPosition());
-                        enemy.PlayerLookDirection.Insert(i, player[i].lookDirection);
-                        enemy.PlayerState.Insert(i, player[i].State);
-                        enemy.PlayerSprSheetX.Insert(i, (int)player[i].sprSheetX);
+                        enemy.PlayerPosition.Insert(i, players[i].GetPosition());
+                        enemy.PlayerLookDirection.Insert(i, players[i].lookDirection);
+                        enemy.PlayerState.Insert(i, players[i].State);
+                        enemy.PlayerSprSheetX.Insert(i, (int)players[i].sprSheetX);
 
-                        player[i].SendPosition(enemy.GetPosition());
-                        player[i].EnemyLookDirection = enemy.lookDirection;
-                        player[i].EnemyState = enemy.State;
-                        player[i].EnemySprSheetX = (int)enemy.sprSheetX;
+                        players[i].SendPosition(enemy.GetPosition());
+                        players[i].EnemyLookDirection = enemy.lookDirection;
+                        players[i].EnemyState = enemy.State;
+                        players[i].EnemySprSheetX = (int)enemy.sprSheetX;
                     }
                     enemy.Update(gameTime);
 
                     foreach (Arrow arrow in enemy.HitArrows)
                     {
-                        player[arrow.PlayerID].Arrows.Remove(arrow);
+                        players[arrow.PlayerID].Arrows.Remove(arrow);
                         arrow.UnloadContent();
                     }
 
                     List<Arrow> temp = new List<Arrow>();
-                    foreach (Player player in player)
+                    foreach (Player player in players)
                         temp.AddRange(player.Arrows);
                     enemy.arrows = temp;
                 }
@@ -178,7 +182,7 @@ namespace Game_Test
                             foreach (Enemy enemy in enemies)
                                 enemy.Draw(spriteBatch);
 
-                            foreach(Player player in player)
+                            foreach(Player player in players)
                                 player.Draw(spriteBatch);
 
                             PlayerActive = true;
@@ -204,7 +208,7 @@ namespace Game_Test
                 }
             }
 
-            if (player[0].Debug)
+            if (players[0].Debug)
             {
                 spriteBatch.Draw(
                     texture: grid,
@@ -229,7 +233,7 @@ namespace Game_Test
             {
                 if (Layers[l].Layername == Name)
                 { 
-                    foreach (Player player in player)
+                    foreach (Player player in players)
                         player.SendLayer(Layers[l], number);
                     foreach (Enemy enemy in enemies)
                         enemy.SendLayer(Layers[l], number);
@@ -245,15 +249,8 @@ namespace Game_Test
             
             enemies.Add(enemy);
 
-            foreach(Player player in player)
+            foreach(Player player in players)
                 player.SetEnemies(enemies);
-        }
-
-        public void CreatePlayers()
-        {
-            Player player = new Player();
-            player.PlayerID = 0;
-            this.player.Add(player);
         }
     }
 }

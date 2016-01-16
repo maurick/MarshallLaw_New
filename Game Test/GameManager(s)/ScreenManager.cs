@@ -55,10 +55,10 @@ namespace Game_Test
             IsTransitioning = false;
 
             Controllers = new List<Arduino> { new Arduino(1) };
-            for(int i=2;Controllers.Count !=  Controllers[0].Ports.Count;i++)
-            {
-                Controllers.Add(new Arduino(i));
-            }
+            //for(int i=2;Controllers.Count !=  Controllers[0].Ports.Count;i++)
+            //{
+            //    Controllers.Add(new Arduino(i));
+            //}
         }
 
         public void LoadContent(ContentManager Content)
