@@ -14,7 +14,7 @@ namespace Game_Test
         private Vector2 P_menuLenght;
         private Vector2 P_menuPosition;
         private int P_currentSelected;
-        private string[] P_text = { "Continue", "Exit to menu" };
+        private string[] P_text = { "Continue", "Connect/Disconnect controller", "Exit to menu" };
         private PauseMenuItem[] P_menuItems;
         public bool Pause { get; private set; }
 
@@ -98,9 +98,28 @@ namespace Game_Test
                 P_menuItems[P_currentSelected].Selected = true;
             }
 
-            if (P_menuItems[P_currentSelected].ItemID == 0 && ((InputManager.Instance.KeyPressed(Keys.Enter)) || ScreenManager.Instance.Controllers[0].dbutt(true)))
+            int continueID = -1;
+            foreach (PauseMenuItem item in P_menuItems)
+            {
+                continueID = item.GetID("Continue");
+                if (continueID != -1)
+                    break;
+            }
+            if (P_menuItems[P_currentSelected].ItemID == continueID && ((InputManager.Instance.KeyPressed(Keys.Enter)) || ScreenManager.Instance.Controllers[0].dbutt(true)) && continueID != -1)
             {
                 Pause = true;
+            }
+
+            int ConnectID = -1;
+            foreach (PauseMenuItem item in P_menuItems)
+            {
+                ConnectID = item.GetID("Connect/Disconnect controller");
+                if (ConnectID != -1)
+                    break;
+            }
+            if (P_menuItems[P_currentSelected].ItemID == ConnectID && ((InputManager.Instance.KeyPressed(Keys.Enter)) || ScreenManager.Instance.Controllers[0].dbutt(true)) && continueID != -1)
+            {
+
             }
 
             int exitID = -1;

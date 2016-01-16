@@ -878,9 +878,9 @@ namespace Game_Test
             string query;
             int temp = 0, temp2 = 0;
             //temp = get exp
-            if (temp > 100)
+            if (temp >= 100)
             {
-                temp -= 100;
+                temp = 0;
                 //temp2 = get level
                 query = "update playerstats set level" + temp2 + "where playerid = " + PlayerID + ";";
             }
