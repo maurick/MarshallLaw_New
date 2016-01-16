@@ -45,6 +45,9 @@ namespace Game_Test
 
         private int dir = 0;
         private double duration = 0;
+        public int minDuration = 1, maxDuration = 4;
+        Random Random = new Random();
+        private bool MoveBreak = false;
 
         private const int AggroDistance = 250;
         private bool Aggro = false;
@@ -58,14 +61,10 @@ namespace Game_Test
 
         private int ZoneNumber;
 
-        public Random Random;
-
         public Enemy(int X, int Y, int ZoneNR)
         {
             //TODO add playerstats
             //this.player = player
-
-            Random = new Random();
 
             Position = new Vector2(X, Y);
             
@@ -241,10 +240,24 @@ namespace Game_Test
                 if (Aggro == false)
                 {
                     SpeedScale = 0.5f;
-                    if (duration <= 0)
+                    if (duration <= 0 && !MoveBreak)
                     {
-                        duration = Random.Next(1, 3);
-                        dir = Random.Next(12);
+                        minDuration = 1;
+                        maxDuration = 4;
+                        dir = Random.Next(8);
+                        duration = Random.Next(minDuration, maxDuration);
+                        MoveBreak = true;
+                    }
+                    else if (duration <= 0 && MoveBreak)
+                    {
+                        minDuration = 0;
+                        maxDuration = 2;
+                        duration = Random.Next(minDuration, maxDuration);
+                        MoveBreak = false;
+                        State = PlayerEnums.ActionState.None;
+                        direction = Vector2.Zero;
+                        sprSheetX = 0;
+                        dir = 8;
                     }
                     else
                         duration -= gameTime.ElapsedGameTime.TotalSeconds;
@@ -291,14 +304,16 @@ namespace Game_Test
                             lookDirection = PlayerEnums.LookDirection.Right;
                             direction = new Vector2(1, 1);
                             break;
-                        default://no movement
-                            State = PlayerEnums.ActionState.None;
-                            sprSheetY = PlayerEnums.Action.None;
-                            sprSheetX = 0;
-                            sprite.SprSheetX = 0;
-                            direction = new Vector2(0, 0);
-                            break;
                     }
+                    /*}
+                    else//no movement
+                    {
+                        State = PlayerEnums.ActionState.None;
+                        sprSheetY = PlayerEnums.Action.None;
+                        sprSheetX = 0;
+                        sprite.SprSheetX = 0;
+                        direction = new Vector2(0, 0);
+                    }*/
                 }
             }
             #endregion
@@ -308,7 +323,7 @@ namespace Game_Test
                 Attack(gameTime);
                 direction = new Vector2(0, 0);
             }
-            else 
+            else if (State != PlayerEnums.ActionState.None)
                 Move(direction, gameTime);
 
             SetAnimationFrame();
