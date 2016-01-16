@@ -7,11 +7,25 @@ using System.Data.SQLite;
 
 namespace Game_Test
 {
-    class Database
+    public class Database
     {
+        private static Database instance;
+
         private SQLiteConnection Connect;
         private SQLiteCommand Command;
         private SQLiteDataReader Reader;
+
+        public static Database Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new Database();
+                }
+                return instance;
+            }
+        }
 
         public Database()
         {
@@ -25,7 +39,7 @@ namespace Game_Test
                 new SQLiteConnection("Data Source=MyDatabase.sqlite;Version=3;");
         }
 
-        private void ExecuteQuery(string txtQuery)
+        public void ExecuteQuery(string txtQuery)
         {
             SetConnection();
             Connect.Open();
@@ -34,7 +48,7 @@ namespace Game_Test
             Connect.Close();
         }
 
-        private string ReturnRead(string ValueName)
+        public string ReturnRead(string ValueName)
         {
             Reader = Command.ExecuteReader();
             if (Reader.Read())

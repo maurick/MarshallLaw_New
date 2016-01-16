@@ -61,6 +61,8 @@ namespace Game_Test
 
         private int ZoneNumber;
 
+        public int LastHitBy { get; private set; }
+
         public Enemy(int X, int Y, int ZoneNR)
         {
             //TODO add playerstats
@@ -116,7 +118,10 @@ namespace Game_Test
             {
                 temp = CheckHit(i);
                 if (temp.X == 1)
+                {
+                    LastHitBy = i;
                     break;
+                }
             }
             if (temp.X == 1 && knockback == false)
             {
@@ -134,6 +139,7 @@ namespace Game_Test
                 Vector2 temp2 = CheckArrowHit(Arrow);
                 if (temp2.X == 1 && knockback == false)
                 {
+                    LastHitBy = Arrow.PlayerID;
                     healthbar.LoseHealth(2 * GameSettings.Instance.Tilescale.X * 1f);
                     knockback = true;
                     knockbacktimer = 0.2f;
@@ -335,6 +341,10 @@ namespace Game_Test
         {
             sprite.Draw(spriteBatch);
             weapon.Draw(spriteBatch);
+        }
+        
+        public void DrawHealthBar(SpriteBatch spriteBatch)
+        {
             healthbar.Draw(spriteBatch, sprite.Position);
         }
 
@@ -667,7 +677,7 @@ namespace Game_Test
             x2 = (int)((position.X + 2 * tilescale_x) / tilescale_x),
             y2 = (int)((position.Y + 2 * tilescale_y) / tilescale_y);
 
-            Rectangle Enemyrect = new Rectangle(new Point((int)(position.X + 0.5 * tilescale_x), (int)(position.Y + tilescale_y)), new Point((int)tilescale_x, (int)(tilescale_y)));
+            Rectangle Enemyrect = new Rectangle(new Point((int)(position.X + 0.5 * tilescale_x), (int)(position.Y + 0.5 * tilescale_y)), new Point((int)tilescale_x, (int)(tilescale_y * 2 - 0.5 * tilescale_y)));
 
             int TileID;
 

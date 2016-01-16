@@ -63,7 +63,6 @@ namespace Game_Test
         private bool ZoneCheck = false;
         private Vector2 ZoneCheckCoor;
         private bool ZoneEnter = false;
-        private bool ZoneLeave = false;
         public int InZone { get; private set; }
 
         public Player(int controller)
@@ -851,7 +850,6 @@ namespace Game_Test
                                     ZoneEnter = true;
                                 if (InZone != 0)
                                 {
-                                    ZoneLeave = false;
                                     InZone = 0;
                                 }
                             }
@@ -860,12 +858,27 @@ namespace Game_Test
                         {
                             if (ZoneEnter && rect.Intersects(PlayerRect))
                                 InZone = TileID;
-                            else if (rect.Intersects(PlayerRect) && !ZoneEnter)
-                                ZoneLeave = true;
                         }
                     }
                 }
             }
+        }
+
+        public void AddExp()
+        {
+            /*
+            string query;
+            int temp = 0, temp2 = 0;
+            //temp = get exp
+            if (temp > 100)
+            {
+                temp -= 100;
+                //temp2 = get level
+                query = "update playerstats set level" + temp2 + "where playerid = " + PlayerID + ";";
+            }
+            query = "update playerstats set exp" + temp + "where playerid = " + PlayerID + ";";
+            Database.Instance.ExecuteQuery(query);
+            */
         }
     }
 }

@@ -120,6 +120,7 @@ namespace Game_Test
                 if (enemy.healthbar.rectwidth == 1 && enemy.AnimationFinished == false)
                 {
                     enemy.Die = true;
+                    players[enemy.LastHitBy].AddExp();
                     enemy.DieAnimation(gameTime);
                 }
                 if (enemy.AnimationFinished)
@@ -195,9 +196,10 @@ namespace Game_Test
             //player.Draw(spriteBatch);
             PlayerActive = false;
             foreach (Player player in players)
-            {
                 player.DrawHealthBar(spriteBatch);
-            }
+
+            foreach (Enemy enemy in enemies)
+                enemy.DrawHealthBar(spriteBatch);
 
         }
 
@@ -252,10 +254,10 @@ namespace Game_Test
             enemies = new List<Enemy>();
             Enemy enemy;
             
-            enemy = new Enemy(500, 500, 2);
+            enemy = new Enemy((int)(20 * GameSettings.Instance.Tilescale.X), (int)(20 * GameSettings.Instance.Tilescale.Y), 2);
             enemies.Add(enemy);
 
-            enemy = new Enemy(1200, 500, 3);
+            enemy = new Enemy((int)(50 * GameSettings.Instance.Tilescale.X), (int)(20 * GameSettings.Instance.Tilescale.Y), 3);
             enemies.Add(enemy);
 
             foreach(Player player in players)
