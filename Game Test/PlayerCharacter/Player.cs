@@ -56,6 +56,8 @@ namespace Game_Test
         public bool Debug { get; private set; }
 
         private Healthbar Healthbar;
+        private LevelIndicator LevelIndicator;
+        private Expbar Expbar;
 
         private Arduino Controller;
         public bool NoConnect;
@@ -88,6 +90,9 @@ namespace Game_Test
                 SpeedScale = 1.5f;
 
                 Healthbar = new Healthbar();
+                LevelIndicator = new LevelIndicator();
+                Expbar = new Expbar();
+                Expbar.SetExp(0);
             }else
             {
                 NoConnect = true;
@@ -312,9 +317,11 @@ namespace Game_Test
                 arrow.Draw(spriteBatch);
         }
 
-        public void DrawHealthBar(SpriteBatch spriteBatch)
+        public void DrawTop(SpriteBatch spriteBatch)
         {
             Healthbar.Draw(spriteBatch, sprite.Position);
+            LevelIndicator.Draw(spriteBatch, sprite.Position);
+            Expbar.Draw(spriteBatch, sprite.Position);
         }
 
         private void Attack(GameTime gameTime)
@@ -866,6 +873,7 @@ namespace Game_Test
 
         public void AddExp()
         {
+            Expbar.IncreaseExp(50);
             /*
             string query;
             int temp = 0, temp2 = 0;

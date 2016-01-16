@@ -61,6 +61,30 @@ namespace Game_Test
             this.Color = Color.Black;
         }
 
+        public cText(string Text, string fontname, Vector2 scale)
+        {
+            this.Text = Text;
+            this.Path = String.Empty;
+
+            switch (fontname)
+            {
+                case "Carne":
+                    this.FontName = "SpriteFonts/Carne";
+                    break;
+                case "DryGood":
+                    this.FontName = "SpriteFonts/DryGood/DryGood";
+                    break;
+                case "DryGood_12":
+                    this.FontName = "SpriteFonts/DryGood/DryGood_12";
+                    break;
+            }
+            this.Position = Vector2.Zero;
+            this.scale = scale;
+            this.Alpha = 1.0f;
+            this.SourceRect = Rectangle.Empty;
+            this.Color = Color.Black;
+        }
+
         public void LoadContent()
         {
             //Load the content for the text
@@ -83,31 +107,6 @@ namespace Game_Test
             this.scale.Y = (GameSettings.Instance.Dimensions.Y / 1080);
         }
 
-        public void LoadContent(Vector2 position)
-        {
-            //Load the content for the text
-            content = new ContentManager(ScreenManager.Instance.Content.ServiceProvider, "Content");
-            font = content.Load<SpriteFont>(FontName);
-
-            
-
-            //Make sure the text class has the dimensions from the font
-            if (Text != string.Empty)
-            {
-                dimensions.X = font.MeasureString(Text).X;
-                dimensions.Y = font.MeasureString(Text).Y;
-            }
-
-            //Create a rectangle wich other classes can work with
-
-            this.scale.X = (GameSettings.Instance.Dimensions.X / 1920);
-            this.scale.Y = (GameSettings.Instance.Dimensions.Y / 1080);
-
-            SourceRect = new Rectangle(0, 0, (int)(dimensions.X * scale.X), (int)(dimensions.Y * scale.Y));
-
-            Position = position;
-        }
-
         public void UnloadContent()
         {
             content.Unload();
@@ -121,6 +120,11 @@ namespace Game_Test
         }
 
         public void DrawString(SpriteBatch spriteBatch)
+        {
+            spriteBatch.DrawString(font, Text, Position, Color * Alpha, 0.0f, Vector2.Zero, scale, SpriteEffects.None, 0.0f);
+        }
+
+        public void DrawString(SpriteBatch spriteBatch, Vector2 scale)
         {
             spriteBatch.DrawString(font, Text, Position, Color * Alpha, 0.0f, Vector2.Zero, scale, SpriteEffects.None, 0.0f);
         }

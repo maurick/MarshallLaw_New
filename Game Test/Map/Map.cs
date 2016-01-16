@@ -117,11 +117,10 @@ namespace Game_Test
 
             foreach (Enemy enemy in enemies)
             {
-                if (enemy.healthbar.rectwidth == 1 && enemy.AnimationFinished == false)
+                if (enemy.healthbar.rectwidth == 1 && enemy.AnimationFinished == false && enemy.Die == false)
                 {
                     enemy.Die = true;
                     players[enemy.LastHitBy].AddExp();
-                    enemy.DieAnimation(gameTime);
                 }
                 if (enemy.AnimationFinished)
                 {
@@ -196,7 +195,7 @@ namespace Game_Test
             //player.Draw(spriteBatch);
             PlayerActive = false;
             foreach (Player player in players)
-                player.DrawHealthBar(spriteBatch);
+                player.DrawTop(spriteBatch);
 
             foreach (Enemy enemy in enemies)
                 enemy.DrawHealthBar(spriteBatch);

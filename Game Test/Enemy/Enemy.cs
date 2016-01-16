@@ -111,7 +111,10 @@ namespace Game_Test
         public void Update(GameTime gameTime)
         {
             if (Die)
+            {
+                DieAnimation(gameTime);
                 return;
+            }
             #region Knockback
             Vector2 temp = Vector2.Zero;
             for (int i = 0; i < PlayerState.Count; i++)
@@ -807,7 +810,7 @@ namespace Game_Test
             return false;
         }
 
-        public void DieAnimation(GameTime gameTime)
+        private void DieAnimation(GameTime gameTime)
         {
             if (sprSheetX >= (int)PlayerEnums.ActionState.Slash)
             {
