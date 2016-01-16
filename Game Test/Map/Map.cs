@@ -17,7 +17,7 @@ namespace Game_Test
         public List<Layer> Layers = new List<Layer>();
         List<string> spriteSheets = new List<string>();
 
-        Player player;
+        List<Player> player = new List<Player>();
 
         List<Enemy> enemies;
 
@@ -41,8 +41,8 @@ namespace Game_Test
             NumberLayers = mapLoader.GetNumLayers();
             spriteSheets = mapLoader.GetSpritesheetList();
             
-            player = new Player();
             CreateEnemies();
+            CreatePlayers();
 
             for (int l = 0; l < Layers.Count; l++)
             {
@@ -56,7 +56,9 @@ namespace Game_Test
 
             foreach (Enemy enemy in enemies)
                 enemy.SetLayernumber(NumberLayers - layer_player_num);
-            player.SetLayernumber(NumberLayers - layer_player_num);
+            player[0].SetLayernumber(NumberLayers - layer_player_num);
+            if (player.Count > 1)
+                player[1].SetLayernumber(NumberLayers - layer_player_num);
             GetLayer("Collision", temp++);
             GetLayer("Zone", temp++);
 
@@ -74,7 +76,7 @@ namespace Game_Test
 
         public virtual void LoadContent()
         {
-            player.LoadContent(32, 32);
+            player[0].LoadContent(32, 32);
 
             foreach (Enemy enemy in enemies)
                 enemy.LoadContent();
@@ -91,10 +93,12 @@ namespace Game_Test
 
         public virtual void UnloadContent()
         {
-            player.UnloadContent();
+            player[0].UnloadContent();
+            if (player.Count > 1)
+                player[1].UnloadContent();
 
             foreach (Enemy enemy in enemies)
-                enemy.UnloadContent();
+            enemy.UnloadContent();
 
             foreach (var layer in Layers)
             {
@@ -106,7 +110,9 @@ namespace Game_Test
 
         public virtual void Update(GameTime gameTime)
         {
-            player.Update(gameTime);
+            player[0].Update(gameTime);
+            if (player.Count > 1)
+                player[1].Update(gameTime);
             foreach (Enemy enemy in enemies)
             {
                 if (enemy.healthbar.rectwidth == 1 && enemy.AnimationFinished == false)
@@ -122,18 +128,28 @@ namespace Game_Test
                 }
                 else
                 {
-                    enemy.SendPosition(player.GetPosition());
-                    enemy.PlayerLookDirection = player.lookDirection;
-                    enemy.PlayerState = player.State;
-                    enemy.PlayerSprSheetX = (int)player.sprSheetX;
+                    enemy.PlayerState.Clear();
+                    enemy.PlayerLookDirection.Clear();
+                    enemy.PlayerPosition.Clear();
+                    enemy.PlayerSprSheetX.Clear();
+                    for (int i = 0; i < player.Count; i++)
+                    {
+                        enemy.PlayerPosition.Insert(i, player[i].GetPosition());
+                        enemy.PlayerLookDirection.Insert(i, player[i].lookDirection);
+                        enemy.PlayerState.Insert(i, player[i].State);
+                        enemy.PlayerSprSheetX.Insert(i, (int)player[i].sprSheetX);
+
+                        player[i].SendPosition(enemy.GetPosition());
+                        player[i].EnemyLookDirection = enemy.lookDirection;
+                        player[i].EnemyState = enemy.State;
+                        player[i].EnemySprSheetX = (int)enemy.sprSheetX;
+                    }
                     enemy.Update(gameTime);
 
-                    player.SendPosition(enemy.GetPosition());
-                    player.EnemyLookDirection = enemy.lookDirection;
-                    player.EnemyState = enemy.State;
-                    player.EnemySprSheetX = (int)enemy.sprSheetX;
-
-                    enemy.arrows = player.Arrows;
+                    List<Arrow> temp = new List<Arrow>();
+                    foreach (Player player in player)
+                        temp.AddRange(player.Arrows);
+                    enemy.arrows = temp;
                 }
             }
 
@@ -158,7 +174,8 @@ namespace Game_Test
                             foreach (Enemy enemy in enemies)
                                 enemy.Draw(spriteBatch);
 
-                            player.Draw(spriteBatch);
+                            foreach(Player player in player)
+                                player.Draw(spriteBatch);
 
                             PlayerActive = true;
                         }
@@ -183,7 +200,7 @@ namespace Game_Test
                 }
             }
 
-            if (player.Debug)
+            if (player[0].Debug)
             {
                 spriteBatch.Draw(
                     texture: grid,
@@ -208,7 +225,8 @@ namespace Game_Test
             {
                 if (Layers[l].Layername == Name)
                 { 
-                    player.SendLayer(Layers[l], number);
+                    foreach (Player player in player)
+                        player.SendLayer(Layers[l], number);
                     foreach (Enemy enemy in enemies)
                         enemy.SendLayer(Layers[l], number);
                 }
@@ -223,7 +241,14 @@ namespace Game_Test
             
             enemies.Add(enemy);
 
-            player.SetEnemies(enemies);
+            foreach(Player player in player)
+                player.SetEnemies(enemies);
+        }
+
+        public void CreatePlayers()
+        {
+            Player player = new Player();
+            this.player.Add(player);
         }
     }
 }
