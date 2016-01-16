@@ -134,12 +134,14 @@ namespace Game_Test
                     enemy.PlayerLookDirection.Clear();
                     enemy.PlayerPosition.Clear();
                     enemy.PlayerSprSheetX.Clear();
+                    enemy.PlayerZones.Clear();
                     for (int i = 0; i < players.Count; i++)
                     {
                         enemy.PlayerPosition.Insert(i, players[i].GetPosition());
                         enemy.PlayerLookDirection.Insert(i, players[i].lookDirection);
                         enemy.PlayerState.Insert(i, players[i].State);
                         enemy.PlayerSprSheetX.Insert(i, (int)players[i].sprSheetX);
+                        enemy.PlayerZones.Insert(i, players[i].InZone);
 
                         players[i].SendPosition(enemy.GetPosition());
                         players[i].EnemyLookDirection = enemy.lookDirection;
@@ -192,6 +194,10 @@ namespace Game_Test
             }
             //player.Draw(spriteBatch);
             PlayerActive = false;
+            foreach (Player player in players)
+            {
+                player.DrawHealthBar(spriteBatch);
+            }
 
         }
 
@@ -244,9 +250,12 @@ namespace Game_Test
         public void CreateEnemies()
         {
             enemies = new List<Enemy>();
-
-            Enemy enemy = new Enemy(500, 500);
+            Enemy enemy;
             
+            enemy = new Enemy(500, 500, 2);
+            enemies.Add(enemy);
+
+            enemy = new Enemy(1200, 500, 3);
             enemies.Add(enemy);
 
             foreach(Player player in players)

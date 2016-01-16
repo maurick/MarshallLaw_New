@@ -1162,3 +1162,6 @@
 /processorParam:TextureFormat=Color
 /build:Weapons/Arrows/arrow_flying.png
 
+#begin Maps/testmap8.txt
+/copy:Maps/testmap8.txt
+

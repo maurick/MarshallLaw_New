@@ -60,6 +60,12 @@ namespace Game_Test
         private Arduino Controller;
         public bool NoConnect;
 
+        private bool ZoneCheck = false;
+        private Vector2 ZoneCheckCoor;
+        private bool ZoneEnter = false;
+        private bool ZoneLeave = false;
+        public int InZone { get; private set; }
+
         public Player(int controller)
         {
             PlayerID = controller;
@@ -88,8 +94,6 @@ namespace Game_Test
                 NoConnect = true;
             }
         }
-
-        
 
         public void LoadContent(int X, int Y)
         {
@@ -275,7 +279,10 @@ namespace Game_Test
             }
             #endregion
             else if (State == PlayerEnums.ActionState.Walk)
+            {
                 Move(direction, gameTime);
+                CheckZone(sprite.Position);
+            }
             else if (State == PlayerEnums.ActionState.Thrust || State == PlayerEnums.ActionState.Slash || State == PlayerEnums.ActionState.Shoot)
                 Attack(gameTime);
             
@@ -304,7 +311,10 @@ namespace Game_Test
             CurrentWeapon.Draw(spriteBatch);
             foreach (Arrow arrow in Arrows)
                 arrow.Draw(spriteBatch);
+        }
 
+        public void DrawHealthBar(SpriteBatch spriteBatch)
+        {
             Healthbar.Draw(spriteBatch, sprite.Position);
         }
 
@@ -677,16 +687,16 @@ namespace Game_Test
         }
 #endregion
 
-        private void ChangeAlpha(Vector2 position, int number)
+        private void ChangeAlpha(Vector2 Position, int number)
         {
             float tilescale_x = GameSettings.Instance.Tilescale.X, tilescale_y = GameSettings.Instance.Tilescale.Y;
 
-            int x1 = (int)(position.X / tilescale_x),
-            y1 = (int)(position.Y / tilescale_y),
-            x2 = (int)((position.X + 2 * tilescale_x) / tilescale_x),
-            y2 = (int)((position.Y + 2 * tilescale_y) / tilescale_y);
+            int x1 = (int)(Position.X / tilescale_x),
+            y1 = (int)(Position.Y / tilescale_y),
+            x2 = (int)((Position.X + 2 * tilescale_x) / tilescale_x),
+            y2 = (int)((Position.Y + 2 * tilescale_y) / tilescale_y);
 
-            Rectangle playerRect = new Rectangle(new Point((int)(position.X) + 12, (int)(position.Y + 10)), new Point((int)tilescale_x, (int)(tilescale_y + 12)));
+            Rectangle PlayerRect = new Rectangle(new Point((int)(Position.X + 0.5 * tilescale_x), (int)(Position.Y + 0.5 * tilescale_y)), new Point((int)tilescale_x, (int)(tilescale_y * 2 - 0.5 * tilescale_y)));
 
             int TileID;
 
@@ -699,7 +709,7 @@ namespace Game_Test
                     if (TileID != 0)
                     {
                         rect = new Rectangle(j * (int)tilescale_x, i * (int)tilescale_y, (int)tilescale_x, (int)tilescale_y);
-                        if (rect.Intersects(playerRect))
+                        if (rect.Intersects(PlayerRect))
                             layer[number].ChangeTileAlpha(j, i, 0.5f);
                         else if (layer[number].GetTileAlpha(j, i) != 1.0f)
                             layer[number].ChangeTileAlpha(j, i, 1.0f);
@@ -796,6 +806,66 @@ namespace Game_Test
         {
             this.enemies.Clear();
             this.enemies = enemies;            
+        }
+
+        private void CheckZone(Vector2 Position)
+        {
+            float tilescale_x = GameSettings.Instance.Tilescale.X, tilescale_y = GameSettings.Instance.Tilescale.Y;
+
+            int x1 = (int)((Position.X + 0.5 * tilescale_x) / tilescale_x),
+            y1 = (int)((Position.Y + tilescale_y) / tilescale_y),
+            x2 = (int)((Position.X + 1.5 * tilescale_x) / tilescale_x),
+            y2 = (int)((Position.Y + 2 * tilescale_y) / tilescale_y);
+
+            Rectangle PlayerRect = new Rectangle(new Point((int)(Position.X + 0.5 * tilescale_x), (int)(Position.Y + tilescale_y)), new Point((int)tilescale_x, (int)(tilescale_y)));
+
+            int TileID;
+
+            Rectangle temp;
+            if (ZoneCheckCoor != Vector2.Zero)
+            {
+                temp = new Rectangle((int)ZoneCheckCoor.X, (int)ZoneCheckCoor.Y, (int)tilescale_x, (int)tilescale_y);
+                if (!(temp.Intersects(PlayerRect)))
+                {
+                    ZoneCheck = false;
+                    ZoneCheckCoor = Vector2.Zero;
+                }
+            }
+
+            for (int i = y1; i <= y2; i++)
+            {
+                for (int j = x1; j <= x2; j++)
+                {
+                    TileID = layer[1].getTileID(j, i);
+                    Rectangle rect;
+                    if (TileID != 0)
+                    {
+                        rect = new Rectangle(j * (int)tilescale_x, i * (int)tilescale_y, (int)tilescale_x, (int)tilescale_y);
+                        if (TileID == 1)
+                        {
+                            if (rect.Intersects(PlayerRect) && ZoneCheck == false)
+                            {
+                                ZoneCheck = true;
+                                ZoneCheckCoor = new Vector2(j, i);
+                                if (InZone == 0)
+                                    ZoneEnter = true;
+                                if (InZone != 0)
+                                {
+                                    ZoneLeave = false;
+                                    InZone = 0;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (ZoneEnter && rect.Intersects(PlayerRect))
+                                InZone = TileID;
+                            else if (rect.Intersects(PlayerRect) && !ZoneEnter)
+                                ZoneLeave = true;
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -33,6 +33,7 @@ namespace Game_Test
         public PlayerEnums.LookDirection lookDirection { get; set; }
         public List<PlayerEnums.LookDirection> PlayerLookDirection { get; set; }
         public List<int> PlayerSprSheetX { get; set; }
+        public List<int> PlayerZones { get; set; }
 
         private SprSheetImage sprite;
 
@@ -55,10 +56,16 @@ namespace Game_Test
         public bool Die { get; set; }
         public bool AnimationFinished { get; private set; }
 
-        public Enemy(int X, int Y)
+        private int ZoneNumber;
+
+        public Random Random;
+
+        public Enemy(int X, int Y, int ZoneNR)
         {
             //TODO add playerstats
             //this.player = player
+
+            Random = new Random();
 
             Position = new Vector2(X, Y);
             
@@ -83,6 +90,9 @@ namespace Game_Test
             PlayerState = new List<PlayerEnums.ActionState>();
             PlayerSprSheetX = new List<int>();
             PlayerPosition = new List<Vector2>();
+            PlayerZones = new List<int>();
+
+            ZoneNumber = ZoneNR;
         }
 
         public void LoadContent()
@@ -176,8 +186,6 @@ namespace Game_Test
             }
             #endregion
 
-            Random rnd = new Random();
-
             #region Movement
             if (State != PlayerEnums.ActionState.Thrust)
             {
@@ -235,8 +243,8 @@ namespace Game_Test
                     SpeedScale = 0.5f;
                     if (duration <= 0)
                     {
-                        duration = rnd.Next(1, 3);
-                        dir = rnd.Next(12);
+                        duration = Random.Next(1, 3);
+                        dir = Random.Next(12);
                     }
                     else
                         duration -= gameTime.ElapsedGameTime.TotalSeconds;
@@ -762,30 +770,9 @@ namespace Game_Test
 
         private bool PlayerinZone(int index)
         {
-            float tilescale_x = GameSettings.Instance.Tilescale.X, tilescale_y = GameSettings.Instance.Tilescale.Y;
-            bool returnvalue = false;
-            int TileID;
-            int[] x = new int[4],
-                y = new int[4];
-
-            x[0] = (int)((PlayerPosition[index].X + tilescale_x * 0.5) / tilescale_x);
-            x[1] = (int)((PlayerPosition[index].X + tilescale_x * 1.5) / tilescale_x);
-
-            y[0] = (int)((PlayerPosition[index].Y + tilescale_y) / tilescale_y);
-            y[1] = (int)((PlayerPosition[index].Y + 2 * tilescale_y) / tilescale_y);
-
-            for (int i = 0; i < 2; i++)
-            {
-                for (int j = 0; j < 2; j++)
-                {
-                    TileID = layer[1].getTileID(x[i], y[j]);
-                    if (TileID != 0)
-                    {
-                            returnvalue = true;
-                    }
-                }
-            }
-            return returnvalue;
+            if (PlayerZones[index] == ZoneNumber)
+                return true;
+            return false;
         }
 
         public void DieAnimation(GameTime gameTime)
