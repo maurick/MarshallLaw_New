@@ -36,30 +36,39 @@ namespace Game_Test
         private void SetConnection()
         {
             this.Connect =
-                new SQLiteConnection("Data Source=MyDatabase.sqlite;Version=3;");
+                new SQLiteConnection("Data Source=DatabaseSQLite.db;Version=3;");
         }
 
         public void ExecuteQuery(string txtQuery)
         {
-            SetConnection();
             Connect.Open();
             Command = new SQLiteCommand(txtQuery, Connect);
             Command.ExecuteNonQuery();
             Connect.Close();
         }
 
-        public string ReturnRead(string ValueName)
+        private string ReturnRead(string txtQuery, string ValueName)
         {
+            Connect.Open();
+            Command = new SQLiteCommand(txtQuery, Connect);
             Reader = Command.ExecuteReader();
             if (Reader.Read())
             {
-                return Reader[ValueName].ToString();
+                string x = Reader[ValueName].ToString();
+                Connect.Close();
+                return x;
             }
             else
             {
+                Connect.Close();
                 return null;
             }
 
+        }
+
+        public string ReturnEnemyHP(string EnemyName)
+        {
+            return ReturnRead("SELECT EnemyHP FROM Enemies WHERE EnemyName LIKE " + EnemyName, "EnemyHP");
         }
     }
 }
