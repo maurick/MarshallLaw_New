@@ -202,7 +202,7 @@ namespace Game_Test
                 player.DrawTop(spriteBatch);
 
             foreach (Enemy enemy in enemies)
-                enemy.DrawHealthBar(spriteBatch);
+                enemy.DrawTop(spriteBatch);
 
         }
 
