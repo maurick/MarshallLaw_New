@@ -472,7 +472,7 @@ namespace Game_Test
                 }
             }
             
-            for (int l = 2; l < layer.Length; l++)
+            for (int l = 3; l < layer.Length; l++)
                 ChangeAlpha(new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY), l);
             sprite.Position = new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY); //Set new position
             boundingBox.Position = new Vector2(boundingBox.Position.X + dirX, boundingBox.Position.Y + dirY);
@@ -887,6 +887,14 @@ namespace Game_Test
             query = "update playerstats set exp" + temp + "where playerid = " + PlayerID + ";";
             Database.Instance.ExecuteQuery(query);
             */
+        }
+
+        public void SetPosition(int x, int y)
+        {
+            Vector2 Position = new Vector2(x, y);
+            sprite.Position = Position;
+            CurrentWeapon.setPosition(Position);
+            boundingBox.Position = Position;
         }
     }
 }

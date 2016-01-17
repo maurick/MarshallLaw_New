@@ -33,12 +33,12 @@ namespace Game_Test
         //Waardes voor het scherm zodat hiermee gewerkt kan worden in andere classes
         public Vector2 Dimensions;
         public Vector2 Screensize;
-        private Vector2 tilescale;
         public Point Position;
         public DisplayMode DisplayMode;
         public DisplayMode FullScreen;
 
-        public Vector2 Tilescale { get { return tilescale; } set { tilescale = value; } }
+        public Vector2 Tilescale { get; set; }
+        public Vector2 TileMapSize { get; set; }
 
         private GameSettings()
         {
@@ -49,8 +49,6 @@ namespace Game_Test
             //Dimensions = Screensize;
             Dimensions = new Vector2(1440, 810);
             Console.OpenStandardInput();
-
-            tilescale = new Vector2();
 
             //Zorgt ervoor dat de window in het midden van je beeldscherm begint
             Position = new Point((int)(Screensize.X - Dimensions.X) / 2, (int)(Screensize.Y - Dimensions.Y) / 2);
