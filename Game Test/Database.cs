@@ -36,12 +36,12 @@ namespace Game_Test
         private void SetConnection()
         {
             this.Connect =
-                new SQLiteConnection("Data Source=MyDatabase.sqlite;Version=3;");
+                new SQLiteConnection("Data Source=DatabaseSQLite.db;Version=3;");
         }
 
         public void ExecuteQuery(string txtQuery)
         {
-            SetConnection();
+            //SetConnection();
             Connect.Open();
             Command = new SQLiteCommand(txtQuery, Connect);
             Command.ExecuteNonQuery();
@@ -60,6 +60,21 @@ namespace Game_Test
                 return null;
             }
 
+        }
+
+        public int ReadQuery(string query, string value)
+        {
+            int returnvalue = 0;
+            Connect.Open();
+            Command = new SQLiteCommand(query, Connect);
+            Reader = Command.ExecuteReader();
+            while(Reader.Read())
+            {
+                Connect.Close();
+                returnvalue = (int)Reader[value];
+            }
+            Connect.Close();
+            return returnvalue;
         }
     }
 }

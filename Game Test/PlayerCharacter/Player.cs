@@ -472,7 +472,7 @@ namespace Game_Test
                 }
             }
             
-            for (int l = 2; l < layer.Length; l++)
+            for (int l = 3; l < layer.Length; l++)
                 ChangeAlpha(new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY), l);
             sprite.Position = new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY); //Set new position
             boundingBox.Position = new Vector2(boundingBox.Position.X + dirX, boundingBox.Position.Y + dirY);
@@ -874,19 +874,28 @@ namespace Game_Test
         public void AddExp()
         {
             Expbar.IncreaseExp(50);
-            /*
-            string query;
+            /*string query;
             int temp = 0, temp2 = 0;
-            //temp = get exp
+            temp = Convert.ToInt32(Database.Instance.ReadQuery("select exp from playerstats where playerid = " + PlayerID + ";", "exp"));
             if (temp >= 100)
             {
                 temp = 0;
-                //temp2 = get level
-                query = "update playerstats set level" + temp2 + "where playerid = " + PlayerID + ";";
+                temp2 = Convert.ToInt32(Database.Instance.ReadQuery("select exp from playerstats where playerid = " + PlayerID + ";", "level"));
+                query = "update playerstats set level " + temp2 + " where playerid = " + PlayerID + ";";
+                Database.Instance.ExecuteQuery(query);
             }
-            query = "update playerstats set exp" + temp + "where playerid = " + PlayerID + ";";
-            Database.Instance.ExecuteQuery(query);
-            */
+            query = "update playerstats set exp " + temp + " where playerid = " + PlayerID + ";";
+            Database.Instance.ExecuteQuery(query);*/
+        }
+
+        public void RemoveEnemy(Enemy enemy)
+        {
+            enemies.Remove(enemy);
+        }
+
+        public void AddEnemy(Enemy enemy)
+        {
+            enemies.Add(enemy);
         }
     }
 }

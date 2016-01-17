@@ -14,6 +14,7 @@ namespace Game_Test
         //Playerstats player;
 
         private Vector2 Position;
+        public Vector2 TilePosition { get; set; }
 
         private float SpeedScale; //Scales up the movementspeed
         
@@ -56,10 +57,13 @@ namespace Game_Test
         public List<Arrow> HitArrows = new List<Arrow>();
 
         public Healthbar healthbar;
+        public LevelIndicator levelindicator;
         public bool Die { get; set; }
         public bool AnimationFinished { get; private set; }
 
         private int ZoneNumber;
+
+        public double Time { get; set; }
 
         public int LastHitBy { get; private set; }
 
@@ -68,11 +72,12 @@ namespace Game_Test
             //TODO add playerstats
             //this.player = player
 
-            Position = new Vector2(X, Y);
-            
+            TilePosition = new Vector2(X, Y);
+            Position = new Vector2(X * GameSettings.Instance.Tilescale.X, Y * GameSettings.Instance.Tilescale.Y);
+
             State = PlayerEnums.ActionState.None;
             if (PlayerState != null)
-                for(int i = 0; i < PlayerState.Count; i++)
+                for (int i = 0; i < PlayerState.Count; i++)
                     PlayerState[i] = PlayerEnums.ActionState.None;
             lookDirection = PlayerEnums.LookDirection.Down;
             sprSheetY = PlayerEnums.Action.WalkDown;
@@ -80,13 +85,44 @@ namespace Game_Test
 
             direction = new Vector2(0, 1);
 
-            sprite = new SprSheetImage("EnemySprites/Male/red_orc");
+            int rnd = Random.Next(9);
+            switch (rnd)
+            {
+                case 0:
+                    sprite = new SprSheetImage("EnemySprites/Female/darkelf");
+                    break;
+                case 1:
+                    sprite = new SprSheetImage("EnemySprites/Female/darkelf2");
+                    break;
+                case 2:
+                    sprite = new SprSheetImage("EnemySprites/Female/orc");
+                    break;
+                case 3:
+                    sprite = new SprSheetImage("EnemySprites/Female/red_orc");
+                    break;
+                case 4:
+                    sprite = new SprSheetImage("EnemySprites/Male/darkelf");
+                    break;
+                case 5:
+                    sprite = new SprSheetImage("EnemySprites/Male/darkelf2");
+                    break;
+                case 6:
+                    sprite = new SprSheetImage("EnemySprites/Male/orc");
+                    break;
+                case 7:
+                    sprite = new SprSheetImage("EnemySprites/Male/red_orc");
+                    break;
+                case 8:
+                    sprite = new SprSheetImage("EnemySprites/Male/skeleton");
+                    break;
+            }
 
             SpeedScale = 0.5f;
 
             weapon = new Weapon("Weapons/Spear/Male/spear_male", PlayerEnums.Weapontype.Spear, sprite.Position, 1, this);
 
             healthbar = new Healthbar();
+            levelindicator = new LevelIndicator();
             PlayerLookDirection = new List<PlayerEnums.LookDirection>();
             PlayerState = new List<PlayerEnums.ActionState>();
             PlayerSprSheetX = new List<int>();
@@ -346,9 +382,10 @@ namespace Game_Test
             weapon.Draw(spriteBatch);
         }
         
-        public void DrawHealthBar(SpriteBatch spriteBatch)
+        public void DrawTop(SpriteBatch spriteBatch)
         {
             healthbar.Draw(spriteBatch, sprite.Position);
+            levelindicator.Draw(spriteBatch, sprite.Position);
         }
 
         private void Attack(GameTime gameTime)
@@ -832,6 +869,11 @@ namespace Game_Test
             sprSheetX += (float)gameTime.ElapsedGameTime.TotalMilliseconds / gameTime.ElapsedGameTime.Milliseconds * Interval;
             sprite.SprSheetX = (int)sprSheetX;
             sprite.Update(gameTime);
+        }
+
+        public int getZoneNR()
+        {
+            return ZoneNumber;
         }
     }
 }
