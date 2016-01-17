@@ -874,27 +874,28 @@ namespace Game_Test
         public void AddExp()
         {
             Expbar.IncreaseExp(50);
-            /*
-            string query;
+            /*string query;
             int temp = 0, temp2 = 0;
-            //temp = get exp
+            temp = Convert.ToInt32(Database.Instance.ReadQuery("select exp from playerstats where playerid = " + PlayerID + ";", "exp"));
             if (temp >= 100)
             {
                 temp = 0;
-                //temp2 = get level
-                query = "update playerstats set level" + temp2 + "where playerid = " + PlayerID + ";";
+                temp2 = Convert.ToInt32(Database.Instance.ReadQuery("select exp from playerstats where playerid = " + PlayerID + ";", "level"));
+                query = "update playerstats set level " + temp2 + " where playerid = " + PlayerID + ";";
+                Database.Instance.ExecuteQuery(query);
             }
-            query = "update playerstats set exp" + temp + "where playerid = " + PlayerID + ";";
-            Database.Instance.ExecuteQuery(query);
-            */
+            query = "update playerstats set exp " + temp + " where playerid = " + PlayerID + ";";
+            Database.Instance.ExecuteQuery(query);*/
         }
 
-        public void SetPosition(int x, int y)
+        public void RemoveEnemy(Enemy enemy)
         {
-            Vector2 Position = new Vector2(x, y);
-            sprite.Position = Position;
-            CurrentWeapon.setPosition(Position);
-            boundingBox.Position = Position;
+            enemies.Remove(enemy);
+        }
+
+        public void AddEnemy(Enemy enemy)
+        {
+            enemies.Add(enemy);
         }
     }
 }

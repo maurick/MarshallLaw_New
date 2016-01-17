@@ -20,6 +20,7 @@ namespace Game_Test
         List<Player> players = new List<Player>();
 
         List<Enemy> enemies;
+        List<Vector4> DeadEnemies = new List<Vector4>();
 
         private bool PlayerActive;
 
@@ -31,6 +32,8 @@ namespace Game_Test
         public int NumberLayers { get; private set; }
 
         int layer_player_num = 0;
+
+        private const double RespawnTime = 0.5;
 
         public Map(string mapName)
         {
@@ -119,16 +122,44 @@ namespace Game_Test
             foreach (Player player in players)
                 player.Update(gameTime);
 
+            foreach(Vector4 temp in DeadEnemies)
+            {
+                if (gameTime.TotalGameTime.TotalMinutes - temp.W >= RespawnTime)
+                {
+                    Enemy enemy = new Enemy((int)temp.X, (int)temp.Y, (int)temp.Z);
+                    NumberLayers = mapLoader.GetNumLayers();
+                    enemy.SetLayernumber(NumberLayers - layer_player_num);
+                    int temp2 = 0;
+                    GetLayerEnemy("Collision", temp2++, enemy);
+                    GetLayerEnemy("Zone", temp2++, enemy);
+                    GetLayerEnemy("Doors", temp2++, enemy);
+                    for (int l = layer_player_num; l < Layers.Count - 3; l++)
+                    {
+                        GetLayerEnemy(Layers[l].Layername, temp2++, enemy);
+                    }
+                    enemy.LoadContent();
+                    enemies.Add(enemy);
+                    foreach (Player player in players)
+                        player.AddEnemy(enemy);
+                    DeadEnemies.Remove(temp);
+                    break;
+                }
+            }
+
             foreach (Enemy enemy in enemies)
             {
                 if (enemy.healthbar.rectwidth == 1 && enemy.AnimationFinished == false && enemy.Die == false)
                 {
                     enemy.Die = true;
                     players[enemy.LastHitBy].AddExp();
+                    enemy.Time = gameTime.TotalGameTime.TotalMinutes;
+                    DeadEnemies.Add(new Vector4(enemy.TilePosition, enemy.getZoneNR(), (float)gameTime.TotalGameTime.TotalMinutes));
                 }
                 if (enemy.AnimationFinished)
                 {
                     enemy.UnloadContent();
+                    foreach (Player player in players)
+                        player.RemoveEnemy(enemy);
                     enemies.Remove(enemy);
                     break;
                 }
@@ -186,7 +217,8 @@ namespace Game_Test
                         if (Layers[l].Layername == "Player" && PlayerActive == false)
                         {
                             foreach (Enemy enemy in enemies)
-                                enemy.Draw(spriteBatch);
+                                if (!enemy.Die || (enemy.Die && !enemy.AnimationFinished))
+                                    enemy.Draw(spriteBatch);
 
                             foreach (Player player in players)
                                 player.Draw(spriteBatch);
@@ -253,6 +285,17 @@ namespace Game_Test
             }
         }
 
+        private void GetLayerEnemy(string Name, int number, Enemy enemy)
+        {
+            for (int l = 0; l < Layers.Count; l++)
+            {
+                if (Layers[l].Layername == Name)
+                {
+                    enemy.SendLayer(Layers[l], number);
+                }
+            }
+        }
+
         public void CreateEnemies()
         {
             Layer temp = Layers.Find(x => x.Layername == "Enemy");
@@ -263,7 +306,7 @@ namespace Game_Test
                 for (int y = 0; y < GameSettings.Instance.TileMapSize.Y; y++)
                     if (temp.getTileID(x, y) != 0)
                     {
-                        enemy = new Enemy((int)(x * GameSettings.Instance.Tilescale.X), (int)(y * GameSettings.Instance.Tilescale.Y), temp.getTileID(x, y));
+                        enemy = new Enemy(x, y, temp.getTileID(x, y));
                         enemies.Add(enemy);
                     }
 
