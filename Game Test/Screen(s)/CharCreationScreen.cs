@@ -233,7 +233,6 @@ namespace Game_Test
                         items3[control.CurrentActiveItem].Update(gameTime);
                     }
                 }
-
             }
 
             if (control.CurrentActiveField == 2)

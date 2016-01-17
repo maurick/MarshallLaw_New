@@ -14,6 +14,7 @@ namespace Game_Test
         //Playerstats player;
 
         private Vector2 Position;
+        public Vector2 TilePosition { get; set; }
 
         private float SpeedScale; //Scales up the movementspeed
         
@@ -62,6 +63,8 @@ namespace Game_Test
 
         private int ZoneNumber;
 
+        public double Time { get; set; }
+
         public int LastHitBy { get; private set; }
 
         public Enemy(int X, int Y, int ZoneNR)
@@ -69,7 +72,8 @@ namespace Game_Test
             //TODO add playerstats
             //this.player = player
 
-            Position = new Vector2(X, Y);
+            TilePosition = new Vector2(X, Y);
+            Position = new Vector2(X * GameSettings.Instance.Tilescale.X, Y * GameSettings.Instance.Tilescale.Y);
 
             State = PlayerEnums.ActionState.None;
             if (PlayerState != null)
@@ -865,6 +869,11 @@ namespace Game_Test
             sprSheetX += (float)gameTime.ElapsedGameTime.TotalMilliseconds / gameTime.ElapsedGameTime.Milliseconds * Interval;
             sprite.SprSheetX = (int)sprSheetX;
             sprite.Update(gameTime);
+        }
+
+        public int getZoneNR()
+        {
+            return ZoneNumber;
         }
     }
 }
