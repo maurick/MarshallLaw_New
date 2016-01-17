@@ -114,7 +114,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.SQLite, Version=1.0.99.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Visual Studio 2015\Projects\kunstgenerator\kunstgenerator\System.Data.SQLite.dll</HintPath>
+      <HintPath>..\..\..\..\System.Data.SQLite.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="System.Drawing" />
