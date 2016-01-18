@@ -126,7 +126,8 @@ namespace Game_Test
             {
                 if (gameTime.TotalGameTime.TotalMinutes - temp.W >= RespawnTime)
                 {
-                    Enemy enemy = new Enemy((int)temp.X, (int)temp.Y, (int)temp.Z);
+                    Database database = new Database();
+                    Enemy enemy = new Enemy((int)temp.X, (int)temp.Y, (int)temp.Z, Convert.ToInt32(database.ReturnEnemyHP("'Wolf'")));
                     NumberLayers = mapLoader.GetNumLayers();
                     enemy.SetLayernumber(NumberLayers - layer_player_num);
                     int temp2 = 0;
@@ -298,6 +299,7 @@ namespace Game_Test
 
         public void CreateEnemies()
         {
+            Database database = new Database();
             Layer temp = Layers.Find(x => x.Layername == "Enemy");
             enemies = new List<Enemy>();
             Enemy enemy;
@@ -306,7 +308,7 @@ namespace Game_Test
                 for (int y = 0; y < GameSettings.Instance.TileMapSize.Y; y++)
                     if (temp.getTileID(x, y) != 0)
                     {
-                        enemy = new Enemy(x, y, temp.getTileID(x, y));
+                        enemy = new Enemy(x, y, temp.getTileID(x, y), Convert.ToInt32(database.ReturnEnemyHP("'Wolf'")));
                         enemies.Add(enemy);
                     }
 
