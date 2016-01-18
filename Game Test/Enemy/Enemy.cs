@@ -121,7 +121,7 @@ namespace Game_Test
                     break;
             }
 
-            SpeedScale = 0.5f;
+            SpeedScale = 0.25f;
 
             weapon = new Weapon("Weapons/Spear/Male/spear_male", PlayerEnums.Weapontype.Spear, sprite.Position, 1, this);
 
@@ -246,7 +246,7 @@ namespace Game_Test
                         PlayerinZone(i))
                     {
                         Aggro = true;
-                        SpeedScale = 0.15f;
+                        SpeedScale = 0.5f;
                         if (sprite.Position.Y - GameSettings.Instance.Tilescale.Y - PlayerPosition[i].Y > 0)
                         {
                             lookDirection = PlayerEnums.LookDirection.Up;
@@ -288,7 +288,7 @@ namespace Game_Test
                 }
                 if (Aggro == false)
                 {
-                    SpeedScale = 0.5f;
+                    SpeedScale = 0.25f;
                     if (duration <= 0 && !MoveBreak)
                     {
                         minDuration = 1;

@@ -30,7 +30,7 @@ namespace Game_Test
             ControllerID = controllerID;
         }
         
-        public void SetCharacterInfo(string name, int gender, int skincolor, int head, int shirt, int belt, int pants, int xp)
+        public void SetCharacterInfo(string name, int gender, int skincolor, int head, int shirt, int belt, int pants, int xp, int level)
         {
             this.Name = name;
             for (int i = 0; i < char_member.GetList(0, 0).Count; i++)
@@ -47,6 +47,7 @@ namespace Game_Test
             this.Belt = belt;
             this.Pants = pants;
             this.XP = xp;
+            this.Level = level;
         }
 
     }
