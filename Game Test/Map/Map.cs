@@ -179,7 +179,7 @@ namespace Game_Test
                         enemy.PlayerState.Insert(i, players[i].State);
                         enemy.PlayerSprSheetX.Insert(i, (int)players[i].sprSheetX);
                         enemy.PlayerZones.Insert(i, players[i].InZone);
-                        enemy.PlayerLevels.IndexOf(i, Convert.ToInt32(players[i].LevelIndicator.Text.Text));
+                        enemy.PlayerLevels.Insert(i, Convert.ToInt32(players[i].LevelIndicator.Text.Text));
 
                         players[i].SendPosition(enemy.GetPosition());
                         players[i].EnemyLookDirection = enemy.lookDirection;

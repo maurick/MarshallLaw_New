@@ -105,6 +105,8 @@ namespace Game_Test
                 Healthbar = new Healthbar();
                 LevelIndicator = new LevelIndicator();
                 LevelIndicator.Text.Text = Convert.ToString(Controller.characterInfo.Level);
+                if (Convert.ToInt32(LevelIndicator.Text.Text) == 0)
+                    LevelIndicator.Text.Text = "1";
                 Expbar = new Expbar();
                 Expbar.SetExp(Controller.characterInfo.XP);
             }else
