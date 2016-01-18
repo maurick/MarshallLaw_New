@@ -22,12 +22,15 @@ namespace Game_Test
         public int Belt { get; set; }
         public int Pants { get; set; }
 
+        public int XP { get; set; }
+        public int Level { get; set; }
+
         public CharacterInfo(int controllerID)
         {
             ControllerID = controllerID;
         }
         
-        public void SetCharacterInfo(string name, int gender, int skincolor, int head, int shirt, int belt, int pants)
+        public void SetCharacterInfo(string name, int gender, int skincolor, int head, int shirt, int belt, int pants, int xp)
         {
             this.Name = name;
             for (int i = 0; i < char_member.GetList(0, 0).Count; i++)
@@ -43,6 +46,7 @@ namespace Game_Test
             this.Shirt = shirt;
             this.Belt = belt;
             this.Pants = pants;
+            this.XP = xp;
         }
 
     }

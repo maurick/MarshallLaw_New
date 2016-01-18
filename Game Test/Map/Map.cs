@@ -152,7 +152,7 @@ namespace Game_Test
                 if (enemy.healthbar.rectwidth == 1 && enemy.AnimationFinished == false && enemy.Die == false)
                 {
                     enemy.Die = true;
-                    players[enemy.LastHitBy].AddExp();
+                    players[enemy.LastHitBy].AddExp(enemy);
                     enemy.Time = gameTime.TotalGameTime.TotalMinutes;
                     DeadEnemies.Add(new Vector4(enemy.TilePosition, enemy.getZoneNR(), (float)gameTime.TotalGameTime.TotalMinutes));
                 }

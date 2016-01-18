@@ -75,16 +75,11 @@ namespace Game_Test
             if (ScreenManager.Instance.Controllers[controller] != null)
             {
                 CharCreation_Members char_mem = new CharCreation_Members();
-                //TODO add playerstats
-                //this.player = player;
-
-
 
                 State = PlayerEnums.ActionState.None;
                 lookDirection = PlayerEnums.LookDirection.Down;
                 sprSheetY = PlayerEnums.Action.None;
                 sprSheetX = 0;
-
 
                 Controller = ScreenManager.Instance.Controllers[controller];
 
@@ -109,8 +104,9 @@ namespace Game_Test
 
                 Healthbar = new Healthbar();
                 LevelIndicator = new LevelIndicator();
+                LevelIndicator.Text.Text = Convert.ToString(Controller.characterInfo.Level);
                 Expbar = new Expbar();
-                Expbar.SetExp(0);
+                Expbar.SetExp(Controller.characterInfo.XP);
             }else
             {
                 NoConnect = true;
@@ -889,26 +885,18 @@ namespace Game_Test
             }
         }
 
-        public void AddExp()
+        public void AddExp(Enemy e)
         {
-            Expbar.IncreaseExp(50);
+            int temp = Convert.ToInt32(LevelIndicator.Text.Text) - Convert.ToInt32(e.levelindicator.Text.Text);
+            int exp = 50 * (temp / 10);
+            Expbar.IncreaseExp(exp);
+            Controller.characterInfo.XP = 100 + exp;
             if (Expbar.rectwidth == (int)(2 * GameSettings.Instance.Tilescale.X))
             {
                 LevelIndicator.Text.Text = Convert.ToString(Convert.ToInt32(LevelIndicator.Text.Text) + 1);
                 Expbar.SetExp(0);
+                Controller.characterInfo.Level = Convert.ToInt32(LevelIndicator.Text.Text);
             }
-            /*string query;
-            int temp = 0, temp2 = 0;
-            temp = Convert.ToInt32(Database.Instance.ReadQuery("select exp from playerstats where playerid = " + PlayerID + ";", "exp"));
-            if (temp >= 100)
-            {
-                temp = 0;
-                temp2 = Convert.ToInt32(Database.Instance.ReadQuery("select exp from playerstats where playerid = " + PlayerID + ";", "level"));
-                query = "update playerstats set level " + temp2 + " where playerid = " + PlayerID + ";";
-                Database.Instance.ExecuteQuery(query);
-            }
-            query = "update playerstats set exp " + temp + " where playerid = " + PlayerID + ";";
-            Database.Instance.ExecuteQuery(query);*/
         }
 
         public void RemoveEnemy(Enemy enemy)
