@@ -29,7 +29,7 @@ namespace Game_Test
 
         public Database()
         {
-            SetConnection();
+            //SetConnection();
         }
 
 

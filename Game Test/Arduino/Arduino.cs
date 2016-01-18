@@ -67,6 +67,7 @@ namespace Game_Test
                 int pants = Convert.ToInt32(message.Substring(23, 1));
 
                 characterInfo.SetCharacterInfo(name, gender, skincolor, head, shirt, belt, pants);
+
             }
             else
             {
@@ -368,6 +369,8 @@ namespace Game_Test
 
 
             string message = "#Save:55";
+
+
 
             for (int i = 0; i < characterInfo.Name.Length; i++)
             {
