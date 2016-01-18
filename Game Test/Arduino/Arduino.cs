@@ -65,8 +65,8 @@ namespace Game_Test
                 int shirt = Convert.ToInt32(message.Substring(21, 1));
                 int belt = Convert.ToInt32(message.Substring(22, 1));
                 int pants = Convert.ToInt32(message.Substring(23, 1));
-                int xp = Convert.ToInt32(message.Substring(24, 3));
-                int level = Convert.ToInt32(message.Substring(27, 2));
+                int xp = Convert.ToInt32(message.Substring(24, 3)) - 100;
+                int level = Convert.ToInt32(message.Substring(27, 2)) - 10;
 
                 characterInfo.SetCharacterInfo(name, gender, skincolor, head, shirt, belt, pants, xp, level);
 
@@ -75,6 +75,8 @@ namespace Game_Test
             {
                 CharachterInfo_Collected = true;
                 characterInfo.NotFound = true;
+                characterInfo.XP = 1;
+                characterInfo.Level = 1;
                 //characterInfo.SetCharacterInfo("nonamefond", 1, 2,);
             }
 
