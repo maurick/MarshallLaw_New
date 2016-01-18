@@ -35,8 +35,7 @@ namespace Game_Test
 
         private void SetConnection()
         {
-            this.Connect =
-                new SQLiteConnection("Data Source=DatabaseSQLite.db;Version=3;");
+            this.Connect = new SQLiteConnection("Data Source=DatabaseSQLite.db;Version=3;");
         }
 
         public void ExecuteQuery(string txtQuery)

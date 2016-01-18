@@ -32,7 +32,7 @@ namespace Game_Test
 
             port.Open();
             port.Write("#GetInfo%");
-            Thread.Sleep(1000);
+            Thread.Sleep(100);
 
             int count = port.BytesToRead;
             string returnMessage = "";
@@ -353,7 +353,14 @@ namespace Game_Test
         {
             //SendStats();
             Save();
-            Write("ControllerOff");
+
+            port.Open();
+            port.Write("#Exit%");
+            port.Close();
+            
+            Thread.Sleep(1000);
+            GameInstance.ExitGame = true;
+
         }
     }
 }

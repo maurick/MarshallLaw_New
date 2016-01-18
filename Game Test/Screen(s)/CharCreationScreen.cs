@@ -29,6 +29,8 @@ namespace Game_Test
         bool refresh;
         CharacterCreator characterCreator;
 
+
+
         //Contructor
         public CharCreationScreen()
         {

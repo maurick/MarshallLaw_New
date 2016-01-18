@@ -16,6 +16,7 @@ namespace Game_Test
         {
             using (var game = new GameInstance())
                 game.Run();
+                
         }
     }
 #endif

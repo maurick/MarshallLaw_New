@@ -61,7 +61,7 @@ namespace Game_Test
 
                 Port.Open();
                 Port.Write("#Hello Arduino%");
-                Thread.Sleep(1000);
+                Thread.Sleep(100);
 
                 int count = Port.BytesToRead;
                 string returnMessage = "";

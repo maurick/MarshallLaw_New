@@ -178,7 +178,7 @@ namespace Game_Test
                 }
             }
             #endregion
-            //controller.Update();
+
             //Check if keys are pressed
             #region Attack
             if (InputManager.Instance.KeyDown(Keys.Space) || Controller.A_Button(false))

@@ -63,10 +63,15 @@ namespace Game_Test
 
             if(ArduinoManager.SearchArduinoComPort() == true)
             {
+                Controller1_Connected = true;
                 foreach (SerialPort port in ArduinoManager.Good_Ports)
                 {
                     Controllers.Add(new Arduino(port));
                 }
+            }
+            else
+            {
+                Controller1_Connected = false;
             }
 
             bool test;
@@ -101,10 +106,13 @@ namespace Game_Test
         {
             TransitionScreen(gameTime);
             currentscreen.Update(gameTime);
-            foreach (Arduino Controller in Controllers)
+            if(Controller1_Connected)
             {
-                Controller.Update();
-            }      
+                foreach (Arduino Controller in Controllers)
+                {
+                    Controller.Update();
+                }
+            }     
         }
 
         public void Draw(SpriteBatch spriteBatch)

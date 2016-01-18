@@ -12,10 +12,11 @@ namespace Game_Test
     /// </summary>
     public class GameInstance : Game
     {
-        new Database xy = new Database();
+        //new Database xy = new Database();
         public GraphicsDeviceManager Graphics;
         SpriteBatch spriteBatch;
         public static bool ExitGame;
+        bool GameHasExit = false;
 
         public GameInstance()
         {
@@ -76,18 +77,30 @@ namespace Game_Test
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GameSettings.Instance.ScreenDimChanged)
-                SceenReload();
-            if (ExitGame == true)
-            //if (Keyboard.GetState().IsKeyDown(Keys.Escape) || ExitGame == true)
-                Exit();
+            if(GameHasExit == false)
+            {
+                if (GameSettings.Instance.ScreenDimChanged)
+                    SceenReload();
+                if (ExitGame == true)
+                {
+                    foreach (Arduino cont in ScreenManager.Instance.Controllers)
+                    {
+                        cont.Exit();
+                    }
+                    UnloadContent();
+                    Exit();
+                    GameHasExit = true;
+                    return;
+                }
 
-            ScreenManager.Instance.Update(gameTime);
 
-            if (GameSettings.Instance.ScreenDimChanged)
-                SceenReload();
+                ScreenManager.Instance.Update(gameTime);
 
-            base.Update(gameTime);
+                if (GameSettings.Instance.ScreenDimChanged)
+                    SceenReload();
+
+                base.Update(gameTime);
+            }
         }
 
         /// <summary>
