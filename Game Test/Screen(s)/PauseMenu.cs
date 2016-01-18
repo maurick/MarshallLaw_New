@@ -126,6 +126,7 @@ namespace Game_Test
             foreach (PauseMenuItem item in P_menuItems)
             {
                 exitID = item.GetID("Exit to menu");
+                ScreenManager.Instance.Controllers[0].SaveSettings();
                 if (exitID != -1)
                     break;
             }
