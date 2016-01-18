@@ -51,7 +51,7 @@ namespace Game_Test
             bool CharachterInfo_Collected = false;
 
 
-            string message = returnMessage.Substring(returnMessage.IndexOf("#Info:"), 28);
+            string message = returnMessage.Substring(returnMessage.IndexOf("#Info:"), 30);
 
             if(message.Substring(6, 2) == "55")
             {
@@ -66,8 +66,9 @@ namespace Game_Test
                 int belt = Convert.ToInt32(message.Substring(22, 1));
                 int pants = Convert.ToInt32(message.Substring(23, 1));
                 int xp = Convert.ToInt32(message.Substring(24, 3));
+                int level = Convert.ToInt32(message.Substring(27, 2));
 
-                characterInfo.SetCharacterInfo(name, gender, skincolor, head, shirt, belt, pants, xp);
+                characterInfo.SetCharacterInfo(name, gender, skincolor, head, shirt, belt, pants, xp, level);
 
             }
             else

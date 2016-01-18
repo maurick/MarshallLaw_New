@@ -895,7 +895,7 @@ namespace Game_Test
             {
                 LevelIndicator.Text.Text = Convert.ToString(Convert.ToInt32(LevelIndicator.Text.Text) + 1);
                 Expbar.SetExp(0);
-                Controller.characterInfo.Level = Convert.ToInt32(LevelIndicator.Text.Text);
+                Controller.characterInfo.Level = Convert.ToInt32(LevelIndicator.Text.Text) + 10;
             }
         }
 
