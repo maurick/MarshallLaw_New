@@ -13,6 +13,7 @@ namespace Game_Test
         private Color[] HorLineData, VerLineData, Rectangle;
         private float width, height;
         public float rectwidth;
+        private bool Changed = true, Drawn = false;
 
         public Healthbar()
         {
@@ -26,19 +27,27 @@ namespace Game_Test
 
         public void Draw(SpriteBatch spriteBatch, Vector2 Position)
         {
-            TextureRect = new Texture2D(spriteBatch.GraphicsDevice, (int)rectwidth, (int)height);
-            HorLine = new Texture2D(spriteBatch.GraphicsDevice, (int)width, 1);
-            VerLine = new Texture2D(spriteBatch.GraphicsDevice, 1, (int)height);
-            for (int i = 0; i < HorLineData.Length; i++)
-                HorLineData[i] = Color.Black;
-            for (int i = 0; i < VerLineData.Length; i++)
-                VerLineData[i] = Color.Black;
-            for (int i = 0; i < Rectangle.Length; i++)
-                Rectangle[i] = Color.Red;
+            if (!Drawn)
+            {
+                Drawn = true;
+                HorLine = new Texture2D(spriteBatch.GraphicsDevice, (int)width, 1);
+                VerLine = new Texture2D(spriteBatch.GraphicsDevice, 1, (int)height);
+                for (int i = 0; i < HorLineData.Length; i++)
+                    HorLineData[i] = Color.Black;
+                for (int i = 0; i < VerLineData.Length; i++)
+                    VerLineData[i] = Color.Black;
 
-            TextureRect.SetData(Rectangle);
-            HorLine.SetData(HorLineData);
-            VerLine.SetData(VerLineData);
+                HorLine.SetData(HorLineData);
+                VerLine.SetData(VerLineData);
+            }
+            if (Changed)
+            {
+                Changed = false;
+                TextureRect = new Texture2D(spriteBatch.GraphicsDevice, (int)rectwidth, (int)height);
+                for (int i = 0; i < Rectangle.Length; i++)
+                    Rectangle[i] = Color.Red;
+                TextureRect.SetData(Rectangle);
+            }
 
             spriteBatch.Draw(TextureRect, Position, Color.White);
             spriteBatch.Draw(HorLine, Position, Color.White);
@@ -49,6 +58,7 @@ namespace Game_Test
 
         public void LoseHealth(float value)
         {
+            Changed = true;
             rectwidth -= value;
             if (rectwidth < 1)
                 rectwidth = 1;

@@ -13,6 +13,7 @@ namespace Game_Test
         private Color[] HorLineData, VerLineData, Rectangle;
         private float width, height;
         public float rectwidth;
+        private bool Changed = true, Drawn = false;
 
         public Expbar()
         {
@@ -27,19 +28,27 @@ namespace Game_Test
         public void Draw(SpriteBatch spriteBatch, Vector2 Position)
         {
             Position = Position + new Vector2(0, 0.25f * GameSettings.Instance.Tilescale.Y);
-            TextureRect = new Texture2D(spriteBatch.GraphicsDevice, (int)rectwidth, (int)height);
-            HorLine = new Texture2D(spriteBatch.GraphicsDevice, (int)width, 1);
-            VerLine = new Texture2D(spriteBatch.GraphicsDevice, 1, (int)height);
-            for (int i = 0; i < HorLineData.Length; i++)
-                HorLineData[i] = Color.Black;
-            for (int i = 0; i < VerLineData.Length; i++)
-                VerLineData[i] = Color.Black;
-            for (int i = 0; i < Rectangle.Length; i++)
-                Rectangle[i] = Color.Yellow;
+            if (!Drawn)
+            {
+                Drawn = true;
+                HorLine = new Texture2D(spriteBatch.GraphicsDevice, (int)width, 1);
+                VerLine = new Texture2D(spriteBatch.GraphicsDevice, 1, (int)height);
+                for (int i = 0; i < HorLineData.Length; i++)
+                    HorLineData[i] = Color.Black;
+                for (int i = 0; i < VerLineData.Length; i++)
+                    VerLineData[i] = Color.Black;
+                HorLine.SetData(HorLineData);
+                VerLine.SetData(VerLineData);
+            }
+            if (Changed)
+            {
+                Changed = false;
+                TextureRect = new Texture2D(spriteBatch.GraphicsDevice, (int)rectwidth, (int)height);
+                for (int i = 0; i < Rectangle.Length; i++)
+                    Rectangle[i] = Color.Yellow;
 
-            TextureRect.SetData(Rectangle);
-            HorLine.SetData(HorLineData);
-            VerLine.SetData(VerLineData);
+                TextureRect.SetData(Rectangle);
+            }
 
             spriteBatch.Draw(TextureRect, Position, Color.White);
             spriteBatch.Draw(HorLine, Position, Color.White);
@@ -50,6 +59,7 @@ namespace Game_Test
         
         public void SetExp(float Percentage)
         {
+            Changed = true;
             Percentage = Percentage / 100 * (2 * GameSettings.Instance.Tilescale.X);
             rectwidth = Percentage;
             if (rectwidth < 1)
@@ -59,6 +69,7 @@ namespace Game_Test
 
         public void IncreaseExp(float Percentage)
         {
+            Changed = true;
             Percentage = Percentage / 100 * (2 * GameSettings.Instance.Tilescale.X);
             rectwidth += Percentage;
             if (rectwidth > 2 * GameSettings.Instance.Tilescale.X)
