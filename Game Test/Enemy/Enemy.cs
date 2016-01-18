@@ -67,10 +67,14 @@ namespace Game_Test
 
         public int LastHitBy { get; private set; }
 
-        public Enemy(int X, int Y, int ZoneNR)
+        int HP;
+
+        public Enemy(int X, int Y, int ZoneNR, int HP)
         {
             //TODO add playerstats
             //this.player = player
+
+            this.HP = HP;
 
             TilePosition = new Vector2(X, Y);
             Position = new Vector2(X * GameSettings.Instance.Tilescale.X, Y * GameSettings.Instance.Tilescale.Y);
