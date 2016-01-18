@@ -17,10 +17,11 @@ namespace Game_Test
         public string allbuttons;
         public string prevbuttons;
 
-        CharacterInfo characterInfo;
+        public CharacterInfo characterInfo;
 
         public Arduino(SerialPort port)
         {
+
 
             ControllerID = NextAvailableID++;
             this.port = port;
@@ -32,7 +33,7 @@ namespace Game_Test
 
             port.Open();
             port.Write("#GetInfo%");
-            Thread.Sleep(100);
+            Thread.Sleep(1000);
 
             int count = port.BytesToRead;
             string returnMessage = "";
@@ -50,23 +51,28 @@ namespace Game_Test
             bool CharachterInfo_Collected = false;
 
 
-            string message = returnMessage.Substring(returnMessage.IndexOf("#Info:"), 21);
+            string message = returnMessage.Substring(returnMessage.IndexOf("#Info:"), 25);
 
             if(message.Substring(6, 2) == "55")
             {
                 CharachterInfo_Collected = true;
-                characterInfo.NotFound = true;
+                characterInfo.NotFound = false;
 
                 string name = message.Substring(8, 10);
                 int gender = Convert.ToInt32(message.Substring(18, 1));
                 int skincolor = Convert.ToInt32(message.Substring(19, 1));
+                int head = Convert.ToInt32(message.Substring(20, 1));
+                int shirt = Convert.ToInt32(message.Substring(21, 1));
+                int belt = Convert.ToInt32(message.Substring(22, 1));
+                int pants = Convert.ToInt32(message.Substring(23, 1));
 
-                characterInfo.SetCharacterInfo(name, gender, skincolor);
+                characterInfo.SetCharacterInfo(name, gender, skincolor, head, shirt, belt, pants);
             }
             else
             {
                 CharachterInfo_Collected = true;
-                characterInfo.NotFound = false;
+                characterInfo.NotFound = true;
+                //characterInfo.SetCharacterInfo("nonamefond", 1, 2,);
             }
 
             AllowControls();
@@ -344,23 +350,137 @@ namespace Game_Test
             Write(Stats);
         }
 
-        public void Save()
+        public void SaveSettings()
         {
-            Write(64);
+            port.Open();
+            port.Write("#ControlsOff");
+            port.Close();
+
+            Thread.Sleep(1000);
+
+
+
+            string message = "#Save:55";
+
+            for (int i = 0; i < characterInfo.Name.Length; i++)
+            {
+                message += ConvertToInt(characterInfo.Name[i]);
+            }
+
+            message += characterInfo.Gender.ToString();
+            message += characterInfo.Skincolor.ToString();
+            message += characterInfo.Head.ToString();
+            message += characterInfo.Shirt.ToString();
+            message += characterInfo.Belt.ToString();
+            message += characterInfo.Pants.ToString();
+
+            message += "%";
+
+            port.Open();
+
+            bool Saved = false;
+
+            while (Saved == false)
+            {
+                port.Write(message);
+
+                Thread.Sleep(1000);
+
+                int count = port.BytesToRead;
+                string returnMessage = "";
+                int intReturnASCII = 0;
+
+                while (count > 0)
+                {
+                    intReturnASCII = port.ReadByte();
+                    returnMessage += Convert.ToChar(intReturnASCII);
+                    count--;
+                }
+                
+                if(returnMessage.Contains("Saved"))
+                {
+                    Saved = true;
+                }
+            }
+            port.Close();
+
+            Thread.Sleep(1000);
         }
 
         public void Exit()
         {
-            //SendStats();
-            Save();
-
-            port.Open();
+            if(port.IsOpen != true)
+                port.Open();
             port.Write("#Exit%");
             port.Close();
             
             Thread.Sleep(1000);
             GameInstance.ExitGame = true;
 
+        }
+
+        public string ConvertToInt(char text)
+        {
+            text = Char.ToUpper(text);
+            switch(text)
+            {
+                case ' ':
+                    return "10";
+                case 'A':
+                    return "11";
+                case 'B':
+                    return "12";
+                case 'C':
+                    return "13";
+                case 'D':
+                    return "14";
+                case 'E':
+                    return "15";
+                case 'F':
+                    return "16";
+                case 'G':
+                    return "17";
+                case 'H':
+                    return "18";
+                case 'I':
+                    return "19";
+                case 'J':
+                    return "20";
+                case 'K':
+                    return "21";
+                case 'L':
+                    return "22";
+                case 'M':
+                    return "23";
+                case 'N':
+                    return "24";
+                case 'O':
+                    return "25";
+                case 'P':
+                    return "26";
+                case 'Q':
+                    return "27";
+                case 'R':
+                    return "28";
+                case 'S':
+                    return "29";
+                case 'T':
+                    return "30";
+                case 'U':
+                    return "31";
+                case 'V':
+                    return "32";
+                case 'W':
+                    return "33";
+                case 'X':
+                    return "34";
+                case 'Y':
+                    return "35";
+                case 'Z':
+                    return "36";
+                default:
+                    return " ";
+            }
         }
     }
 }

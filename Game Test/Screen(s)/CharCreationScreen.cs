@@ -79,6 +79,7 @@ namespace Game_Test
             }
 
             characterCreator = new CharacterCreator();
+
         }
 
 
@@ -248,6 +249,38 @@ namespace Game_Test
                     characterCreator.curClothessettings[i] = items2[i].currentIndex;
                 }
                 characterCreator.Update(gameTime);
+
+            }
+
+            if (ScreenManager.Instance.Controllers[0].characterInfo.NotFound)
+            {
+                ScreenManager.Instance.Controllers[0].characterInfo.NameIndex = items1[0].currentIndex;
+                ScreenManager.Instance.Controllers[0].characterInfo.Gender = items3[0].currentIndex;
+                ScreenManager.Instance.Controllers[0].characterInfo.Skincolor = items3[1].currentIndex;
+
+                ScreenManager.Instance.Controllers[0].characterInfo.Head = items2[0].currentIndex;
+                ScreenManager.Instance.Controllers[0].characterInfo.Shirt = items2[1].currentIndex;
+                ScreenManager.Instance.Controllers[0].characterInfo.Belt = items2[2].currentIndex;
+                ScreenManager.Instance.Controllers[0].characterInfo.Pants = items2[3].currentIndex;
+
+                ScreenManager.Instance.Controllers[0].characterInfo.NotFound = false;
+            }
+
+
+            if (control.currentSelectedMainControl == Control1.selection.buttoncontinue && (InputManager.Instance.KeyPressed(Keys.Enter) || ScreenManager.Instance.Controllers[0].A_Button(true)))
+            {
+                ScreenManager.Instance.Controllers[0].characterInfo.Name = charCreatin_member.GetString(0, 0, items1[0].currentIndex);
+                ScreenManager.Instance.Controllers[0].characterInfo.Gender = items3[0].currentIndex;
+                ScreenManager.Instance.Controllers[0].characterInfo.Skincolor = items3[1].currentIndex;
+
+                ScreenManager.Instance.Controllers[0].characterInfo.Head = items2[0].currentIndex;
+                ScreenManager.Instance.Controllers[0].characterInfo.Shirt = items2[1].currentIndex;
+                ScreenManager.Instance.Controllers[0].characterInfo.Belt = items2[2].currentIndex;
+                ScreenManager.Instance.Controllers[0].characterInfo.Pants = items2[3].currentIndex;
+
+                ScreenManager.Instance.Controllers[0].SaveSettings();
+
+                ScreenManager.Instance.ChangeScreen("MapTestScreen");
             }
 
             //When the Escape key has been pressed exit the game

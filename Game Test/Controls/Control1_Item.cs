@@ -50,7 +50,48 @@ namespace Game_Test
             currentSelected = selection.arrowleft;
             this.maxIndex = maxindex;
             Random random = new Random();
-            currentIndex = random.Next(0, maxindex);
+
+            if (ScreenManager.Instance.Controllers[0].characterInfo.NotFound == true)
+            {
+                currentIndex = random.Next(0, maxindex);
+            }
+            else
+            {
+                if (fieldID == 1)
+                {
+                    switch (itemID)
+                    {
+                        case 0:
+                            currentIndex = ScreenManager.Instance.Controllers[0].characterInfo.Gender;
+                            break;
+                        case 1:
+                            currentIndex = ScreenManager.Instance.Controllers[0].characterInfo.Skincolor;
+                            break;
+                    }
+                }
+                else if(fieldID == 2)
+                {
+                    switch (itemID)
+                    {
+                        case 0:
+                            currentIndex = ScreenManager.Instance.Controllers[0].characterInfo.Head;
+                            break;
+                        case 1:
+                            currentIndex = ScreenManager.Instance.Controllers[0].characterInfo.Shirt;
+                            break;
+                        case 2:
+                            currentIndex = ScreenManager.Instance.Controllers[0].characterInfo.Belt;
+                            break;
+                        case 3:
+                            currentIndex = ScreenManager.Instance.Controllers[0].characterInfo.Pants;
+                            break;
+                    }
+                }
+                else if(fieldID == 0)
+                {
+                    currentIndex = ScreenManager.Instance.Controllers[0].characterInfo.NameIndex;
+                }
+            }
         }
 
         public void LoadContent()
@@ -146,7 +187,7 @@ namespace Game_Test
                         break;
                 }
 
-                if (InputManager.Instance.KeyPressed(Keys.Enter))
+                if (InputManager.Instance.KeyPressed(Keys.Enter) || ScreenManager.Instance.Controllers[0].A_Button(true))
                 {
                     if (currentSelected == selection.arrowleft)
                     {

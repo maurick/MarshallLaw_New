@@ -11,11 +11,11 @@ namespace Game_Test
     public class Control1
     {
         Image background, field_active, mainbuttonup, mainbuttonmiddle, mainbuttondown, mainbuttonup_pressed, mainbuttondown_pressed;
-        cText buttonleft, buttonright, buttonback, buttoncontinue;
+        cText buttonback, buttoncontinue;
 
         public enum selection
         {
-            buttonup, buttonmiddle, buttondown, fieldactive, arrow_left, arrow_right, buttonleft, buttonright, buttonback, buttoncontinue
+            buttonup, buttonmiddle, buttondown, fieldactive, arrow_left, arrow_right, buttonback, buttoncontinue
         };
 
         int numberControlFields;
@@ -37,8 +37,6 @@ namespace Game_Test
             mainbuttondown = new Image("OptionsScreen/buttondown_selected");
             mainbuttonup_pressed = new Image("OptionsScreen/buttonup_selected_pressed");
             mainbuttondown_pressed = new Image("OptionsScreen/buttondown_selected_pressed");
-            buttonleft = new cText("Cancel", "DryGood");
-            buttonright = new cText("Apply Changes", "DryGood");
             buttonback = new cText("Back", "DryGood");
             buttoncontinue = new cText("Continue", "DryGood");
             #endregion
@@ -104,20 +102,14 @@ namespace Game_Test
 
             Vector2 textScale = new Vector2(GameSettings.Instance.Dimensions.X / (3200 / 1.2f), GameSettings.Instance.Dimensions.Y / (1800 / 1.2f));
 
-            buttonleft.LoadContent();
-            buttonright.LoadContent();
             buttonback.LoadContent();
             buttoncontinue.LoadContent();
 
-            buttonleft.Scale = textScale;
-            buttonright.Scale = textScale;
             buttonback.Scale = textScale;
             buttoncontinue.Scale = textScale;
 
             float x_scale = (GameSettings.Instance.Dimensions.X / 1920);
 
-            buttonleft.Position = new Vector2(610 * x_scale, 800 * x_scale);
-            buttonright.Position = new Vector2(1360 * x_scale, 800 * x_scale);
             buttonback.Position = new Vector2(350 * x_scale, 900 * x_scale);
             buttoncontinue.Position = new Vector2(1400 * x_scale, 900 * x_scale);
 
@@ -134,8 +126,6 @@ namespace Game_Test
             mainbuttondown.UnloadContent();
             mainbuttondown_pressed.UnloadContent();
 
-            buttonleft.UnloadContent();
-            buttonright.UnloadContent();
             buttonback.UnloadContent();
             buttoncontinue.UnloadContent();
 
@@ -167,12 +157,6 @@ namespace Game_Test
                 case selection.fieldactive:
                     field_active.Update(gameTime);
                     break;
-                case selection.buttonleft:
-                    buttonleft.Update(gameTime);
-                    break;
-                case selection.buttonright:
-                    buttonright.Update(gameTime);
-                    break;
                 case selection.buttonback:
                     buttonback.Update(gameTime);
                     break;
@@ -192,10 +176,6 @@ namespace Game_Test
                         currentSelectedItemControl = selection.arrow_left;
                     else if (currentSelectedItemControl == selection.arrow_left)
                         currentSelectedMainControl = selection.buttonup;
-                    else if (currentSelectedItemControl == selection.buttonleft)
-                        currentSelectedMainControl = selection.buttondown;
-                    else if (currentSelectedItemControl == selection.buttonright)
-                        currentSelectedItemControl = selection.buttonleft;
                 }
                 if (InputManager.Instance.KeyPressed(Keys.Right) || ScreenManager.Instance.Controllers[0].Right(true))
                 {
@@ -203,32 +183,22 @@ namespace Game_Test
                         currentSelectedItemControl = selection.arrow_left;
                     else if (currentSelectedItemControl == selection.arrow_left)
                         currentSelectedItemControl = selection.arrow_right;
-                    else if (currentSelectedItemControl == selection.buttonleft)
-                        currentSelectedItemControl = selection.buttonright;
                 }
                 if (InputManager.Instance.KeyPressed(Keys.Down) || ScreenManager.Instance.Controllers[0].Down(true))
                 {
-                    if (currentSelectedItemControl == selection.buttonleft)
-                    {
-                        currentSelectedMainControl = selection.buttonback;
-                    }
-                    if (currentSelectedItemControl == selection.buttonright)
-                    {
-                        currentSelectedMainControl = selection.buttoncontinue;
-                    }
 
                     if (CurrentActiveItem + 1 >= CurrentNumberControlItems)
                     {
-                        currentSelectedItemControl = selection.buttonleft;
+                        currentSelectedMainControl = selection.buttoncontinue;
                         CurrentActiveItem = 10;
                     }
                     else
                     {
                         CurrentActiveItem++;
-                        if (currentSelectedItemControl == selection.buttonleft)
-                            currentSelectedItemControl = selection.arrow_left;
-                        if (currentSelectedItemControl == selection.buttonright)
-                            currentSelectedItemControl = selection.arrow_right;
+                        //if (currentSelectedItemControl == selection.buttonleft)
+                            //currentSelectedItemControl = selection.arrow_left;
+                        //if (currentSelectedItemControl == selection.buttonright)
+                            //currentSelectedItemControl = selection.arrow_right;
                     }
                 }
                 if (InputManager.Instance.KeyPressed(Keys.Up) || ScreenManager.Instance.Controllers[0].Up(true))
@@ -236,10 +206,10 @@ namespace Game_Test
                     if (CurrentActiveItem == 10)
                     {
                         CurrentActiveItem = CurrentNumberControlItems - 1;
-                        if (currentSelectedItemControl == selection.buttonleft)
-                            currentSelectedItemControl = selection.arrow_left;
-                        if (currentSelectedItemControl == selection.buttonright)
-                            currentSelectedItemControl = selection.arrow_right;
+                        //if (currentSelectedItemControl == selection.buttonleft)
+                            //currentSelectedItemControl = selection.arrow_left;
+                        //if (currentSelectedItemControl == selection.buttonright)
+                            //currentSelectedItemControl = selection.arrow_right;
                     }
                     else if (CurrentActiveItem != 0)
                     {
@@ -262,8 +232,7 @@ namespace Game_Test
                     else if (currentSelectedMainControl == selection.buttoncontinue)
                     {
                         currentSelectedMainControl = selection.fieldactive;
-                        currentSelectedItemControl = selection.buttonright;
-                        CurrentActiveItem = 10;
+                        currentSelectedItemControl = selection.arrow_right;
                     }
                 }
 
@@ -345,15 +314,6 @@ namespace Game_Test
 
             mainbuttonmiddle.Draw(spriteBatch);
 
-            if(currentSelectedItemControl == selection.buttonleft && currentSelectedMainControl == selection.fieldactive)
-                buttonleft.Color = Color.White;
-            else
-                buttonleft.Color = Color.Black;
-
-            if (currentSelectedItemControl == selection.buttonright && currentSelectedMainControl == selection.fieldactive)
-                buttonright.Color = Color.White;
-            else
-                buttonright.Color = Color.Black;
 
             if (currentSelectedMainControl == selection.buttonback)
                 buttonback.Color = Color.White;
@@ -364,8 +324,6 @@ namespace Game_Test
             else
                 buttoncontinue.Color = Color.Black;
 
-            buttonleft.DrawString(spriteBatch);
-            buttonright.DrawString(spriteBatch);
             buttonback.DrawString(spriteBatch);
             buttoncontinue.DrawString(spriteBatch);
              

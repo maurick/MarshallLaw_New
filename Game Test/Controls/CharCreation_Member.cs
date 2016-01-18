@@ -40,26 +40,27 @@ namespace Game_Test
 
         #region "Field 0"
         List<string> character = new List<string>();
-        List<string> empty0 = new List<string>();
+        List<string> names = new List<string>();
         #endregion
 
         #region "Field 2"
         List<string> clothes = new List<string>();
-        List<string> empty1 = new List<string>();
+        List<string> head = new List<string>();
+        List<string> shirtf = new List<string>();
+        List<string> shirt = new List<string>();
+        List<string> belt = new List<string>();
+        List<string> pants = new List<string>();
         #endregion
 
         #region "Field 1"
         List<string> appearance = new List<string>();
         List<string> skincolors = new List<string>();
         List<string> gender = new List<string>();
-        List<string> head = new List<string>();
-        List<string> belt = new List<string>();
-        List<string> pants = new List<string>();
         #endregion
 
         public void Create_Lists()
         {
-            string[] stringEmpty = { "empty" };
+            string[] stringNames = { "Bob       ", "Kees      ", "Einstein  ", "Geert     " };
 
             #region "FieldID 1"
             string[] stringAppearance = { "Gender", "Skincolor" };
@@ -82,11 +83,11 @@ namespace Game_Test
             #endregion
 
             #region "FieldID 2"
-            string[] stringClothes = { "Head", "Belt", "Pants" };
+            string[] stringClothes = { "Head", "Shirt", "Belt", "Pants" };
 
             string[] stringHead = { "Red Bandana", "Leather Cap", "Chain Hat", "Cloth Hood" };
-            string[] stringShirt_Male = { "Red Bandana", "Leather Cap", "Chain Hat", "Cloth Hood" };
-            string[] stringShirt_Female = { "Red Bandana", "Leather Cap", "Chain Hat", "Cloth Hood" };
+            //string[] stringShirt_Female = { "Brown Shirt", "Brown Strap Shirt", "Dark Red Shirt", "Dark Red Strap Shirt", "Fancy White Shirt", "Fancy White Strap Shirt", "Hipster Blue Shirt", "Hipster Blue Strap Shirt" };
+            string[] stringShirt= { "Brown Shirt", "Dark Red Shirt", "Fancy White Shirt", "Hipster Blue Shirt",  };
             string[] stringBelt = { "Leather", "Cloth" };
             string[] stringPants = { "Red", "Magenta", "White", "Teal" };
 
@@ -106,6 +107,18 @@ namespace Game_Test
             {
                 pants.Add(stringPants[i]);
             }
+            //for (int i = 0; i < stringShirt_Female.Length; i++)
+            //{
+                //shirtf.Add(stringShirt_Female[i]);
+            //}
+            for (int i = 0; i < stringShirt.Length; i++)
+            {
+                shirt.Add(stringShirt[i]);
+            }
+            for (int i = 0; i < stringPants.Length; i++)
+            {
+                pants.Add(stringPants[i]);
+            }
             #endregion
 
             #region "FieldID 0"
@@ -115,9 +128,9 @@ namespace Game_Test
             {
                 character.Add(stringCharacter[i]);
             }
-            for (int i = 0; i < stringEmpty.Length; i++)
+            for (int i = 0; i < stringNames.Length; i++)
             {
-                empty0.Add(stringEmpty[i]);
+                names.Add(stringNames[i]);
             }
             #endregion
         }
@@ -131,7 +144,7 @@ namespace Game_Test
                     switch (itemID)
                     {
                         case 0:
-                            return empty0;
+                            return names;
                         case 1:
                             return null;
                         case 2:
@@ -163,11 +176,11 @@ namespace Game_Test
                         case 0:
                             return head;
                         case 1:
-                            return belt;
+                            return shirt;
                         case 2:
-                            return pants;
+                            return belt;
                         case 3:
-                            return null;
+                            return pants;
                         case 4:
                             return null;
                         case 5:
@@ -226,18 +239,43 @@ namespace Game_Test
             switch(fieldID)
             {
                 case 0:
-                    return "empty";
+                    switch (itemID)
+                    {
+                        case 0:
+                            return names[index];
+                        case 1:
+                            return null;
+                        case 2:
+                            return null;
+                        case 3:
+                            return null;
+                        case 4:
+                            return null;
+                        case 5:
+                            return null;
+                        case 6:
+                            return null;
+                        case 7:
+                            return null;
+                        case 8:
+                            return null;
+                        case 9:
+                            return null;
+                        case 10:
+                            return null;
+                    }
+                    return "error";
                 case 2:
                     switch (itemID)
                     {
                         case 0:
                             return head[index];
                         case 1:
-                            return belt[index];
+                            return shirt[index];
                         case 2:
-                            return pants[index];
+                            return belt[index];
                         case 3:
-                            return null;
+                            return pants[index];
                         case 4:
                             return null;
                         case 5:
