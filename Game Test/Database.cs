@@ -41,40 +41,34 @@ namespace Game_Test
 
         public void ExecuteQuery(string txtQuery)
         {
-            //SetConnection();
             Connect.Open();
             Command = new SQLiteCommand(txtQuery, Connect);
             Command.ExecuteNonQuery();
             Connect.Close();
         }
 
-        public string ReturnRead(string ValueName)
+        private string ReturnRead(string txtQuery, string ValueName)
         {
+            Connect.Open();
+            Command = new SQLiteCommand(txtQuery, Connect);
             Reader = Command.ExecuteReader();
             if (Reader.Read())
             {
-                return Reader[ValueName].ToString();
+                string x = Reader[ValueName].ToString();
+                Connect.Close();
+                return x;
             }
             else
             {
+                Connect.Close();
                 return null;
             }
 
         }
 
-        public int ReadQuery(string query, string value)
+        public string ReturnEnemyHP(string EnemyName)
         {
-            int returnvalue = 0;
-            Connect.Open();
-            Command = new SQLiteCommand(query, Connect);
-            Reader = Command.ExecuteReader();
-            while(Reader.Read())
-            {
-                Connect.Close();
-                returnvalue = (int)Reader[value];
-            }
-            Connect.Close();
-            return returnvalue;
+            return ReturnRead("SELECT EnemyHP FROM Enemies WHERE EnemyName LIKE " + EnemyName, "EnemyHP");
         }
     }
 }
