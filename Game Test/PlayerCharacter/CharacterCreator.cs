@@ -16,19 +16,23 @@ namespace Game_Test
         SprSheetImage[,] Belt;
         SprSheetImage[,] Pants;
 
-        public int[] curCharactersettings = { 0, 0, 0, 0, 0 };// 1.Gender 2.Skincolor 3.Head 4.Belt 5.Pants
-        int[] prevCharactersettings = { 0, 0, 0, 0, 0 };// 1.Gender 2.Skincolor 3.Head 4.Belt 5.Pants
+        //public int[] curCharactersettings = { 0, 0, 0, 0, 0 };// 1.Gender 2.Skincolor 3.Head 4.Belt 5.Pants
+        //int[] prevCharactersettings = { 0, 0, 0, 0, 0 };// 1.Gender 2.Skincolor 3.Head 4.Belt 5.Pants
+
+        public int[] curAppearencesettings = { 0, 0 };// 1.Gender 2.Skincolor
+        int[] prevAppearencesettings = { 0, 0 };// 1.Gender 2.Skincolor
+
+        public int[] curClothessettings = { 0, 0, 0 };// 1.Head 2.Belt 3.Pants
+        int[] prevClothessettings = { 0, 0, 0 };//  1.Head 2.Belt 3.Pants
 
         public CharacterCreator()
         {
             charCreation_member = new CharCreation_Members();
 
-            Skincolor = new SprSheetImage[2, charCreation_member.GetList(1, 2).Count];
-            Head = new SprSheetImage[2, charCreation_member.GetList(2, 2).Count];
-            Belt = new SprSheetImage[2, charCreation_member.GetList(3, 2).Count];
-            Pants = new SprSheetImage[2, charCreation_member.GetList(4, 2).Count];
-
-            Random random = new Random();
+            Skincolor = new SprSheetImage[2, charCreation_member.GetList(1, 1).Count];
+            Head = new SprSheetImage[2, charCreation_member.GetList(0, 2).Count];
+            Belt = new SprSheetImage[2, charCreation_member.GetList(1, 2).Count];
+            Pants = new SprSheetImage[2, charCreation_member.GetList(2, 2).Count];
 
             FillArrays();
 
@@ -124,12 +128,12 @@ namespace Game_Test
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            int gender = curCharactersettings[0];
+            int gender = curAppearencesettings[0];
 
-            Skincolor[ gender, curCharactersettings[1]].Draw(spriteBatch);
-            Head[gender, curCharactersettings[2]].Draw(spriteBatch);
-            Belt[gender, curCharactersettings[3]].Draw(spriteBatch);
-            Pants[gender, curCharactersettings[4]].Draw(spriteBatch);
+            Skincolor[ gender, curAppearencesettings[1]].Draw(spriteBatch);
+            Head[gender, curClothessettings[0]].Draw(spriteBatch);
+            Belt[gender, curClothessettings[1]].Draw(spriteBatch);
+            Pants[gender, curClothessettings[2]].Draw(spriteBatch);
         }
 
         public void FillArrays()
@@ -144,36 +148,36 @@ namespace Game_Test
                     gender = "Female";
 
                 #region "SkinColor"
-                for (int j = 0; j < charCreation_member.GetList(1, 2).Count; j++)
+                for (int j = 0; j < charCreation_member.GetList(1, 1).Count; j++)
                 {
-                    string spriteName = charCreation_member.GetString(2, 1, j);
+                    string spriteName = charCreation_member.GetString(1, 1, j);
 
                     Skincolor[i,j] = new SprSheetImage("CharacterSprites/" + gender + "/SkinColor/" + spriteName);
                 }
                 #endregion
 
                 #region "Head"
-                for (int j = 0; j < charCreation_member.GetList(2, 2).Count; j++)
+                for (int j = 0; j < charCreation_member.GetList(0, 2).Count; j++)
                 {
-                    string spriteName = charCreation_member.GetString(2, 2, j);
+                    string spriteName = charCreation_member.GetString(2, 0, j);
 
                     Head[i, j] = new SprSheetImage("CharacterSprites/" + gender + "/Head/" + spriteName);
                 }
                 #endregion
 
                 #region "Belt"
-                for (int j = 0; j < charCreation_member.GetList(3, 2).Count; j++)
+                for (int j = 0; j < charCreation_member.GetList(1, 2).Count; j++)
                 {
-                    string spriteName = charCreation_member.GetString(2, 3, j);
+                    string spriteName = charCreation_member.GetString(2, 1, j);
 
                     Belt[i, j] = new SprSheetImage("CharacterSprites/" + gender + "/Belt/" + spriteName);
                 }
                 #endregion
 
                 #region "Pants"
-                for (int j = 0; j < charCreation_member.GetList(4, 2).Count; j++)
+                for (int j = 0; j < charCreation_member.GetList(2, 2).Count; j++)
                 {
-                    string spriteName = charCreation_member.GetString(2, 4, j);
+                    string spriteName = charCreation_member.GetString(2, 2, j);
 
                     Pants[i, j] = new SprSheetImage("CharacterSprites/" + gender + "/Pants/" + spriteName);
                 }

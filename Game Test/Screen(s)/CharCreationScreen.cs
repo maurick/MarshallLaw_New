@@ -35,20 +35,20 @@ namespace Game_Test
             charCreatin_member = new CharCreation_Members();
 
             numitems1 = charCreatin_member.GetList(10, 0).Count;
-            numitems2 = charCreatin_member.GetList(10, 1).Count;
-            numitems3 = charCreatin_member.GetList(10, 2).Count;
+            numitems2 = charCreatin_member.GetList(10, 2).Count;
+            numitems3 = charCreatin_member.GetList(10, 1).Count;
 
-            fields[0] = new Control1_Field( 0, numFields, "Character", numitems1);
-            fields[1] = new Control1_Field( 1, numFields, "Attributes", numitems2);
-            fields[2] = new Control1_Field( 2, numFields, "Appearance", numitems3);
+            fields[0] = new Control1_Field(0, numFields, "Character", numitems1);
+            fields[2] = new Control1_Field(2, numFields, "Clothes", numitems2);
+            fields[1] = new Control1_Field(1, numFields, "Appearance", numitems3);
 
             control = new Control1(numFields, numitems1);
 
             for (int i = 0; i < numitems1; i++)
             {
                 items1[i] = new Control1_Item(
-                    itemID:i,
-                    itemname: charCreatin_member.GetList(10, 0)[i], 
+                    itemID: i,
+                    itemname: charCreatin_member.GetList(10, 0)[i],
                     itemsetting: charCreatin_member.GetString(0, i, 0),
                     fieldID: 0,
                     maxindex: charCreatin_member.GetList(i, 0).Count
@@ -59,20 +59,20 @@ namespace Game_Test
             {
                 items2[i] = new Control1_Item(
                     itemID: i,
-                    itemname: charCreatin_member.GetList(10, 1)[i],
-                    itemsetting: charCreatin_member.GetString(1, i, 0),
-                    fieldID: 1,
-                    maxindex: charCreatin_member.GetList(i, 1).Count
+                    itemname: charCreatin_member.GetList(10, 2)[i],
+                    itemsetting: charCreatin_member.GetString(2, i, 0),
+                    fieldID: 2,
+                    maxindex: charCreatin_member.GetList(i, 2).Count
                     );
             }
             for (int i = 0; i < numitems3; i++)
             {
                 items3[i] = new Control1_Item(
                     itemID: i,
-                    itemname: charCreatin_member.GetList(10, 2)[i],
-                    itemsetting: charCreatin_member.GetString(2, i, 0),
-                    fieldID: 2,
-                    maxindex: charCreatin_member.GetList(i, 2).Count
+                    itemname: charCreatin_member.GetList(10, 1)[i],
+                    itemsetting: charCreatin_member.GetString(1, i, 0),
+                    fieldID: 1,
+                    maxindex: charCreatin_member.GetList(i, 1).Count
                     );
             }
 
@@ -151,29 +151,29 @@ namespace Game_Test
             {
                 for (int i = 0; i < items1.Length; i++)
                 {
-                    if(i != 10 && items1[i] != null)
+                    if (i != 10 && items1[i] != null)
                     {
                         items1[i].itemsetting.Text = charCreatin_member.GetString(0, i, items1[i].currentIndex);
                     }
                 }
             }
-            else if(control.CurrentActiveField == 1)
+            else if (control.CurrentActiveField == 2)
             {
                 for (int i = 0; i < items2.Length; i++)
                 {
                     if (i != 10 && items2[i] != null)
                     {
-                        items2[i].itemsetting.Text = charCreatin_member.GetString(1, i, items2[i].currentIndex);
+                        items2[i].itemsetting.Text = charCreatin_member.GetString(2, i, items2[i].currentIndex);
                     }
                 }
             }
-            else if (control.CurrentActiveField == 2)
+            else if (control.CurrentActiveField == 1)
             {
                 for (int i = 0; i < items3.Length; i++)
                 {
                     if (i != 10 && items3[i] != null)
                     {
-                        items3[i].itemsetting.Text = charCreatin_member.GetString(2, i, items3[i].currentIndex);
+                        items3[i].itemsetting.Text = charCreatin_member.GetString(1, i, items3[i].currentIndex);
                     }
                 }
             }
@@ -217,17 +217,17 @@ namespace Game_Test
             {
                 if (control.CurrentActiveItem != 10)
                 {
-                    if(control.CurrentActiveField == 0)
+                    if (control.CurrentActiveField == 0)
                     {
                         items1[control.CurrentActiveItem].IsSelected = true;
                         items1[control.CurrentActiveItem].Update(gameTime);
                     }
-                    if (control.CurrentActiveField == 1)
+                    if (control.CurrentActiveField == 2)
                     {
                         items2[control.CurrentActiveItem].IsSelected = true;
                         items2[control.CurrentActiveItem].Update(gameTime);
                     }
-                    if (control.CurrentActiveField == 2)
+                    if (control.CurrentActiveField == 1)
                     {
                         items3[control.CurrentActiveItem].IsSelected = true;
                         items3[control.CurrentActiveItem].Update(gameTime);
@@ -236,11 +236,15 @@ namespace Game_Test
 
             }
 
-            if (control.CurrentActiveField == 2)
+            if (control.CurrentActiveField == 1 || control.CurrentActiveField == 2)
             {
-                for (int i = 0; i < characterCreator.curCharactersettings.Length; i++)
+                for (int i = 0; i < characterCreator.curAppearencesettings.Length; i++)
                 {
-                    characterCreator.curCharactersettings[i] = items3[i].currentIndex;
+                    characterCreator.curAppearencesettings[i] = items3[i].currentIndex;
+                }
+                for (int i = 0; i < characterCreator.curClothessettings.Length; i++)
+                {
+                    characterCreator.curClothessettings[i] = items2[i].currentIndex;
                 }
                 characterCreator.Update(gameTime);
             }
@@ -266,7 +270,7 @@ namespace Game_Test
             foreach (var item in items1)
             {
                 if (item != null)
-                    if(item.fieldID == control.CurrentActiveField)
+                    if (item.fieldID == control.CurrentActiveField)
                         item.Draw(spriteBatch);
             }
 
@@ -284,7 +288,7 @@ namespace Game_Test
                         item.Draw(spriteBatch);
             }
 
-            if(control.CurrentActiveField == 2)
+            if (control.CurrentActiveField == 1 || control.CurrentActiveField == 2)
                 characterCreator.Draw(spriteBatch);
         }
     }
