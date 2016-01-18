@@ -892,6 +892,11 @@ namespace Game_Test
         public void AddExp()
         {
             Expbar.IncreaseExp(50);
+            if (Expbar.rectwidth == (int)(2 * GameSettings.Instance.Tilescale.X))
+            {
+                LevelIndicator.Text.Text = Convert.ToString(Convert.ToInt32(LevelIndicator.Text.Text) + 1);
+                Expbar.SetExp(0);
+            }
             /*string query;
             int temp = 0, temp2 = 0;
             temp = Convert.ToInt32(Database.Instance.ReadQuery("select exp from playerstats where playerid = " + PlayerID + ";", "exp"));

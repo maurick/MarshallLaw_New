@@ -9,7 +9,7 @@ namespace Game_Test
 {
     public class LevelIndicator
     {
-        cText Text;
+        public cText Text;
         private float width, height;
 
         public LevelIndicator()
