@@ -341,7 +341,14 @@ namespace Game_Test
         public void AllowControls()
         {
             port.Open();
+
             port.Write("#AllowControls%");
+            port.Write("#AllowControls%");
+            port.Write("#AllowControls%");
+            port.Write("#AllowControls%");
+            port.Write("#AllowControls%");
+            port.Write("#AllowControls%");
+
             port.Close();
         }
 

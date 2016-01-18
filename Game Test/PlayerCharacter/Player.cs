@@ -43,7 +43,8 @@ namespace Game_Test
 
         private List<Enemy> enemies = new List<Enemy>();
         
-        private SprSheetImage sprite;
+        //private SprSheetImage sprite;
+        private SpriteClasscs sprite;
 
         private bool knockback;
         private double knockbacktimer;
@@ -73,8 +74,12 @@ namespace Game_Test
             NoConnect = false;
             if (ScreenManager.Instance.Controllers[controller] != null)
             {
+                CharCreation_Members char_mem = new CharCreation_Members();
                 //TODO add playerstats
                 //this.player = player;
+
+
+
                 State = PlayerEnums.ActionState.None;
                 lookDirection = PlayerEnums.LookDirection.Down;
                 sprSheetY = PlayerEnums.Action.None;
@@ -85,7 +90,20 @@ namespace Game_Test
 
                 direction = new Vector2(0, 1);
 
-                sprite = new SprSheetImage("CharacterSprites/Male/SkinColor/Light");
+                string gender = "";
+
+                if (Controller.characterInfo.Gender == 0)
+                    gender = "Male";
+                else
+                    gender = "Female";
+
+                sprite = new SpriteClasscs(
+                    "CharacterSprites/" + gender + "/SkinColor/"+ char_mem.GetString(1, 1, Controller.characterInfo.Skincolor),
+                    "CharacterSprites/" + gender + "/Shirt/" + char_mem.GetString(2, 1, Controller.characterInfo.Shirt),
+                    "CharacterSprites/" + gender + "/Head/" + char_mem.GetString(2, 0, Controller.characterInfo.Head),
+                    "CharacterSprites/" + gender + "/Belt/" + char_mem.GetString(2, 2, Controller.characterInfo.Belt),
+                    "CharacterSprites/" + gender + "/Pants/" + char_mem.GetString(2, 3, Controller.characterInfo.Pants) 
+                    );
 
                 SpeedScale = 1.5f;
 

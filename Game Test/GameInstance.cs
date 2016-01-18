@@ -12,7 +12,6 @@ namespace Game_Test
     /// </summary>
     public class GameInstance : Game
     {
-        //new Database xy = new Database();
         public GraphicsDeviceManager Graphics;
         SpriteBatch spriteBatch;
         public static bool ExitGame;
