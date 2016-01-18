@@ -57,7 +57,7 @@ namespace Game_Test
         public bool Debug { get; private set; }
 
         private Healthbar Healthbar;
-        private LevelIndicator LevelIndicator;
+        public LevelIndicator LevelIndicator;
         private Expbar Expbar;
 
         private Arduino Controller;

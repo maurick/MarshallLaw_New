@@ -35,6 +35,7 @@ namespace Game_Test
         public List<PlayerEnums.LookDirection> PlayerLookDirection { get; set; }
         public List<int> PlayerSprSheetX { get; set; }
         public List<int> PlayerZones { get; set; }
+        public List<int> PlayerLevels { get; set; }
 
         private SprSheetImage sprite;
 
@@ -168,7 +169,7 @@ namespace Game_Test
             }
             if (temp.X == 1 && knockback == false)
             {
-                healthbar.LoseHealth(2 * GameSettings.Instance.Tilescale.X * 0.25f);
+                healthbar.LoseHealth(2 * GameSettings.Instance.Tilescale.X * (0.2f * (PlayerLevels[LastHitBy] - Convert.ToInt32(levelindicator.Text.Text) / 10)));
                 knockback = true;
                 knockbacktimer = 0.2f;
                 duration = 0;
@@ -183,7 +184,7 @@ namespace Game_Test
                 if (temp2.X == 1 && knockback == false)
                 {
                     LastHitBy = Arrow.PlayerID;
-                    healthbar.LoseHealth(2 * GameSettings.Instance.Tilescale.X * 1f);
+                    healthbar.LoseHealth(2 * GameSettings.Instance.Tilescale.X * (0.15f * (PlayerLevels[LastHitBy] - Convert.ToInt32(levelindicator.Text.Text) / 10)));
                     knockback = true;
                     knockbacktimer = 0.2f;
                     duration = 0;
