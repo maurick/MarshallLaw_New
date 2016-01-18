@@ -298,7 +298,7 @@ namespace Game_Test
 
 
             #region "Actions"
-            if (InputManager.Instance.KeyPressed(Keys.Enter) || ScreenManager.Instance.Controllers[0].dbutt(true))
+            if (InputManager.Instance.KeyPressed(Keys.Enter) || ScreenManager.Instance.Controllers[0].A_Button(true))
             {
                 switch(currentSelectedMainControl)
                 {

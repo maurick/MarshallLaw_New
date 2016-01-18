@@ -105,7 +105,7 @@ namespace Game_Test
                 if (continueID != -1)
                     break;
             }
-            if (P_menuItems[P_currentSelected].ItemID == continueID && ((InputManager.Instance.KeyPressed(Keys.Enter)) || ScreenManager.Instance.Controllers[0].dbutt(true)) && continueID != -1)
+            if (P_menuItems[P_currentSelected].ItemID == continueID && ((InputManager.Instance.KeyPressed(Keys.Enter)) || ScreenManager.Instance.Controllers[0].A_Button(true)) && continueID != -1)
             {
                 Pause = true;
             }
@@ -117,7 +117,7 @@ namespace Game_Test
                 if (ConnectID != -1)
                     break;
             }
-            if (P_menuItems[P_currentSelected].ItemID == ConnectID && ((InputManager.Instance.KeyPressed(Keys.Enter)) || ScreenManager.Instance.Controllers[0].dbutt(true)) && continueID != -1)
+            if (P_menuItems[P_currentSelected].ItemID == ConnectID && ((InputManager.Instance.KeyPressed(Keys.Enter)) || ScreenManager.Instance.Controllers[0].A_Button(true)) && continueID != -1)
             {
 
             }
@@ -130,7 +130,7 @@ namespace Game_Test
                     break;
             }
             //If the Exit button is selected and Enter has been pressed exit the game
-            if (P_menuItems[P_currentSelected].ItemID == exitID && ((InputManager.Instance.KeyPressed(Keys.Enter)) || ScreenManager.Instance.Controllers[0].dbutt(true)) && exitID != -1)
+            if (P_menuItems[P_currentSelected].ItemID == exitID && ((InputManager.Instance.KeyPressed(Keys.Enter)) || ScreenManager.Instance.Controllers[0].A_Button(true)) && exitID != -1)
             {
                 ScreenManager.Instance.ChangeScreen("MenuScreen");
             }

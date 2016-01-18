@@ -181,7 +181,7 @@ namespace Game_Test
             //controller.Update();
             //Check if keys are pressed
             #region Attack
-            if (InputManager.Instance.KeyDown(Keys.Space) || Controller.dbutt(false))
+            if (InputManager.Instance.KeyDown(Keys.Space) || Controller.A_Button(false))
             {
                 switch (CurrentWeapon.weapontype)
                 {
@@ -267,7 +267,7 @@ namespace Game_Test
             #endregion
 
             #region SwitchWeapon
-            if (InputManager.Instance.KeyPressed(Keys.LeftShift) || Controller.lbutt(true))
+            if (InputManager.Instance.KeyPressed(Keys.LeftShift) || Controller.B_Button(true))
             {
                 int tempID = 1;
                 if (CurrentWeapon.WeaponID != CurrentWeapon.GetMaxID)

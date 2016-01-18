@@ -131,19 +131,19 @@ namespace Game_Test
                     menuItems[currentSelected].Selected = true;
                 }
 
-                if (menuItems[currentSelected].ItemID == 0 && (InputManager.Instance.KeyPressed(Keys.Enter) || ScreenManager.Instance.Controllers[0].dbutt(true)))
+                if (menuItems[currentSelected].ItemID == 0 && (InputManager.Instance.KeyPressed(Keys.Enter) || ScreenManager.Instance.Controllers[0].A_Button(true)))
                 {
                     ScreenManager.Instance.ChangeScreen("CharCreationScreen");
                 }
 
                 //If the Exit button is selected and Enter has been pressed exit the game
-                if (menuItems[currentSelected].ItemID == 1 && (InputManager.Instance.KeyPressed(Keys.Enter) || ScreenManager.Instance.Controllers[0].dbutt(true)))
+                if (menuItems[currentSelected].ItemID == 1 && (InputManager.Instance.KeyPressed(Keys.Enter) || ScreenManager.Instance.Controllers[0].A_Button(true)))
                 {
                     ScreenManager.Instance.ChangeScreen("MapTestScreen");
                 }
 
                 //If the Exit button is selected and Enter has been pressed exit the game
-                if (menuItems[currentSelected].ItemID == 2 && (InputManager.Instance.KeyPressed(Keys.Enter) || ScreenManager.Instance.Controllers[0].dbutt(true)))
+                if (menuItems[currentSelected].ItemID == 2 && (InputManager.Instance.KeyPressed(Keys.Enter) || ScreenManager.Instance.Controllers[0].A_Button(true)))
                 {
                     foreach (Arduino cont in ScreenManager.Instance.Controllers)
                     {

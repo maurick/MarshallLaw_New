@@ -64,7 +64,7 @@ namespace Game_Test
             map.Update(gameTime);
 
             //When the Escape key has been pressed exit the game
-            if ((InputManager.Instance.KeyReleased(Keys.Escape) || ScreenManager.Instance.Controllers[0].ubutt(true)) && GamePaused == false)
+            if ((InputManager.Instance.KeyReleased(Keys.Escape) || ScreenManager.Instance.Controllers[0].X_Button(true)) && GamePaused == false)
             {
                 //ScreenManager.Instance.ChangeScreen("MenuScreen");
                 GamePaused = true;

@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
+using System.IO.Ports;
 
 namespace Game_Test
 {
@@ -45,7 +46,11 @@ namespace Game_Test
 
         Image fade;
         FadeEffect fadeEffect;
-        public List<Arduino> Controllers;
+
+        ArduinoManager ArduinoManager;
+        public List<Arduino> Controllers = new List<Arduino>();
+
+        public bool Controller1_Connected = false;
 
         //Contructor
         private ScreenManager()
@@ -54,7 +59,19 @@ namespace Game_Test
             currentscreen = new MenuScreen();
             IsTransitioning = false;
 
-            Controllers = new List<Arduino> { new Arduino(1) };
+            ArduinoManager = new ArduinoManager();
+
+            if(ArduinoManager.SearchArduinoComPort() == true)
+            {
+                foreach (SerialPort port in ArduinoManager.Good_Ports)
+                {
+                    Controllers.Add(new Arduino(port));
+                }
+            }
+
+            bool test;
+            test = true;
+            //Controllers = new List<Arduino> { new Arduino(1) };
             //for(int i=2;Controllers.Count !=  Controllers[0].Ports.Count;i++)
             //{
             //    Controllers.Add(new Arduino(i));
@@ -86,10 +103,7 @@ namespace Game_Test
             currentscreen.Update(gameTime);
             foreach (Arduino Controller in Controllers)
             {
-                if (Controller.ControllerConnected)
-                {
-                    Controller.Update();
-                }
+                Controller.Update();
             }      
         }
 
