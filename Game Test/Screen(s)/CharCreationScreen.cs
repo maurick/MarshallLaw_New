@@ -255,6 +255,7 @@ namespace Game_Test
             if (ScreenManager.Instance.Controllers[0].characterInfo.NotFound)
             {
                 ScreenManager.Instance.Controllers[0].characterInfo.NameIndex = items1[0].currentIndex;
+
                 ScreenManager.Instance.Controllers[0].characterInfo.Gender = items3[0].currentIndex;
                 ScreenManager.Instance.Controllers[0].characterInfo.Skincolor = items3[1].currentIndex;
 
