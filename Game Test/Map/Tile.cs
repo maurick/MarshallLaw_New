@@ -12,7 +12,7 @@ namespace Game_Test
     {
         public int TileID { get; private set; }
 
-        public Vector2 TileOnSheetPosition { get; private set; }
+        public Vector2 TileOnSheetPosition { get; set; }
 
         public string TextureName{ get; private set; }
 

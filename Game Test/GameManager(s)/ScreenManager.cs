@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
+using System.IO.Ports;
 
 namespace Game_Test
 {
@@ -45,7 +46,11 @@ namespace Game_Test
 
         Image fade;
         FadeEffect fadeEffect;
-        public Arduino Controller;
+
+        ArduinoManager ArduinoManager;
+        public List<Arduino> Controllers = new List<Arduino>();
+
+        public bool Controller1_Connected = false;
 
         //Contructor
         private ScreenManager()
@@ -53,7 +58,29 @@ namespace Game_Test
             //CurrentScreen begint met het SplashScreen
             currentscreen = new MenuScreen();
             IsTransitioning = false;
-            Controller = new Arduino(1);
+
+            ArduinoManager = new ArduinoManager();
+
+            if(ArduinoManager.SearchArduinoComPort() == true)
+            {
+                Controller1_Connected = true;
+                foreach (SerialPort port in ArduinoManager.Good_Ports)
+                {
+                    Controllers.Add(new Arduino(port));
+                }
+            }
+            else
+            {
+                Controller1_Connected = false;
+            }
+
+            bool test;
+            test = true;
+            //Controllers = new List<Arduino> { new Arduino(1) };
+            //for(int i=2;Controllers.Count !=  Controllers[0].Ports.Count;i++)
+            //{
+            //    Controllers.Add(new Arduino(i));
+            //}
         }
 
         public void LoadContent(ContentManager Content)
@@ -79,10 +106,13 @@ namespace Game_Test
         {
             TransitionScreen(gameTime);
             currentscreen.Update(gameTime);
-            if (Controller.ControllerConnected)
+            if(Controller1_Connected)
             {
-                Controller.Update();
-            }
+                foreach (Arduino Controller in Controllers)
+                {
+                    Controller.Update();
+                }
+            }     
         }
 
         public void Draw(SpriteBatch spriteBatch)

@@ -158,6 +158,7 @@ namespace Game_Test
 
                         //GameSettings.Instance.Tilescale = new Vector2(GameSettings.Instance.Dimensions.X / mapDimensions.X , GameSettings.Instance.Dimensions.Y / mapDimensions.Y);
                         GameSettings.Instance.Tilescale = new Vector2(24, 24);
+                        GameSettings.Instance.TileMapSize = mapDimensions;
 
                         Layer tempLayer = new Layer(buffer, mapDimensions, (int)mapDimensions.X, (int)mapDimensions.Y);
 

@@ -19,8 +19,7 @@ namespace Game_Test
         public PlayerEnums.Weapontype weapontype { get; private set; }
         public int WeaponID { get; private set; }
 
-        private static int NextAvailableID = 1;
-        public int GetMaxID { get { return NextAvailableID - 1; } }
+        public int GetMaxID { get { return 2; } }
 
         public int SprSheetX
         {
@@ -56,15 +55,13 @@ namespace Game_Test
             }
         }
 
-        public Weapon(string path, PlayerEnums.Weapontype weapontype, Vector2 Position, object sender)
+        public Weapon(string path, PlayerEnums.Weapontype weapontype, Vector2 Position, int weaponID, object sender)
         {
             sprite = new SprSheetImage(path);
             this.weapontype = weapontype;
             LoadContent((int)Position.X, (int)Position.Y);
-            WeaponID = NextAvailableID;
+            WeaponID = weaponID;
             Quiver = false;
-            if (sender is Player)
-                NextAvailableID++;
         }
 
         /// <summary>
@@ -73,17 +70,16 @@ namespace Game_Test
         /// <param name="bow"></param>
         /// <param name="quiver"></param>
         /// <param name="arrow"></param>
-        public Weapon(string bow, string quiver, string arrow, Vector2 Position, object sender)
+        public Weapon(string bow, string quiver, string arrow, Vector2 Position, int weaponID, object sender)
         {
             sprbow = new SprSheetImage(bow);
             sprquiver = new SprSheetImage(quiver);
             sprarrow = new SprSheetImage(arrow);
             weapontype = PlayerEnums.Weapontype.Bow;
             LoadContent((int)Position.X, (int)Position.Y);
-            WeaponID = NextAvailableID;
+            WeaponID = weaponID;
             Quiver = true;
-            if (sender is Player)
-                NextAvailableID++;
+
         }
 
         public void LoadContent(int X, int Y)

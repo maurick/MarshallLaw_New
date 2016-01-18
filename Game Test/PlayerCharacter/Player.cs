@@ -13,6 +13,8 @@ namespace Game_Test
     {
         //Playerstats player;
 
+        public int PlayerID { get; private set; }
+
         private Vector2 EnemyPosition;
 
         private float SpeedScale; //Scales up the movementspeed
@@ -54,23 +56,47 @@ namespace Game_Test
         public bool Debug { get; private set; }
 
         private Healthbar Healthbar;
+        private LevelIndicator LevelIndicator;
+        private Expbar Expbar;
 
-        public Player()
+        private Arduino Controller;
+        public bool NoConnect;
+
+        private bool ZoneCheck = false;
+        private Vector2 ZoneCheckCoor;
+        private bool ZoneEnter = false;
+        public int InZone { get; private set; }
+
+        public Player(int controller)
         {
-            //TODO add playerstats
-            //this.player = player;
-            State = PlayerEnums.ActionState.None;
-            lookDirection = PlayerEnums.LookDirection.Down;
-            sprSheetY = PlayerEnums.Action.None;
-            sprSheetX = 0;
-            
-            direction = new Vector2(0, 1);
-            
-            sprite = new SprSheetImage("CharacterSprites/Male/SkinColor/Light");
-            
-            SpeedScale = 1.5f;
+            PlayerID = controller;
+            NoConnect = false;
+            if (ScreenManager.Instance.Controllers[controller] != null)
+            {
+                //TODO add playerstats
+                //this.player = player;
+                State = PlayerEnums.ActionState.None;
+                lookDirection = PlayerEnums.LookDirection.Down;
+                sprSheetY = PlayerEnums.Action.None;
+                sprSheetX = 0;
 
-            Healthbar = new Healthbar();
+
+                Controller = ScreenManager.Instance.Controllers[controller];
+
+                direction = new Vector2(0, 1);
+
+                sprite = new SprSheetImage("CharacterSprites/Male/SkinColor/Light");
+
+                SpeedScale = 1.5f;
+
+                Healthbar = new Healthbar();
+                LevelIndicator = new LevelIndicator();
+                Expbar = new Expbar();
+                Expbar.SetExp(0);
+            }else
+            {
+                NoConnect = true;
+            }
         }
 
         public void LoadContent(int X, int Y)
@@ -80,9 +106,9 @@ namespace Game_Test
             boundingBox = new Image("Images/green");
             boundingBox.LoadContent( X + (0.5f * GameSettings.Instance.Tilescale.X), Y + GameSettings.Instance.Tilescale.Y, false, new Vector2(GameSettings.Instance.Tilescale.X, GameSettings.Instance.Tilescale.Y));
 
-            CurrentWeapon = new Weapon("Weapons/Bow/bow", "Weapons/Bow/quiver", "Weapons/Bow/arrow", sprite.Position, this);
+            CurrentWeapon = new Weapon("Weapons/Bow/bow", "Weapons/Bow/quiver", "Weapons/Bow/arrow", sprite.Position,1, this);
             inventory.Add(CurrentWeapon);
-            Weapon tempweapon = new Weapon("Weapons/Spear/Male/spear_male", PlayerEnums.Weapontype.Spear, sprite.Position, this);
+            Weapon tempweapon = new Weapon("Weapons/Spear/Male/spear_male", PlayerEnums.Weapontype.Spear, sprite.Position,2, this);
             inventory.Add(tempweapon);
         }
 
@@ -103,7 +129,7 @@ namespace Game_Test
             foreach (Enemy enemy in enemies)
             {
                 temp = CheckHit();
-                if (temp.X == 1)
+                if (temp.X == 1 && knockback == false)
                 {
                     Healthbar.LoseHealth(2 * GameSettings.Instance.Tilescale.X * 0.1f);
                     knockback = true;
@@ -152,10 +178,10 @@ namespace Game_Test
                 }
             }
             #endregion
-            //controller.Update();
+
             //Check if keys are pressed
             #region Attack
-            if (InputManager.Instance.KeyDown(Keys.Space))
+            if (InputManager.Instance.KeyDown(Keys.Space) || Controller.A_Button(false))
             {
                 switch (CurrentWeapon.weapontype)
                 {
@@ -177,28 +203,28 @@ namespace Game_Test
             #region Movement
             else
             {
-                if (InputManager.Instance.KeyDown(Keys.W))
+                if (InputManager.Instance.KeyDown(Keys.W) || Controller.Up(false))
                 {
                     State = PlayerEnums.ActionState.Walk;
                     lookDirection = PlayerEnums.LookDirection.Up;
                     direction.Y = -1;
                     Interval = BaseInterval * (int)State / (int)PlayerEnums.ActionState.Walk;
                 }
-                if (InputManager.Instance.KeyDown(Keys.S))
+                if (InputManager.Instance.KeyDown(Keys.S) || Controller.Down(false))
                 {
                     State = PlayerEnums.ActionState.Walk;
                     lookDirection = PlayerEnums.LookDirection.Down;
                     direction.Y = 1;
                     Interval = BaseInterval * (int)State / (int)PlayerEnums.ActionState.Walk;
                 }
-                if (InputManager.Instance.KeyDown(Keys.A))
+                if (InputManager.Instance.KeyDown(Keys.A) || Controller.Left(false))
                 {
                     State = PlayerEnums.ActionState.Walk;
                     lookDirection = PlayerEnums.LookDirection.left;
                     direction.X = -1;
                     Interval = BaseInterval * (int)State / (int)PlayerEnums.ActionState.Walk;
                 }
-                if (InputManager.Instance.KeyDown(Keys.D))
+                if (InputManager.Instance.KeyDown(Keys.D) || Controller.Right(false))
                 {
                     State = PlayerEnums.ActionState.Walk;
                     lookDirection = PlayerEnums.LookDirection.Right;
@@ -218,7 +244,19 @@ namespace Game_Test
                 sprite.SprSheetX = 0;
                 direction = new Vector2(0, 0);
             }
-            if (/*!ControlsActive ||*/ (InputManager.Instance.KeyReleased(Keys.W) || InputManager.Instance.KeyReleased(Keys.A) || InputManager.Instance.KeyReleased(Keys.S) || InputManager.Instance.KeyReleased(Keys.D)) && InputManager.Instance.KeyDown(Keys.Space) == false)
+
+            bool ControlsActive = false;
+            for (int i = 0; i < 8; i++)
+            {
+                    if (Controller.prevbuttons[i] == '1' && !Controller.Button(i))
+                    {
+                    ControlsActive = true;
+                    }
+            
+            }
+
+
+            if (ControlsActive || (InputManager.Instance.KeyReleased(Keys.W) || InputManager.Instance.KeyReleased(Keys.A) || InputManager.Instance.KeyReleased(Keys.S) || InputManager.Instance.KeyReleased(Keys.D)) && InputManager.Instance.KeyDown(Keys.Space) == false)
             {
                 State = PlayerEnums.ActionState.None;
                 sprSheetY = PlayerEnums.Action.None;
@@ -229,12 +267,12 @@ namespace Game_Test
             #endregion
 
             #region SwitchWeapon
-            if (InputManager.Instance.KeyPressed(Keys.LeftShift))
+            if (InputManager.Instance.KeyPressed(Keys.LeftShift) || Controller.B_Button(true))
             {
                 int tempID = 1;
                 if (CurrentWeapon.WeaponID != CurrentWeapon.GetMaxID)
                     tempID = CurrentWeapon.WeaponID + 1;
-                CurrentWeapon = inventory.Find(x => x.WeaponID == tempID);
+                CurrentWeapon = this.inventory.Find(x => x.WeaponID == tempID);
                 CurrentWeapon.setPosition(sprite.Position);
             }
             #endregion
@@ -245,7 +283,10 @@ namespace Game_Test
             }
             #endregion
             else if (State == PlayerEnums.ActionState.Walk)
+            {
                 Move(direction, gameTime);
+                CheckZone(sprite.Position);
+            }
             else if (State == PlayerEnums.ActionState.Thrust || State == PlayerEnums.ActionState.Slash || State == PlayerEnums.ActionState.Shoot)
                 Attack(gameTime);
             
@@ -274,8 +315,13 @@ namespace Game_Test
             CurrentWeapon.Draw(spriteBatch);
             foreach (Arrow arrow in Arrows)
                 arrow.Draw(spriteBatch);
+        }
 
+        public void DrawTop(SpriteBatch spriteBatch)
+        {
             Healthbar.Draw(spriteBatch, sprite.Position);
+            LevelIndicator.Draw(spriteBatch, sprite.Position);
+            Expbar.Draw(spriteBatch, sprite.Position);
         }
 
         private void Attack(GameTime gameTime)
@@ -317,7 +363,7 @@ namespace Game_Test
                     }
                     if (CurrentWeapon.weapontype == PlayerEnums.Weapontype.Bow && sprSheetX >= (int)PlayerEnums.ActionState.Shoot - 3 && RecentlyShot == false)
                     {
-                        arrow = new Arrow(ArrowPath, new Vector2(sprite.Position.X, sprite.Position.Y), 2, 1);
+                        arrow = new Arrow(ArrowPath, new Vector2(sprite.Position.X, sprite.Position.Y), 2, 1, PlayerID);
                         Arrows.Add(arrow);
                         RecentlyShot = true;
                     }
@@ -331,7 +377,7 @@ namespace Game_Test
                     }
                     if (CurrentWeapon.weapontype == PlayerEnums.Weapontype.Bow && sprSheetX >= (int)PlayerEnums.ActionState.Shoot - 3 && RecentlyShot == false)
                     {
-                        arrow = new Arrow(ArrowPath, new Vector2(sprite.Position.X, sprite.Position.Y + GameSettings.Instance.Tilescale.Y / 4), 1, 2);
+                        arrow = new Arrow(ArrowPath, new Vector2(sprite.Position.X, sprite.Position.Y + GameSettings.Instance.Tilescale.Y / 4), 1, 2, PlayerID);
                         Arrows.Add(arrow);
                         RecentlyShot = true;
                     }
@@ -345,7 +391,7 @@ namespace Game_Test
                     }
                     if (CurrentWeapon.weapontype == PlayerEnums.Weapontype.Bow && sprSheetX >= (int)PlayerEnums.ActionState.Shoot - 3 && RecentlyShot == false)
                     {
-                        arrow = new Arrow(ArrowPath, new Vector2(sprite.Position.X, sprite.Position.Y), 2, 2);
+                        arrow = new Arrow(ArrowPath, new Vector2(sprite.Position.X, sprite.Position.Y), 2, 2, PlayerID);
                         Arrows.Add(arrow);
                         RecentlyShot = true;
                     }
@@ -363,7 +409,7 @@ namespace Game_Test
                     }
                     if (CurrentWeapon.weapontype == PlayerEnums.Weapontype.Bow && sprSheetX >= (int)PlayerEnums.ActionState.Shoot - 3 && RecentlyShot == false)
                     {
-                        arrow = new Arrow(ArrowPath, new Vector2(sprite.Position.X, sprite.Position.Y + GameSettings.Instance.Tilescale.Y / 4), 1, 1);
+                        arrow = new Arrow(ArrowPath, new Vector2(sprite.Position.X, sprite.Position.Y + GameSettings.Instance.Tilescale.Y / 4), 1, 1, PlayerID);
                         Arrows.Add(arrow);
                         RecentlyShot = true;
                     }
@@ -426,7 +472,7 @@ namespace Game_Test
                 }
             }
             
-            for (int l = 2; l < layer.Length; l++)
+            for (int l = 3; l < layer.Length; l++)
                 ChangeAlpha(new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY), l);
             sprite.Position = new Vector2(sprite.Position.X + dirX, sprite.Position.Y + dirY); //Set new position
             boundingBox.Position = new Vector2(boundingBox.Position.X + dirX, boundingBox.Position.Y + dirY);
@@ -647,16 +693,16 @@ namespace Game_Test
         }
 #endregion
 
-        private void ChangeAlpha(Vector2 position, int number)
+        private void ChangeAlpha(Vector2 Position, int number)
         {
             float tilescale_x = GameSettings.Instance.Tilescale.X, tilescale_y = GameSettings.Instance.Tilescale.Y;
 
-            int x1 = (int)(position.X / tilescale_x),
-            y1 = (int)(position.Y / tilescale_y),
-            x2 = (int)((position.X + 2 * tilescale_x) / tilescale_x),
-            y2 = (int)((position.Y + 2 * tilescale_y) / tilescale_y);
+            int x1 = (int)(Position.X / tilescale_x),
+            y1 = (int)(Position.Y / tilescale_y),
+            x2 = (int)((Position.X + 2 * tilescale_x) / tilescale_x),
+            y2 = (int)((Position.Y + 2 * tilescale_y) / tilescale_y);
 
-            Rectangle playerRect = new Rectangle(new Point((int)(position.X) + 12, (int)(position.Y + 10)), new Point((int)tilescale_x, (int)(tilescale_y + 12)));
+            Rectangle PlayerRect = new Rectangle(new Point((int)(Position.X + 0.5 * tilescale_x), (int)(Position.Y + 0.5 * tilescale_y)), new Point((int)tilescale_x, (int)(tilescale_y * 2 - 0.5 * tilescale_y)));
 
             int TileID;
 
@@ -669,7 +715,7 @@ namespace Game_Test
                     if (TileID != 0)
                     {
                         rect = new Rectangle(j * (int)tilescale_x, i * (int)tilescale_y, (int)tilescale_x, (int)tilescale_y);
-                        if (rect.Intersects(playerRect))
+                        if (rect.Intersects(PlayerRect))
                             layer[number].ChangeTileAlpha(j, i, 0.5f);
                         else if (layer[number].GetTileAlpha(j, i) != 1.0f)
                             layer[number].ChangeTileAlpha(j, i, 1.0f);
@@ -766,6 +812,90 @@ namespace Game_Test
         {
             this.enemies.Clear();
             this.enemies = enemies;            
+        }
+
+        private void CheckZone(Vector2 Position)
+        {
+            float tilescale_x = GameSettings.Instance.Tilescale.X, tilescale_y = GameSettings.Instance.Tilescale.Y;
+
+            int x1 = (int)((Position.X + 0.5 * tilescale_x) / tilescale_x),
+            y1 = (int)((Position.Y + tilescale_y) / tilescale_y),
+            x2 = (int)((Position.X + 1.5 * tilescale_x) / tilescale_x),
+            y2 = (int)((Position.Y + 2 * tilescale_y) / tilescale_y);
+
+            Rectangle PlayerRect = new Rectangle(new Point((int)(Position.X + 0.5 * tilescale_x), (int)(Position.Y + tilescale_y)), new Point((int)tilescale_x, (int)(tilescale_y)));
+
+            int TileID;
+
+            Rectangle temp;
+            if (ZoneCheckCoor != Vector2.Zero)
+            {
+                temp = new Rectangle((int)ZoneCheckCoor.X, (int)ZoneCheckCoor.Y, (int)tilescale_x, (int)tilescale_y);
+                if (!(temp.Intersects(PlayerRect)))
+                {
+                    ZoneCheck = false;
+                    ZoneCheckCoor = Vector2.Zero;
+                }
+            }
+
+            for (int i = y1; i <= y2; i++)
+            {
+                for (int j = x1; j <= x2; j++)
+                {
+                    TileID = layer[1].getTileID(j, i);
+                    Rectangle rect;
+                    if (TileID != 0)
+                    {
+                        rect = new Rectangle(j * (int)tilescale_x, i * (int)tilescale_y, (int)tilescale_x, (int)tilescale_y);
+                        if (TileID == 1)
+                        {
+                            if (rect.Intersects(PlayerRect) && ZoneCheck == false)
+                            {
+                                ZoneCheck = true;
+                                ZoneCheckCoor = new Vector2(j, i);
+                                if (InZone == 0)
+                                    ZoneEnter = true;
+                                if (InZone != 0)
+                                {
+                                    InZone = 0;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (ZoneEnter && rect.Intersects(PlayerRect))
+                                InZone = TileID;
+                        }
+                    }
+                }
+            }
+        }
+
+        public void AddExp()
+        {
+            Expbar.IncreaseExp(50);
+            /*string query;
+            int temp = 0, temp2 = 0;
+            temp = Convert.ToInt32(Database.Instance.ReadQuery("select exp from playerstats where playerid = " + PlayerID + ";", "exp"));
+            if (temp >= 100)
+            {
+                temp = 0;
+                temp2 = Convert.ToInt32(Database.Instance.ReadQuery("select exp from playerstats where playerid = " + PlayerID + ";", "level"));
+                query = "update playerstats set level " + temp2 + " where playerid = " + PlayerID + ";";
+                Database.Instance.ExecuteQuery(query);
+            }
+            query = "update playerstats set exp " + temp + " where playerid = " + PlayerID + ";";
+            Database.Instance.ExecuteQuery(query);*/
+        }
+
+        public void RemoveEnemy(Enemy enemy)
+        {
+            enemies.Remove(enemy);
+        }
+
+        public void AddEnemy(Enemy enemy)
+        {
+            enemies.Add(enemy);
         }
     }
 }

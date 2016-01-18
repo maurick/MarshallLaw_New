@@ -10,7 +10,7 @@ namespace Game_Test
 {
     public class Layer
     {
-        Tile[,] tiles;
+        private Tile[,] tiles;
         
         string layerName;
 
@@ -25,7 +25,7 @@ namespace Game_Test
         public Layer(string layerName, Vector2 mapDimensions, int widht, int height)
         {
             this.layerName = layerName;
-            tiles = new Tile[(int)mapDimensions.X,(int)mapDimensions.Y];
+            tiles = new Tile[(int)mapDimensions.X, (int)mapDimensions.Y];
         }
 
         public void AddTile(int index_x, int index_y, int tileID)
@@ -107,6 +107,10 @@ namespace Game_Test
             {
                 temp_int = 3;
             }
+            else if (tileID > 1699 && tileID <= 2722)
+            {
+                temp_int = 4;
+            }
             return spriteSheets[temp_int];
         }
 
@@ -163,7 +167,7 @@ namespace Game_Test
                     }
                 }
             }
-            else if (tileID > 1676 && tileID <= 1699)
+            else if (tileID > 1676 && tileID <= 1700)
             {
                 int temp_tileID = 1;
                 Vector2 tileSheetDimension = new Vector2(6, 4);
@@ -172,6 +176,23 @@ namespace Game_Test
                     for (int x = 0; x < tileSheetDimension.X; x++)
                     {
                         if (tileID - 1676 == temp_tileID)
+                        {
+                            return new Vector2(x, y);
+                        }
+                        else
+                            temp_tileID++;
+                    }
+                }
+            }
+            else if (tileID > 1700 && tileID <= 2724)
+            {
+                int temp_tileID = 1;
+                Vector2 tileSheetDimension = new Vector2(32, 32);
+                for (int y = 0; y < tileSheetDimension.Y; y++)
+                {
+                    for (int x = 0; x < tileSheetDimension.X; x++)
+                    {
+                        if (tileID - 1700 == temp_tileID)
                         {
                             return new Vector2(x, y);
                         }

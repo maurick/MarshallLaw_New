@@ -29,6 +29,8 @@ namespace Game_Test
         bool refresh;
         CharacterCreator characterCreator;
 
+
+
         //Contructor
         public CharCreationScreen()
         {
@@ -233,7 +235,6 @@ namespace Game_Test
                         items3[control.CurrentActiveItem].Update(gameTime);
                     }
                 }
-
             }
 
             if (control.CurrentActiveField == 1 || control.CurrentActiveField == 2)

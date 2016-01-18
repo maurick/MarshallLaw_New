@@ -32,7 +32,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -67,7 +67,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Animation_Effects\FadeEffect.cs" />
+    <Compile Include="Arduino\ArduinoManager.cs" />
     <Compile Include="Arduino\Arduino.cs" />
+    <Compile Include="PlayerCharacter\CharacterInfo.cs" />
+    <Compile Include="Database.cs" />
     <Compile Include="PlayerCharacter\CharacterCreator.cs" />
     <Compile Include="Controls\CharCreation_Member.cs" />
     <Compile Include="Controls\Options_Members.cs" />
@@ -76,10 +79,11 @@
     <Compile Include="DrawBaseClasses\SprSheetImage.cs" />
     <Compile Include="Enemy\Enemy.cs" />
     <Compile Include="GameObjects\Arrow.cs" />
-    <Compile Include="GameObjects\Items.cs" />
     <Compile Include="GameObjects\Weapon.cs" />
     <Compile Include="GameSettings.cs" />
+    <Compile Include="PlayerCharacter\Expbar.cs" />
     <Compile Include="PlayerCharacter\Healthbar.cs" />
+    <Compile Include="PlayerCharacter\LevelIndicator.cs" />
     <Compile Include="PlayerCharacter\PlayerEnums.cs" />
     <Compile Include="Screen%28s%29\MapTestScreen.cs" />
     <Compile Include="Map\Layer.cs" />
@@ -110,6 +114,11 @@
       <HintPath>$(MSBuildProgramFiles32)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.SQLite, Version=1.0.99.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\System.Data.SQLite.dll</HintPath>
+    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />

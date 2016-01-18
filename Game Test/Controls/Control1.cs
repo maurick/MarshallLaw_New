@@ -182,10 +182,11 @@ namespace Game_Test
             }
             #endregion
 
+
             #region "Navigation of the control"
             if(currentSelectedMainControl == selection.fieldactive)
             {
-                if (InputManager.Instance.KeyPressed(Keys.Left))
+                if (InputManager.Instance.KeyPressed(Keys.Left) || ScreenManager.Instance.Controllers[0].Left(true))
                 {
                     if (currentSelectedItemControl == selection.arrow_right)
                         currentSelectedItemControl = selection.arrow_left;
@@ -196,7 +197,7 @@ namespace Game_Test
                     else if (currentSelectedItemControl == selection.buttonright)
                         currentSelectedItemControl = selection.buttonleft;
                 }
-                if (InputManager.Instance.KeyPressed(Keys.Right))
+                if (InputManager.Instance.KeyPressed(Keys.Right) || ScreenManager.Instance.Controllers[0].Right(true))
                 {
                     if (currentSelectedItemControl == selection.arrow_right)
                         currentSelectedItemControl = selection.arrow_left;
@@ -205,7 +206,7 @@ namespace Game_Test
                     else if (currentSelectedItemControl == selection.buttonleft)
                         currentSelectedItemControl = selection.buttonright;
                 }
-                if (InputManager.Instance.KeyPressed(Keys.Down))
+                if (InputManager.Instance.KeyPressed(Keys.Down) || ScreenManager.Instance.Controllers[0].Down(true))
                 {
                     if (currentSelectedItemControl == selection.buttonleft)
                     {
@@ -230,7 +231,7 @@ namespace Game_Test
                             currentSelectedItemControl = selection.arrow_right;
                     }
                 }
-                if (InputManager.Instance.KeyPressed(Keys.Up))
+                if (InputManager.Instance.KeyPressed(Keys.Up) || ScreenManager.Instance.Controllers[0].Up(true))
                 {
                     if (CurrentActiveItem == 10)
                     {
@@ -248,7 +249,7 @@ namespace Game_Test
             }
             else
             {
-                if (InputManager.Instance.KeyPressed(Keys.Up))
+                if (InputManager.Instance.KeyPressed(Keys.Up) || ScreenManager.Instance.Controllers[0].Up(true))
                 {
                     if (currentSelectedMainControl == selection.buttonmiddle)
                         currentSelectedMainControl = selection.buttonup;
@@ -266,7 +267,7 @@ namespace Game_Test
                     }
                 }
 
-                if (InputManager.Instance.KeyPressed(Keys.Down))
+                if (InputManager.Instance.KeyPressed(Keys.Down) || ScreenManager.Instance.Controllers[0].Down(true))
                 {
                     if (currentSelectedMainControl == selection.buttonmiddle)
                         currentSelectedMainControl = selection.buttondown;
@@ -275,7 +276,7 @@ namespace Game_Test
                     else if (currentSelectedMainControl == selection.buttondown)
                         currentSelectedMainControl = selection.buttonback;
                 }
-                if (InputManager.Instance.KeyPressed(Keys.Right))
+                if (InputManager.Instance.KeyPressed(Keys.Right) || ScreenManager.Instance.Controllers[0].Right(true))
                 {
                     if (currentSelectedMainControl == selection.buttondown || currentSelectedMainControl == selection.buttonup)
                     {
@@ -286,7 +287,7 @@ namespace Game_Test
                         currentSelectedMainControl = selection.buttoncontinue;
                     }
                 }
-                if (InputManager.Instance.KeyPressed(Keys.Left))
+                if (InputManager.Instance.KeyPressed(Keys.Left) || ScreenManager.Instance.Controllers[0].Left(true))
                 {
                     if (currentSelectedMainControl == selection.buttoncontinue)
                     {
@@ -298,7 +299,7 @@ namespace Game_Test
 
 
             #region "Actions"
-            if (InputManager.Instance.KeyPressed(Keys.Enter))
+            if (InputManager.Instance.KeyPressed(Keys.Enter) || ScreenManager.Instance.Controllers[0].A_Button(true))
             {
                 switch(currentSelectedMainControl)
                 {

@@ -14,7 +14,7 @@ namespace Game_Test
         private Vector2 P_menuLenght;
         private Vector2 P_menuPosition;
         private int P_currentSelected;
-        private string[] P_text = { "Continue", "Add Controller", "Exit to menu" };
+        private string[] P_text = { "Continue", "Connect/Disconnect controller", "Exit to menu" };
         private PauseMenuItem[] P_menuItems;
         public bool Pause { get; private set; }
 
@@ -79,7 +79,7 @@ namespace Game_Test
             P_poster.Update(gameTime);
 
             //If the down key is selected then move the selected 1 down
-            if (InputManager.Instance.KeyPressed(Keys.Down))
+            if (InputManager.Instance.KeyPressed(Keys.Down) || ScreenManager.Instance.Controllers[0].Down(true))
             {
                 P_menuItems[P_currentSelected].Selected = false;
                 P_currentSelected++;
@@ -89,7 +89,7 @@ namespace Game_Test
             }
 
             //If the up key is selected then move the selected 1 up
-            if (InputManager.Instance.KeyPressed(Keys.Up))
+            if (InputManager.Instance.KeyPressed(Keys.Up) || ScreenManager.Instance.Controllers[0].Up(true))
             {
                 P_menuItems[P_currentSelected].Selected = false;
                 P_currentSelected--;
@@ -98,9 +98,28 @@ namespace Game_Test
                 P_menuItems[P_currentSelected].Selected = true;
             }
 
-            if (P_menuItems[P_currentSelected].ItemID == 0 && (InputManager.Instance.KeyPressed(Keys.Enter)))
+            int continueID = -1;
+            foreach (PauseMenuItem item in P_menuItems)
+            {
+                continueID = item.GetID("Continue");
+                if (continueID != -1)
+                    break;
+            }
+            if (P_menuItems[P_currentSelected].ItemID == continueID && ((InputManager.Instance.KeyPressed(Keys.Enter)) || ScreenManager.Instance.Controllers[0].A_Button(true)) && continueID != -1)
             {
                 Pause = true;
+            }
+
+            int ConnectID = -1;
+            foreach (PauseMenuItem item in P_menuItems)
+            {
+                ConnectID = item.GetID("Connect/Disconnect controller");
+                if (ConnectID != -1)
+                    break;
+            }
+            if (P_menuItems[P_currentSelected].ItemID == ConnectID && ((InputManager.Instance.KeyPressed(Keys.Enter)) || ScreenManager.Instance.Controllers[0].A_Button(true)) && continueID != -1)
+            {
+
             }
 
             int exitID = -1;
@@ -111,7 +130,7 @@ namespace Game_Test
                     break;
             }
             //If the Exit button is selected and Enter has been pressed exit the game
-            if (P_menuItems[P_currentSelected].ItemID == exitID && (InputManager.Instance.KeyPressed(Keys.Enter)) && exitID != -1)
+            if (P_menuItems[P_currentSelected].ItemID == exitID && ((InputManager.Instance.KeyPressed(Keys.Enter)) || ScreenManager.Instance.Controllers[0].A_Button(true)) && exitID != -1)
             {
                 ScreenManager.Instance.ChangeScreen("MenuScreen");
             }

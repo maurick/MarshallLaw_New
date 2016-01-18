@@ -25,7 +25,7 @@ namespace Game_Test
         public MapTestScreen()
         {
 
-            map = new Map("testmap7");
+            map = new Map("map1");
         }
 
         public override void LoadContent()
@@ -63,12 +63,25 @@ namespace Game_Test
 
             map.Update(gameTime);
 
-            //When the Escape key has been pressed exit the game
-            if (InputManager.Instance.KeyReleased(Keys.Escape) && GamePaused == false)
+            if (ScreenManager.Instance.Controller1_Connected)
             {
-                //ScreenManager.Instance.ChangeScreen("MenuScreen");
-                GamePaused = true;
-                menu = new PauseMenu();
+                //When the Escape key has been pressed exit the game
+                if (ScreenManager.Instance.Controllers[0].X_Button(true) && GamePaused == false)
+                {
+                    //ScreenManager.Instance.ChangeScreen("MenuScreen");
+                    GamePaused = true;
+                    menu = new PauseMenu();
+                }
+            }
+            else
+            {
+                //When the Escape key has been pressed exit the game
+                if (InputManager.Instance.KeyReleased(Keys.Escape) && GamePaused == false)
+                {
+                    //ScreenManager.Instance.ChangeScreen("MenuScreen");
+                    GamePaused = true;
+                    menu = new PauseMenu();
+                }
             }
         }
 

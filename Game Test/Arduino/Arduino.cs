@@ -9,41 +9,71 @@ namespace Game_Test
 {
     public class Arduino
     {
-        private SerialPort Port;
-        List<SerialPort> Ports;
-        public bool portFound;
-        public bool ControllerConnected;
+        static int NextAvailableID = 0;
+        public int ControllerID;
+
+        private SerialPort port;
 
         public string allbuttons;
         public string prevbuttons;
 
-        public Arduino(int Controller)
+        CharacterInfo characterInfo;
+
+        public Arduino(SerialPort port)
         {
-            Ports = new List<SerialPort> { };
-            SetComPort();
-            if (Ports.Count > 0)
+
+            ControllerID = NextAvailableID++;
+            this.port = port;
+
+            characterInfo = new CharacterInfo(ControllerID);
+
+            allbuttons = "000000000";
+            prevbuttons = "000000000";
+
+            port.Open();
+            port.Write("#GetInfo%");
+            Thread.Sleep(100);
+
+            int count = port.BytesToRead;
+            string returnMessage = "";
+            int intReturnASCII = 0;
+
+            while (count > 0)
             {
-                portFound = true;
+                intReturnASCII = port.ReadByte();
+                returnMessage += Convert.ToChar(intReturnASCII);
+                count--;
+            }
+
+            port.Close();
+
+            bool CharachterInfo_Collected = false;
+
+
+            string message = returnMessage.Substring(returnMessage.IndexOf("#Info:"), 21);
+
+            if(message.Substring(6, 2) == "55")
+            {
+                CharachterInfo_Collected = true;
+                characterInfo.NotFound = true;
+
+                string name = message.Substring(8, 10);
+                int gender = Convert.ToInt32(message.Substring(18, 1));
+                int skincolor = Convert.ToInt32(message.Substring(19, 1));
+
+                characterInfo.SetCharacterInfo(name, gender, skincolor);
             }
             else
             {
-                portFound = false;
+                CharachterInfo_Collected = true;
+                characterInfo.NotFound = false;
             }
-            if(portFound)
-            {
-                Port = Ports[Controller - 1];
-                ControllerConnected = true;
-            }
-            if (ControllerConnected)
-            {
-                AllowControls();
-            }
-            allbuttons = "000000000";
-            prevbuttons = "000000000";
+
+            AllowControls();
         }
 
         //Port Detection
-        private void SetComPort()
+        /*private void SetComPort()
         {
             try
             {
@@ -61,9 +91,9 @@ namespace Game_Test
             {
                 portFound = false;
             }
-        }
+        }*/
 
-        private bool DetectArduino()
+        /*private bool DetectArduino()
         {
             try
             {
@@ -100,22 +130,22 @@ namespace Game_Test
             {
                 return false;
             }
-        }
+        }*/
 
         //Read
         public string Read()
         {
-            if (!Port.IsOpen)
+            if (!port.IsOpen)
             {
-                Port.Open();
+                port.Open();
             }
             string message = "";
-            int incomingByte = Port.ReadByte();
+            int incomingByte = port.ReadByte();
             char readChar = (char)incomingByte;
 
-            while (Port.BytesToRead > 0)
+            while (port.BytesToRead > 0)
             {
-                incomingByte = Port.ReadByte();
+                incomingByte = port.ReadByte();
                 readChar = (char)incomingByte;
 
                 if (readChar == '#')
@@ -125,25 +155,25 @@ namespace Game_Test
 
                 if (readChar == '%')
                 {
-                    Port.Close();
+                    port.Close();
                     return message;
                 }
 
                 message += readChar;
             }
-            Port.Close();
+            port.Close();
             return message;
         }
 
 
         public bool MessageAvailable()
         {
-            if (!Port.IsOpen)
+            if (!port.IsOpen)
             {
-                Port.Open();
+                port.Open();
             }
 
-            if (Port.BytesToRead > 0)
+            if (port.BytesToRead > 0)
             {
                 return true;
             }
@@ -157,9 +187,22 @@ namespace Game_Test
             buffer[0] = Convert.ToByte(16);
             buffer[1] = Convert.ToByte(CmdByte);
 
-            Port.Open();
-            Port.Write(buffer, 0, 2);
-            Port.Close();
+            if (!port.IsOpen)
+            {
+                port.Open();
+            }
+            port.Write(buffer, 0, 2);
+            port.Close();
+        }
+
+        private void Write(string Text)
+        {
+            if (!port.IsOpen)
+            {
+                port.Open();
+            }
+            port.Write("#"+Text+"%");
+            port.Close();
         }
 
         private void Write(int[] Array)
@@ -168,13 +211,16 @@ namespace Game_Test
             buffer[0] = Convert.ToByte(16);
             buffer[1] = Convert.ToByte(8);
 
-            Port.Open();
-            Port.Write(buffer, 0, 2);
+            if (!port.IsOpen)
+            {
+                port.Open();
+            }
+            port.Write(buffer, 0, 2);
             foreach (var nr in Array)
             {
-                Port.Write(nr.ToString());
+                port.Write(nr.ToString());
             }
-            Port.Close();
+            port.Close();
         }
 
         //Controller
@@ -184,6 +230,10 @@ namespace Game_Test
             if(MessageAvailable())
             {
                 allbuttons = this.Read();
+                if(allbuttons.Length < 9)
+                {
+                    allbuttons = "000000000";
+                }
             }
         }
 
@@ -199,64 +249,94 @@ namespace Game_Test
             }
         }
 
-        //Methods
-        public bool MenuUp()
+        private bool Debounce(int Button)
         {
-            if(allbuttons[2] > prevbuttons[2])
-            {
-                return true;
-            }
-            return false;        
-        }
-        public bool MenuDown()
-        {
-            if (allbuttons[3] > prevbuttons[3])
+            if (allbuttons[Button] > prevbuttons[Button])
             {
                 return true;
             }
             return false;
         }
 
-        public bool Up()
+        //Methods
+        public bool Up(bool debounce)
         {
-            return Button(2);
-        }
-        public bool Down()
-        {
+            if (debounce)
+            {
+                return Debounce(3);
+            }
             return Button(3);
         }
-        public bool Left()
+        public bool Down(bool debounce)
         {
-            return Button(1);
-        }
-        public bool Right()
-        {
-            return Button(0);
-        }
-        public bool rbutt()
-        {
+            if (debounce)
+            {
+                return Debounce(4);
+            }
             return Button(4);
         }
-        public bool ubutt()
+        public bool Left(bool debounce)
         {
-            return Button(5);
+            if (debounce)
+            {
+                return Debounce(2);
+            }
+            return Button(2); 
         }
-        public bool dbutt()
+        public bool Right(bool debounce)
         {
-            return Button(6);
+            if (debounce)
+            {
+                return Debounce(1);
+            }
+            return Button(1);
         }
-        public bool lbutt()
+        public bool Joystick_Button(bool debounce)
         {
+            if (debounce)
+            {
+                return Debounce(0);
+            }
+            return Button(0);
+        }
+        public bool X_Button(bool debounce)
+        {
+            if (debounce)
+            {
+                return Debounce(8);
+            }
+            return Button(8);
+        }
+        public bool A_Button(bool debounce)
+        {
+            if (debounce)
+            {
+                return Debounce(7);
+            }
             return Button(7);
         }
-        public bool jbutt()
+        public bool B_Button(bool debounce)
         {
-            return Button(8);
+            if (debounce)
+            {
+                return Debounce(5);
+            }
+            return Button(5);
+        }
+        public bool Y_Button(bool debounce)
+        {
+            if (debounce)
+            {
+                return Debounce(6);
+            }
+            return Button(6);
         }
 
         public void AllowControls()
         {
-            Write(32);
+            port.Open();
+            port.Write("#AllowControls%");
+            port.Close();
         }
 
         public void SendStats(int[] Stats)
@@ -267,6 +347,20 @@ namespace Game_Test
         public void Save()
         {
             Write(64);
+        }
+
+        public void Exit()
+        {
+            //SendStats();
+            Save();
+
+            port.Open();
+            port.Write("#Exit%");
+            port.Close();
+            
+            Thread.Sleep(1000);
+            GameInstance.ExitGame = true;
+
         }
     }
 }

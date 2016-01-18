@@ -14,7 +14,7 @@ namespace Game_Test
         //Playerstats player;
 
         private Vector2 Position;
-        private Vector2 PlayerPosition;
+        public Vector2 TilePosition { get; set; }
 
         private float SpeedScale; //Scales up the movementspeed
         
@@ -26,13 +26,15 @@ namespace Game_Test
         //Collisionlayer and Tree layer(s)
         Layer[] layer;
 
+        public List<Vector2> PlayerPosition { get; set; }
         public float sprSheetX { get; private set; }
         private PlayerEnums.Action sprSheetY { get; set; }
         public PlayerEnums.ActionState State { get; set; }
-        public PlayerEnums.ActionState PlayerState { get; set; }
+        public List<PlayerEnums.ActionState> PlayerState { get; set; }
         public PlayerEnums.LookDirection lookDirection { get; set; }
-        public PlayerEnums.LookDirection PlayerLookDirection { get; set; }
-        public int PlayerSprSheetX { get; set; }
+        public List<PlayerEnums.LookDirection> PlayerLookDirection { get; set; }
+        public List<int> PlayerSprSheetX { get; set; }
+        public List<int> PlayerZones { get; set; }
 
         private SprSheetImage sprite;
 
@@ -44,35 +46,90 @@ namespace Game_Test
 
         private int dir = 0;
         private double duration = 0;
+        public int minDuration = 1, maxDuration = 4;
+        Random Random = new Random();
+        private bool MoveBreak = false;
 
         private const int AggroDistance = 250;
+        private bool Aggro = false;
 
         public List<Arrow> arrows = new List<Arrow>();
+        public List<Arrow> HitArrows = new List<Arrow>();
 
         public Healthbar healthbar;
+        public LevelIndicator levelindicator;
+        public bool Die { get; set; }
+        public bool AnimationFinished { get; private set; }
 
-        public Enemy(int X, int Y)
+        private int ZoneNumber;
+
+        public double Time { get; set; }
+
+        public int LastHitBy { get; private set; }
+
+        public Enemy(int X, int Y, int ZoneNR)
         {
             //TODO add playerstats
-            //this.player = player;
+            //this.player = player
 
-            Position = new Vector2(X, Y);
-            
+            TilePosition = new Vector2(X, Y);
+            Position = new Vector2(X * GameSettings.Instance.Tilescale.X, Y * GameSettings.Instance.Tilescale.Y);
+
             State = PlayerEnums.ActionState.None;
-            PlayerState = PlayerEnums.ActionState.None;
+            if (PlayerState != null)
+                for (int i = 0; i < PlayerState.Count; i++)
+                    PlayerState[i] = PlayerEnums.ActionState.None;
             lookDirection = PlayerEnums.LookDirection.Down;
             sprSheetY = PlayerEnums.Action.WalkDown;
             sprSheetX = 0;
 
             direction = new Vector2(0, 1);
 
-            sprite = new SprSheetImage("EnemySprites/Male/red_orc");
+            int rnd = Random.Next(9);
+            switch (rnd)
+            {
+                case 0:
+                    sprite = new SprSheetImage("EnemySprites/Female/darkelf");
+                    break;
+                case 1:
+                    sprite = new SprSheetImage("EnemySprites/Female/darkelf2");
+                    break;
+                case 2:
+                    sprite = new SprSheetImage("EnemySprites/Female/orc");
+                    break;
+                case 3:
+                    sprite = new SprSheetImage("EnemySprites/Female/red_orc");
+                    break;
+                case 4:
+                    sprite = new SprSheetImage("EnemySprites/Male/darkelf");
+                    break;
+                case 5:
+                    sprite = new SprSheetImage("EnemySprites/Male/darkelf2");
+                    break;
+                case 6:
+                    sprite = new SprSheetImage("EnemySprites/Male/orc");
+                    break;
+                case 7:
+                    sprite = new SprSheetImage("EnemySprites/Male/red_orc");
+                    break;
+                case 8:
+                    sprite = new SprSheetImage("EnemySprites/Male/skeleton");
+                    break;
+            }
 
             SpeedScale = 0.5f;
 
-            weapon = new Weapon("Weapons/Spear/Male/spear_male", PlayerEnums.Weapontype.Spear, sprite.Position, this);
+            weapon = new Weapon("Weapons/Spear/Male/spear_male", PlayerEnums.Weapontype.Spear, sprite.Position, 1, this);
 
             healthbar = new Healthbar();
+            levelindicator = new LevelIndicator();
+            PlayerLookDirection = new List<PlayerEnums.LookDirection>();
+            PlayerState = new List<PlayerEnums.ActionState>();
+            PlayerSprSheetX = new List<int>();
+            PlayerPosition = new List<Vector2>();
+            PlayerZones = new List<int>();
+
+            ZoneNumber = ZoneNR;
         }
 
         public void LoadContent()
@@ -89,11 +146,25 @@ namespace Game_Test
 
         public void Update(GameTime gameTime)
         {
-            #region Knockback
-            Vector2 temp = CheckHit();
-            if (temp.X == 1)
+            if (Die)
             {
-                healthbar.LoseHealth(2 * GameSettings.Instance.Tilescale.X * 0.1f);
+                DieAnimation(gameTime);
+                return;
+            }
+            #region Knockback
+            Vector2 temp = Vector2.Zero;
+            for (int i = 0; i < PlayerState.Count; i++)
+            {
+                temp = CheckHit(i);
+                if (temp.X == 1)
+                {
+                    LastHitBy = i;
+                    break;
+                }
+            }
+            if (temp.X == 1 && knockback == false)
+            {
+                healthbar.LoseHealth(2 * GameSettings.Instance.Tilescale.X * 0.25f);
                 knockback = true;
                 knockbacktimer = 0.2f;
                 duration = 0;
@@ -102,12 +173,13 @@ namespace Game_Test
                 sprSheetX = 4;
                 knockbackdirection = temp;
             }
-                foreach (Arrow Arrow in arrows)
+            foreach (Arrow Arrow in arrows)
             {
                 Vector2 temp2 = CheckArrowHit(Arrow);
-                if (temp2.X == 1)
+                if (temp2.X == 1 && knockback == false)
                 {
-                    healthbar.LoseHealth(2 * GameSettings.Instance.Tilescale.X * 0.1f);
+                    LastHitBy = Arrow.PlayerID;
+                    healthbar.LoseHealth(2 * GameSettings.Instance.Tilescale.X * 1f);
                     knockback = true;
                     knockbacktimer = 0.2f;
                     duration = 0;
@@ -115,7 +187,9 @@ namespace Game_Test
                     sprSheetY = PlayerEnums.Action.Hit;
                     sprSheetX = 4;
                     knockbackdirection = temp2;
+                    HitArrows.Add(Arrow);
                     arrows.Remove(Arrow);
+                    
                     break;
                 }
             }
@@ -156,62 +230,79 @@ namespace Game_Test
             }
             #endregion
 
-            Random rnd = new Random();
-
+            #region Movement
             if (State != PlayerEnums.ActionState.Thrust)
             {
-                #region Aggro
-                if ((((sprite.Position.X - PlayerPosition.X < AggroDistance && sprite.Position.X - PlayerPosition.X > 0) ||
-                    (PlayerPosition.X - sprite.Position.X < AggroDistance && PlayerPosition.X - sprite.Position.X > 0)) &&
-                    ((sprite.Position.Y - PlayerPosition.Y < AggroDistance && sprite.Position.Y - PlayerPosition.Y > 0) ||
-                    (PlayerPosition.Y - sprite.Position.Y < AggroDistance && PlayerPosition.Y - sprite.Position.Y > 0))) &&
-                    PlayerinZone())
+                for (int i = 0; i < PlayerPosition.Count; i++)
                 {
-                    SpeedScale = 0.15f;
-                    if (sprite.Position.Y - GameSettings.Instance.Tilescale.Y - PlayerPosition.Y > 0)
+                    if ((((sprite.Position.X - PlayerPosition[i].X < AggroDistance && sprite.Position.X - PlayerPosition[i].X > 0) ||
+                        (PlayerPosition[i].X - sprite.Position.X < AggroDistance && PlayerPosition[i].X - sprite.Position.X > 0)) &&
+                        ((sprite.Position.Y - PlayerPosition[i].Y < AggroDistance && sprite.Position.Y - PlayerPosition[i].Y > 0) ||
+                        (PlayerPosition[i].Y - sprite.Position.Y < AggroDistance && PlayerPosition[i].Y - sprite.Position.Y > 0))) &&
+                        PlayerinZone(i))
                     {
-                        lookDirection = PlayerEnums.LookDirection.Up;
-                        State = PlayerEnums.ActionState.Walk;
-                        direction.Y = -1;
-                    }
-                    else if (sprite.Position.Y + GameSettings.Instance.Tilescale.Y - PlayerPosition.Y < 0)
-                    {
-                        lookDirection = PlayerEnums.LookDirection.Down;
-                        State = PlayerEnums.ActionState.Walk;
-                        direction.Y = 1;
-                    }
-                    else
-                        direction.Y = 0;
-                    if (sprite.Position.X - GameSettings.Instance.Tilescale.X - PlayerPosition.X > 0)
-                    {
-                        lookDirection = PlayerEnums.LookDirection.left;
-                        State = PlayerEnums.ActionState.Walk;
-                        direction.X = -1;
-                    }
-                    else if (sprite.Position.X + GameSettings.Instance.Tilescale.X - PlayerPosition.X < 0)
-                    {
-                        lookDirection = PlayerEnums.LookDirection.Right;
-                        State = PlayerEnums.ActionState.Walk;
-                        direction.X = 1;
-                    }
-                    else
-                        direction.X = 0;
+                        Aggro = true;
+                        SpeedScale = 0.15f;
+                        if (sprite.Position.Y - GameSettings.Instance.Tilescale.Y - PlayerPosition[i].Y > 0)
+                        {
+                            lookDirection = PlayerEnums.LookDirection.Up;
+                            State = PlayerEnums.ActionState.Walk;
+                            direction.Y = -1;
+                        }
+                        else if (sprite.Position.Y + GameSettings.Instance.Tilescale.Y - PlayerPosition[i].Y < 0)
+                        {
+                            lookDirection = PlayerEnums.LookDirection.Down;
+                            State = PlayerEnums.ActionState.Walk;
+                            direction.Y = 1;
+                        }
+                        else
+                            direction.Y = 0;
+                        if (sprite.Position.X - GameSettings.Instance.Tilescale.X - PlayerPosition[i].X > 0)
+                        {
+                            lookDirection = PlayerEnums.LookDirection.left;
+                            State = PlayerEnums.ActionState.Walk;
+                            direction.X = -1;
+                        }
+                        else if (sprite.Position.X + GameSettings.Instance.Tilescale.X - PlayerPosition[i].X < 0)
+                        {
+                            lookDirection = PlayerEnums.LookDirection.Right;
+                            State = PlayerEnums.ActionState.Walk;
+                            direction.X = 1;
+                        }
+                        else
+                            direction.X = 0;
 
-                    if (direction.Y == 0 && direction.X == 0)
-                    {
-                        State = PlayerEnums.ActionState.Thrust;
-                        Attack(gameTime);
+                        if (direction.Y == 0 && direction.X == 0)
+                        {
+                            State = PlayerEnums.ActionState.Thrust;
+                            Attack(gameTime);
+                        }
+                        break;
                     }
+                    else
+                        Aggro = false;
                 }
-                #endregion
-                #region Random Movement
-                else
+                if (Aggro == false)
                 {
                     SpeedScale = 0.5f;
-                    if (duration <= 0)
+                    if (duration <= 0 && !MoveBreak)
                     {
-                        duration = rnd.Next(1, 3);
-                        dir = rnd.Next(12);
+                        minDuration = 1;
+                        maxDuration = 4;
+                        dir = Random.Next(8);
+                        duration = Random.Next(minDuration, maxDuration);
+                        MoveBreak = true;
+                    }
+                    else if (duration <= 0 && MoveBreak)
+                    {
+                        minDuration = 0;
+                        maxDuration = 2;
+                        duration = Random.Next(minDuration, maxDuration);
+                        MoveBreak = false;
+                        State = PlayerEnums.ActionState.None;
+                        direction = Vector2.Zero;
+                        sprSheetX = 0;
+                        dir = 8;
                     }
                     else
                         duration -= gameTime.ElapsedGameTime.TotalSeconds;
@@ -258,24 +349,26 @@ namespace Game_Test
                             lookDirection = PlayerEnums.LookDirection.Right;
                             direction = new Vector2(1, 1);
                             break;
-                        default://no movement
-                            State = PlayerEnums.ActionState.None;
-                            sprSheetY = PlayerEnums.Action.None;
-                            sprSheetX = 0;
-                            sprite.SprSheetX = 0;
-                            direction = new Vector2(0, 0);
-                            break;
                     }
-                    #endregion
+                    /*}
+                    else//no movement
+                    {
+                        State = PlayerEnums.ActionState.None;
+                        sprSheetY = PlayerEnums.Action.None;
+                        sprSheetX = 0;
+                        sprite.SprSheetX = 0;
+                        direction = new Vector2(0, 0);
+                    }*/
                 }
             }
-            
+            #endregion
+
             if (State == PlayerEnums.ActionState.Thrust)
             {
                 Attack(gameTime);
                 direction = new Vector2(0, 0);
             }
-            else 
+            else if (State != PlayerEnums.ActionState.None)
                 Move(direction, gameTime);
 
             SetAnimationFrame();
@@ -287,7 +380,12 @@ namespace Game_Test
         {
             sprite.Draw(spriteBatch);
             weapon.Draw(spriteBatch);
+        }
+        
+        public void DrawTop(SpriteBatch spriteBatch)
+        {
             healthbar.Draw(spriteBatch, sprite.Position);
+            levelindicator.Draw(spriteBatch, sprite.Position);
         }
 
         private void Attack(GameTime gameTime)
@@ -475,6 +573,13 @@ namespace Game_Test
             Rectangle rect;
             int temp = 0;
             int TileID = layer[0].getTileID(x, y);
+            int TileID2 = layer[1].getTileID(x, y);
+
+            if (TileID2 != 0)
+            {
+                rect = new Rectangle(x * (int)tilescale_x, y * (int)tilescale_y, (int)tilescale_x, (int)tilescale_y);
+                temp = CheckCollision4(rect, playerRect);
+            }
 
             if (TileID != 0)
             {
@@ -612,7 +717,7 @@ namespace Game_Test
             x2 = (int)((position.X + 2 * tilescale_x) / tilescale_x),
             y2 = (int)((position.Y + 2 * tilescale_y) / tilescale_y);
 
-            Rectangle Enemyrect = new Rectangle(new Point((int)(position.X + 0.5 * tilescale_x), (int)(position.Y + tilescale_y)), new Point((int)tilescale_x, (int)(tilescale_y)));
+            Rectangle Enemyrect = new Rectangle(new Point((int)(position.X + 0.5 * tilescale_x), (int)(position.Y + 0.5 * tilescale_y)), new Point((int)tilescale_x, (int)(tilescale_y * 2 - 0.5 * tilescale_y)));
 
             int TileID;
 
@@ -670,24 +775,19 @@ namespace Game_Test
             }
         }
 
-        public void SendPosition(Vector2 position)
-        {
-            PlayerPosition = position;
-        }
-
         public Vector2 GetPosition()
         {
             return sprite.Position;
         }
 
-        private Vector2 CheckHit()
+        private Vector2 CheckHit(int i)
         {
             Vector2 returnvalue = new Vector2(0, 0);
             Rectangle Enemyrect = new Rectangle(new Point((int)(sprite.Position.X + 0.5 * GameSettings.Instance.Tilescale.X), (int)sprite.Position.Y), new Point((int)GameSettings.Instance.Tilescale.X, (int)(GameSettings.Instance.Tilescale.Y * 2))),
-                Playerrect = new Rectangle((int)(PlayerPosition.X + 0.5 * GameSettings.Instance.Tilescale.X), (int)(PlayerPosition.Y + GameSettings.Instance.Tilescale.Y), (int)GameSettings.Instance.Tilescale.X, (int)(GameSettings.Instance.Tilescale.Y));
-            if (PlayerState == PlayerEnums.ActionState.Thrust && PlayerSprSheetX == 5)
+                Playerrect = new Rectangle((int)(PlayerPosition[i].X + 0.5 * GameSettings.Instance.Tilescale.X), (int)(PlayerPosition[i].Y + GameSettings.Instance.Tilescale.Y), (int)GameSettings.Instance.Tilescale.X, (int)(GameSettings.Instance.Tilescale.Y));
+            if (PlayerState[i] == PlayerEnums.ActionState.Thrust && PlayerSprSheetX[i] == 5)
             {
-                switch (PlayerLookDirection)
+                switch (PlayerLookDirection[i])
                 {
                     case PlayerEnums.LookDirection.Up:
                         Playerrect.Y -= (int)GameSettings.Instance.Tilescale.Y / 4;
@@ -703,13 +803,13 @@ namespace Game_Test
                         break;
                     case PlayerEnums.LookDirection.Down:
                         Playerrect.Height = (int)GameSettings.Instance.Tilescale.Y;
-                        Playerrect.Y = (int)(PlayerPosition.Y + (2 * GameSettings.Instance.Tilescale.Y -  0.5 * Playerrect.Height));
+                        Playerrect.Y = (int)(PlayerPosition[i].Y + (2 * GameSettings.Instance.Tilescale.Y -  0.5 * Playerrect.Height));
                         if (Enemyrect.Intersects(Playerrect))
                             returnvalue = new Vector2(1, 3);
                         break;
                     case PlayerEnums.LookDirection.Right:
                         Playerrect.Width = (int)GameSettings.Instance.Tilescale.X;
-                        Playerrect.X = (int)(PlayerPosition.X + (1.5 * GameSettings.Instance.Tilescale.X -  0.5 * Playerrect.Width));
+                        Playerrect.X = (int)(PlayerPosition[i].X + (1.5 * GameSettings.Instance.Tilescale.X -  0.5 * Playerrect.Width));
                         if (Enemyrect.Intersects(Playerrect))
                             returnvalue = new Vector2(1, 4);
                         break;
@@ -740,32 +840,40 @@ namespace Game_Test
             return returnvalue;
         }
 
-        private bool PlayerinZone()
+        private bool PlayerinZone(int index)
         {
-            float tilescale_x = GameSettings.Instance.Tilescale.X, tilescale_y = GameSettings.Instance.Tilescale.Y;
-            bool returnvalue = false;
-            int TileID;
-            int[] x = new int[4],
-                y = new int[4];
+            if (PlayerZones[index] == ZoneNumber)
+                return true;
+            return false;
+        }
 
-            x[0] = (int)((PlayerPosition.X + tilescale_x * 0.5) / tilescale_x);
-            x[1] = (int)((PlayerPosition.X + tilescale_x * 1.5) / tilescale_x);
-
-            y[0] = (int)((PlayerPosition.Y + tilescale_y) / tilescale_y);
-            y[1] = (int)((PlayerPosition.Y + 2 * tilescale_y) / tilescale_y);
-
-            for (int i = 0; i < 2; i++)
+        private void DieAnimation(GameTime gameTime)
+        {
+            if (sprSheetX >= (int)PlayerEnums.ActionState.Slash)
             {
-                for (int j = 0; j < 2; j++)
-                {
-                    TileID = layer[1].getTileID(x[i], y[j]);
-                    if (TileID != 0)
-                    {
-                            returnvalue = true;
-                    }
-                }
+                AnimationFinished = true;
+                return;
             }
-            return returnvalue;
+            if (sprSheetY != PlayerEnums.Action.Hit)
+            {
+                Interval = 0.2f;
+                sprSheetY = PlayerEnums.Action.Hit;
+                sprite.SprSheetY = (int)sprSheetY;
+                sprite.SprSheetX = 0;
+                sprSheetX = 0;
+                sprite.Update(gameTime);
+                weapon.SprSheetX = 1;
+                weapon.SprSheetY = (int)PlayerEnums.Action.WalkLeft;
+                weapon.Update(gameTime);
+            }
+            sprSheetX += (float)gameTime.ElapsedGameTime.TotalMilliseconds / gameTime.ElapsedGameTime.Milliseconds * Interval;
+            sprite.SprSheetX = (int)sprSheetX;
+            sprite.Update(gameTime);
+        }
+
+        public int getZoneNR()
+        {
+            return ZoneNumber;
         }
     }
 }
