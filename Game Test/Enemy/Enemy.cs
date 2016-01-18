@@ -133,6 +133,7 @@ namespace Game_Test
             PlayerSprSheetX = new List<int>();
             PlayerPosition = new List<Vector2>();
             PlayerZones = new List<int>();
+            PlayerLevels = new List<int>();
 
             ZoneNumber = ZoneNR;
         }
